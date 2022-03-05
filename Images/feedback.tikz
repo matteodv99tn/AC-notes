@@ -23,7 +23,7 @@
 		\node [style=dot] (59) at (-3.5, 0) {};
 		\node [style=none] (60) at (-6.25, 0) {};
 		\node [style=none] (61) at (-4.25, 0.25) {{$\scriptstyle +$}};
-		\node [style=none] (62) at (-3.25, -0.5) {{$\scriptstyle -$}};
+		\node [style=none] (62) at (-3.25, -0.6) {{$\scriptstyle -$}};
 	\end{pgfonlayer}
 	\begin{pgfonlayer}{edgelayer}
 		\draw [style=Black filled] (3.center)

@@ -161,9 +161,10 @@
 		and similarly the output in the time domain
 		\[ y = \C_1 x_1 + \D_1 u_1 + \C_2 x_2 + \D_2 x_2 = \mat{\C_1 & \C_2} \vet{x_1 \\ x_2} + \vet{D_1+D_2} u \]
 		The associated \textit{big matrix} is so
-		\begin{equation} \mat{\begin{array}{c c | c}
+		\begin{equation} 			
+			\vet{\delta x_1 \\ \delta x_2 \\ y} = \mat{\begin{array}{c c | c}
 					\A_1 & 0 & \B_1 \\ 0 & \A_2 & \B_2 \\ \hline \C_1 & \C_2 & \D_1 + \D_2
-			\end{array}}
+			\end{array}} \vet{x_1 \\ x_2 \\ u}
 		\end{equation}
 	
 	\subsection[Series connection]{Series (cascade) connection}
@@ -216,8 +217,27 @@
 		This solution is obtained by inverting the matrix $\I + \hat \G_1$ and this operation is possible if the matrix is \textit{\de{well-posed}}, condition that happens every time the matrix $\I + \D_1$ is invertible. By performing the analysis in the states space we have in fact 
 		\begin{align*}
 			y & = \C_1 x_1 + \D_1 u_1 = \C_1 x_1 + \D_1 (u-y) \\
-			(\I + \D_1) y & = \C_1 x_1 + \D_1 u
+			(\I + \D_1) y & = \C_1 x_1 + \D_1 u \\
+			y & = (\I + \D_1)^{-1}\C_1 x_1 +(\I + \D_1)^{-1} \D_1 u
 		\end{align*}
+		From this expression is possible to observe why the well-posedness condition is related to having $\I + \D_1$ invertible. Expliciting the variation of the states we have instead we have
+		\begin{align*}
+			\delta x & = \A_1 x_1 + \B_1 u_1 = \A_1x_1 + \B_1 (u-y) \\
+			& = \A_1 x_1 + \B_1 u - \B_1 \left( (\I + \D_1)^{-1}\C_1 x_1 +(\I + \D_1)^{-1} \D_1 u \right) \\
+			& = \left( \A_1 - \B_1 (\I+\D_1)^{-1} \C_1 \right) x_1 + \left( \B_1 - \B_1 (\I+\D_1)^{-1} \D_1 \right)u
+		\end{align*}
+		From this states space expansion we can define the \textit{big matrix} associated to a feedback connection as
+		\begin{equation}
+			\mat{ \begin{array} {c | c}
+				\A_1 - \B_1(\I+\D_1)^{-1} \C_1 & \B_1\left(\I - (\I+\D_1)^{-1} \D_1\right) \\ \hline 
+				(\I+\D_1)^{-1}\C_1 & (\I+\D_1)^{-1} \D_1
+			\end{array} } = 
+			\mat{ \begin{array} {c | c}
+				\A_1 - \B_1(\I+\D_1)^{-1} \C_1 & \B_1 (\I+\D_1)^{-1} \\ \hline 
+				(\I+\D_1)^{-1}\C_1 & \D_1 (\I+\D_1)^{-1} 
+		\end{array} }
+		\end{equation}
+	
 		
 		
 		
