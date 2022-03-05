@@ -1,0 +1,53 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (0) at (-2, 1) {};
+		\node [style=none] (1) at (2, 1) {};
+		\node [style=none] (2) at (2, -1) {};
+		\node [style=none] (3) at (-2, -1) {};
+		\node [style=none] (4) at (0, 0) {$\Sigma_1$};
+		\node [style=none] (5) at (2, 0) {};
+		\node [style=none] (6) at (5, 0) {};
+		\node [style=none] (7) at (3.5, 0.5) {{$\scriptstyle y_1 = u_2$}};
+		\node [style=none] (12) at (7, 0) {$\Sigma_2$};
+		\node [style=none] (13) at (9, 0) {};
+		\node [style=none] (14) at (10.5, 0) {};
+		\node [style=none] (15) at (9.75, 0.5) {{$\scriptstyle y_2$}};
+		\node [style=none] (16) at (5, 1) {};
+		\node [style=none] (17) at (9, 1) {};
+		\node [style=none] (18) at (9, -1) {};
+		\node [style=none] (19) at (5, -1) {};
+		\node [style=none] (20) at (-3.5, 0) {};
+		\node [style=none] (21) at (-2, 0) {};
+		\node [style=none] (22) at (-2.75, 0.5) {{$\scriptstyle u_1$}};
+		\node [style=none] (23) at (-5, 0) {};
+		\node [style=none] (24) at (12, 0) {};
+		\node [style=none] (25) at (11, -2) {};
+		\node [style=none] (26) at (11, 2) {};
+		\node [style=none] (27) at (-4, -2) {};
+		\node [style=none] (28) at (-4, 2) {};
+		\node [style=none] (29) at (-5.5, 0) {$u$};
+		\node [style=none] (30) at (12.5, 0) {$y$};
+		\node [style=none] (31) at (10.5, -2.5) {$\Sigma$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=Black Arrow] (5.center) to (6.center);
+		\draw [style=Black Arrow] (13.center) to (14.center);
+		\draw [style=Black filled] (3.center)
+			 to (2.center)
+			 to (1.center)
+			 to (0.center)
+			 to [in=90, out=-90] cycle;
+		\draw [style=Black filled] (19.center)
+			 to (18.center)
+			 to (17.center)
+			 to (16.center)
+			 to [in=90, out=-90] cycle;
+		\draw [style=Black Arrow] (20.center) to (21.center);
+		\draw [style=Black Arrow] (23.center) to (20.center);
+		\draw [style=Black Arrow] (14.center) to (24.center);
+		\draw [style=Dashed] (27.center) to (25.center);
+		\draw [style=Dashed] (25.center) to (26.center);
+		\draw [style=Dashed] (26.center) to (28.center);
+		\draw [style=Dashed] (28.center) to (27.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

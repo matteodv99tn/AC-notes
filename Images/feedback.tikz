@@ -1,0 +1,46 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (0) at (-2, 1) {};
+		\node [style=none] (1) at (2, 1) {};
+		\node [style=none] (2) at (2, -1) {};
+		\node [style=none] (3) at (-2, -1) {};
+		\node [style=none] (4) at (0, 0) {$\Sigma_1$};
+		\node [style=none] (22) at (-2.75, 0.5) {{$\scriptstyle u_1$}};
+		\node [style=none] (25) at (4, -3) {};
+		\node [style=none] (26) at (4, 2) {};
+		\node [style=none] (27) at (-5, -3) {};
+		\node [style=none] (28) at (-5, 2) {};
+		\node [style=none] (31) at (3.5, -3.5) {$\Sigma$};
+		\node [style=none] (40) at (3, 0) {};
+		\node [style=none] (43) at (-3.5, 0) {};
+		\node [style=none] (44) at (-2, 0) {};
+		\node [style=none] (49) at (5, 0) {};
+		\node [style=none] (50) at (2, 0) {};
+		\node [style=none] (55) at (-6.75, 0) {$u$};
+		\node [style=none] (56) at (5.5, 0) {$y$};
+		\node [style=none] (57) at (3, -2) {};
+		\node [style=none] (58) at (-3.5, -2) {};
+		\node [style=dot] (59) at (-3.5, 0) {};
+		\node [style=none] (60) at (-6.25, 0) {};
+		\node [style=none] (61) at (-4.25, 0.25) {{$\scriptstyle +$}};
+		\node [style=none] (62) at (-3.25, -0.5) {{$\scriptstyle -$}};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=Black filled] (3.center)
+			 to (2.center)
+			 to (1.center)
+			 to (0.center)
+			 to [in=90, out=-90] cycle;
+		\draw [style=Black Arrow] (43.center) to (44.center);
+		\draw [style=Black] (50.center) to (40.center);
+		\draw [style=Dashed] (28.center) to (26.center);
+		\draw [style=Dashed] (28.center) to (27.center);
+		\draw [style=Dashed] (27.center) to (25.center);
+		\draw [style=Dashed] (25.center) to (26.center);
+		\draw [style=Black Arrow] (40.center) to (49.center);
+		\draw [style=Black Arrow] (58.center) to (59);
+		\draw [style=Black Arrow] (60.center) to (59);
+		\draw [style=Black] (58.center) to (57.center);
+		\draw [style=Black] (57.center) to (40.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

@@ -27,7 +27,10 @@
 \usepackage{bm}
 \usepackage{enumerate}
 \usepackage{mathrsfs} 
+\usepackage{tikzit}
 
+\usetikzlibrary{arrows.meta}
+\input{style.tikzstyles}
 \graphicspath{{Images/}}
 
 
@@ -36,13 +39,22 @@
 \captionsetup{font = {it, small}, labelfont={color=NavyBlue, bf}}
 
 \renewcommand{\L}{\mathscr{L}}
+\newcommand{\Z}{\mathscr{Z}}
+\newcommand{\ztransf}[1]{\Z\left\{#1\right\}}
 \newcommand{\aL}{\L^{-1}}
 \newcommand{\laplace}[1]{\L \left\{ #1 \right\}}
 \newcommand{\antilaplace}[1]{\L^{-1} \left\{ #1 \right\} }
 \renewcommand{\Re}[1]{\mathds{R}\textrm{e}\left\{#1\right\}}
 \renewcommand{\Im}[1]{\mathds{I}\textrm{m}\left\{#1\right\}}
-
-
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\I}{\mathcal{I}}
+\newcommand{\vet}[1]{\begin{pmatrix} #1 \end{pmatrix}}
+\newcommand{\mat}[1]{\begin{bmatrix} #1 \end{bmatrix}}
+\newcommand{\tikzfigure}[1]{\tikzfig{Images/#1}}
 
 
 \newcommand{\de}[1]{\textbf{\textcolor{NavyBlue}{#1}}}

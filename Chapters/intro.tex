@@ -1,0 +1,242 @@
+\chapter{Dynamical systems}
+
+	This course will treat the \de{automatic control} of \de{dynamical systems}, hence it's necessary to firstly understand what a \textit{dynamical system} is and how it's described. In general such systems can be regarded as \textit{black box} that for a given \textbf{input} $u(t)$ determines an \textbf{output} $y(t)$; systems can be \textbf{continuous} or \textbf{discrete-time} depending on the type of \textit{time axis scale}, but also \textbf{hybrid} systems exists (as it will be studied).
+	
+	\paragraph{Rabbits} In order to understand behaviours of dynamical system, let's consider the example of pairs of rabbit. If we describe with $y(t)$ the total number of rabbits couple that one person has (where $t$ is the time expressed in months), we can consider that initially a person start with no animals ($y(0) = 0$) and goes at $t=1$ at an animal shop to buy a couple of small rabbits (hence $y(1) = 1$). In the first month of life they grow up and from \textit{babies} they become \textit{adults}, but the person still has $y(2) = 1$ couple of rabbit. In the next month they procreate a new couple of rabbits and so we have $y(3) = 2$ rabbit pairs. Assuming that no rabbit dies, we can describe the evolution of the system as
+	\begin{equation} \label{eq:dyn:rabbitdiscrete}
+		y(n) = y(n-2) + y(n-1)
+	\end{equation}
+	where the term $y(n-2)$ relates to the elder population and $y(n-1)$ describes the newly borne couple from each pair of elder pair. Equation \ref{eq:dyn:rabbitdiscrete} is a \textbf{finite difference equation} that allows to recursively define the number of rabbit pairs depending on the time $t$ assuming to know the \textbf{initial conditions} $y(0)$ and $y(1)$.
+	
+	For such system we can define it's \de{states} $x_1(t) = y(t)$ and $x_2 = y(t-1)$ determining the vector $x(t)$:
+	\begin{equation}
+		x(t) = \begin{pmatrix}
+			x_1(t) \\ x_2(t)
+		\end{pmatrix}
+	\end{equation}
+	Given so the states $x(t)$, we can compute their evolution $x(t+1)$ as
+	\[ x(t+1) = \vet{x_1(t+1) \\ x_2(t+1)} = \vet{y(t+1) \\ y(t)} = \vet{y(t-1) + y(t) \\ y(t)} = \vet{x_2(t) + x_1(t) \\ x_1(t)}\]
+	Using linear algebra the evolution of the state can be regarded as a linear combination of the actual states, in fact
+	\begin{equation}
+		x(t+1) = \mat{1 & 1 \\ 1 & 0} \vet{x_1(t) \\ x_2(t)} = \A x(t)
+	\end{equation}
+	Having the eigenvalues of the matrix $\A$ equal to $\lambda_{1,2} = \frac{1 \pm \sqrt 5}{2}$ we will prove that the continuous explicit function that express the rabbit pairs $y$ as function of $t$ is
+	\[ y(t) = \frac1{\sqrt{5}} \left[ \left(\frac{1 + \sqrt 5}{2}\right)^t - \left(\frac{1 - \sqrt 5}{2}\right)^t \right] \]
+	
+	\paragraph{Classification of system} This example allowed to intrude the first classification of system: they in fact can be \de{linear} if the states variation and output can be regarded as linear combination of the actual states and inputs, meaning that they can be expressed as
+	\begin{equation} \label{eq:dyn:temp1}
+	\begin{cases}
+		x(t+1) = \A x(t) + \B u(t) \\ y(t) = \C x(t) + \D u(t)
+	\end{cases}
+	\end{equation}
+	where $\A$ is the \textbf{dynamic matrix}, $\B$ the \textbf{input} m., $\C$ the \textbf{output} m. and $\D$ is the \textbf{feed-through} (instantaneous) m.; both $u,x$ and $y$ are in general vectors. To simplify the notation usually the dependency on the time $t$ is dropped and the increment for \textbf{discrete-time} systems (where $t\in \mathds Z$) is described as $x^+$ (values of the state at the next step), hence equation \ref{eq:dyn:temp1} is rewritten as
+	\begin{equation} \label{eq:dyn:LTIdiscrete}
+		\begin{cases}
+			x^+ = \A x + \B u \\ y = \C x + \D u \\ x(t_0) = x_0
+		\end{cases}
+	\end{equation}
+	For \textbf{continuous-time} systems (where $t\in \mathds R$) the concept of increment is represented by the derivative $\dot x = \frac{dx}{dt}$, hence
+	\begin{equation} \label{eq:dyn:LTIcontinuous}
+		\begin{cases}
+			\dot x = \A x + \B u \\ y = \C x + \D u \\ x(t_0) = x_0
+		\end{cases}
+	\end{equation}
+	Note that for all the system is very important to define the \textbf{initial condition} $x(t_0) = x_0$ of the states because the response of the output is strictly related to them.
+	
+	System that don't exhibits a linear behaviour are therefore called \de{non-linear} and the input/state/output relations are described by functions:
+	\begin{equation}
+	\begin{cases}
+		\delta x = f(x,u) \\
+		y = h(x,y) \\
+		x(t_0) = x_0
+	\end{cases}
+	\end{equation}
+	\begin{note}
+		the term $\delta x$ is the generalization of $\dot x$ for continuous-time or $x^+$ for discrete-time systems in order to make the notation more generalized and will be used throughout the whole book.
+	\end{note}
+	
+	Until now the notation were referred to \de{time-invariant} systems where the matrix $\A,\B\,\C,\D$ (for linear sys.) or the functions $f,h$ (for non-linear sys.) were not dependent on time, however \de{time-variant} systems also exists that exhibiting an explicit relation with time, hence can be regarded as
+	\begin{equation}
+		\begin{cases}
+			\delta x = \A(t) x + \B(t) u \\ y = \C(t) x + \D(t) u \\ x(t_0) = x_0
+		\end{cases}
+		\qquad \textrm{or} \qquad 
+		\begin{cases}
+			\delta x = f(x,u,t) \\
+			y = h(x,y,t) \\
+			x(t_0) = x_0
+		\end{cases}
+	\end{equation}
+	for both linear and non-linear case.\\
+	By a mathematical point of view a system if it satisfy that
+	\[ \begin{cases}
+		x(t_0 + T) = x_0 \\ u(t-T) 
+	\end{cases} \qquad \Rightarrow \quad y(t-T) \hspace{2cm} \forall t \geq t_0 + T \]
+	
+	\textbf{ESEMPI DEI DIVERSI TIPI DI SISTEMI}
+	
+\section{Linear time-invariant systems and transfer functions}
+	As equations \ref{eq:dyn:LTIdiscrete} and \ref{eq:dyn:LTIcontinuous} stated, \de{linear time-invariant} \textbf{LTI} systems can be described in matrix form as
+	\[ \begin{cases}
+		\delta x = \A x + \B u \qquad x(0) = x_0\\ y = \C x + \D u 
+	\end{cases} \]
+	where the matrix $\A,\B,\C,\D$ are constant (hence independent from time due to the time-invariancy requirement). Having the system time invariant the initial condition can be expressed as $x(0)$ (because it doesn't depend on the choice of $t_0$, but on any general initial condition).
+	
+	Continuous-time LTI systems can be easily analysed in the domain of the complex variable $s$ using the \textbf{Laplace transform} $\mathscr L$, an operator defined
+	\[ X(s) = \laplace{x(t)} = \int_0^\infty x(t) e^{-st}\, dt \hspace{2cm} s \in \mathds C \]
+	An important property of such operator is that converts differential equations into algebraic ones in the variable $s$, in fact we can observe that
+	\[ \dot x(t) \mapsto s X(s) - x(0) \]
+	The Laplace transform has also the useful property of being linear, hence the input-output relation of LTI system can be transformed according to Laplace, hence
+	\begin{equation}
+		(eq.\ref{eq:dyn:LTIcontinuous}) \mapsto \begin{cases}
+			sX(s) - x(0) = \A X(s) + \B U(s) \\ Y(s) = \C X(s) + \D U(s)
+		\end{cases}
+	\end{equation}
+	The first equation can be solved in order to explicit the transform of the states $X(s) = \laplace{x(s)}$ as function of the transform of the input $U(s) = \laplace{u(t)}$ determining
+	\begin{align*}
+		sX(s) - \A X(s) & = \B U(s) + x(0) \\
+		(s\I-\A) X(s) & = \B U(s) + x(0) \\
+		X(s) & = (s\I - \A)^{-1} \B U(s) + (sI- \A)^{-1} x(0) 
+	\end{align*}
+	\begin{note}
+		In the first step in order to collect $sX(s)$ and $\A X(s)$ has been necessary to multiply $s$ by the identity matrix $\I$: $s$ is in fact a scalar while $\A$ is a matrix and no operation is compatible between this elements (addition is defined only for matrix with same sizes).
+	\end{note} \noindent
+	With this result obtained we can compute the transform of the output $Y(s) = \laplace{y(t)}$ as function of the lonely $U(s)$ as 
+	\begin{equation}
+		Y(s) = \underbrace{\left(\C (s\I - \A)^{-1} \B + \D\right)}_{= \hat \G(s)} U(s) + \underbrace{\C(s\I-\A)^{-1} \D}_{\hat \psi(s)} x(0)
+	\end{equation}
+	In this equation $\hat \G(s)$ represent the \de{transfer function} of the system (however more generally it's a matrix). Observing that the output in the Laplace domain can be so simplified to the form $Y(s) = \hat G(s) U(s) + \hat \psi(s) x(0)$ and so by using property of the (inverse) Laplace transform we can rewrite the output as the convolution of the input sequence and the \de{impulse response} $G(t) = \mathscr L^{-1}\{\hat G(s)\}$ of the system:
+	\begin{equation}
+		y(t) = (G*x)(t) + \psi(t) x(0)
+	\end{equation}
+	where the convolution is defined as
+	\[ (G*x)(t) = \int_0^t G(t)x(t-\tau)\, d\tau \]
+	
+	Considering the case of discrete-time LTI  systems instead of the Laplace we have to use the \textbf{Z transform} $\Z$ that maps discrete time sequences into a domain in the complex variable $z$; knowing that $X(z) = \ztransf{x(t)}$ (with $t\in \mathds Z$) the analogous property of differentiation in time is that $x(t+1) = x^+ \mapsto z X(z) - z x(0)$, hence
+	\begin{equation}
+		(eq.\ref{eq:dyn:LTIdiscrete} )\mapsto \begin{cases}
+			z X(z) - z x(0) = \A X(z) + \B U(z) \\ Y(z) = \C X(z) + \D U(z)
+		\end{cases}
+	\end{equation}
+	As in the continuous case it's possible to compute the transform of the output $Y(z) = \ztransf{y(t)}$ as function of the spectrum $U(z) = \ztransf{x(t)}$ as
+	\begin{equation}
+		Y(z) = \underbrace{\left(\C (z\I - \A)^{-1} \B + \D\right)}_{= \hat \G(z)} U(z) + \underbrace{\C(s\I-\A)^{-1} \D z}_{\hat \psi(z)} x(0)
+	\end{equation}
+
+	\paragraph{Theorem} A fundamental theorem for continuous-time linear time-invariant systems states that \textit{the \textbf{transfer function} $\hat \G(s)$ and so the \textbf{impulse response} $\G(t)$ of such systems is computed as}
+	\begin{equation}
+		\hat \G(s) = \left(\C (s\I - \A)^{-1} \B + \D\right) \hspace{2cm} \G(s) = \antilaplace{\left(\C (s\I - \A)^{-1} \B + \D\right)}
+	\end{equation}
+	
+\section{Interconnected systems}
+	The control of dynamical systems is based on \de{interconnections} between, and such connection can be summarized as: in parallel, in series, in feedback. In this section a proof of transfer function of interconnected system is given in the case of linear time-invariant system (where the concept of transfer function is \textit{well defined}). Such system represented as 
+	\[ \begin{cases}
+		\delta x = \A x + \B u \qquad x(0) = x_0\\ y = \C x + \D u 
+	\end{cases} \]
+	are so characterized by the 4 matrix $\A,\B,\C,\D$ by the \textit{big matrix notation}
+	\[ \vet{\delta x \\ \hline y} = \begin{bmatrix}
+		\begin{array}{c | c}
+			\A & \B \\ \hline \C & \D
+		\end{array} 
+	\end{bmatrix} \vet{x \\ u }\]
+	
+	\subsection{Parallel connection}
+		\begin{figure}[b!]
+			\centering
+			\tikzfigure{parallel}
+			\caption{black box representation of a parallel connection between two systems.} \label{fig:dyn:parallel}
+		\end{figure}
+		Considering the parallel connection of the systems $\Sigma_1,\Sigma_2$ (figure \ref{fig:dyn:parallel}), the overall transfer function of the system $\Sigma$ can be computed considering that the output $Y(\cdot)$ in the Laplace/Z domain is the sum of the contribution of the single stages that can be computed so independently
+		\begin{equation}
+		\begin{aligned}
+			Y &  = Y_1 + Y_2 = \hat \G_1 U_1 + \hat \G_2 U_2 = \hat \G_1 U + \hat G_2 U \\
+			& = \underbrace{\big(\hat \G_1  + \hat \G_2\big)}_{=\hat \G} U
+		\end{aligned}
+		\end{equation}
+		
+		While connection two or more systems we have that the overall states $x$ of the system $\Sigma$ is the union of the individual systems $x_i$, hence in this case
+		\[ x = \vet{x_1 \\ x_2} \]
+		More formally the we have that the variation of the states $\delta x$ of the system $\Sigma$ can be regarded as
+		\[ \delta x = \A_1 x_1 + \B_1 u_1 + \A_2 u_2 + \B_2 u_2 = \mat{\A_1 & 0 \\ 0 & \A_2} \vet{x_1 \\ x_2} + \mat{\B_1 \\ \B_2} u \]
+		and similarly the output in the time domain
+		\[ y = \C_1 x_1 + \D_1 u_1 + \C_2 x_2 + \D_2 x_2 = \mat{\C_1 & \C_2} \vet{x_1 \\ x_2} + \vet{D_1+D_2} u \]
+		The associated \textit{big matrix} is so
+		\begin{equation} \mat{\begin{array}{c c | c}
+					\A_1 & 0 & \B_1 \\ 0 & \A_2 & \B_2 \\ \hline \C_1 & \C_2 & \D_1 + \D_2
+			\end{array}}
+		\end{equation}
+	
+	\subsection[Series connection]{Series (cascade) connection}
+		A series connection (figure \ref{fig:dyn:series}) between two system is implemented by feeding the input of $\Sigma_2$ with the output of $\Sigma_1$; in this case the input-output of the overall system can be regarded in the Laplace/Z transform as
+		\begin{equation}
+		\begin{aligned}
+			Y & = \hat \G_2 U_2 = \hat \G_2 Y_1 = \hat \G_2 \hat \G_1 U_1 \\ & = \hat \G_2 \hat \G_1  U = \hat \G U
+		\end{aligned}
+		\end{equation}
+		Note that in this case the order of the transfer function $\hat \G= \hat \G_2 \hat \G_1$ is important due to the multiplication of matrix; in fact in order to make the series connection possible we need to have that the length of the vector $y_1$ is equal to the one of $x_2$: this makes possible to have a matrix $\hat \G$ the can be multiplied by $U$ and returns a proper $Y$.
+	
+		Carefully representing this system in the space of the states, we obtain that
+		\begin{align*}
+			\delta x_1 & = \A_1 x_1 + \B_1 u \\
+			y_1 & = \C_1 x_1 + \D_1 u = u_2 \\
+			\delta x_2 & = \A_2 x_2 + \B_2 u_2 = \A_2 x_2 + \B_2\big( \C_1 x_1 + \D_1 u \big) \\
+			y= y_2 & = \C_2 x_2 + \D_2 u_2 = \C_2 x_2 + \D_2 \big(\C_1 x_1 + \D_1 u\big)
+		\end{align*}
+		hence the \textit{big matrix} is
+		\begin{equation}
+			\mat{ \begin{array} {c c | c}
+					\A_1 & 0 & \B_1 \\ 
+					\B_2 \C_1 & \A_2 & \B_2 \D_1 \\ \hline 
+					\D_2 \C_1 & \C_2 & \D_2\D_1
+			\end{array} }
+		\end{equation}
+		
+		\begin{figure}[bht]
+			\centering
+			\tikzfigure{series}
+			\caption{black box representation of a series connection between two systems.} \label{fig:dyn:series}
+		\end{figure}
+	
+	\subsection{Feedback connection}	
+		\begin{figure}[bt]
+			\centering
+			\tikzfigure{feedback}
+			\caption{black box representation of a series feedback connection of a system.} \label{fig:dyn:feedback}
+		\end{figure}
+		
+		A feedback connection (figure \ref{fig:dyn:feedback}) of a system is realised by subtracting to the input $u$ of the system it's output $y$. Performing the analysis in the frequency domain we have have in fact the solution
+		\[ Y = \hat\G_1 U_1 = \hat\G_1 (U-Y) \]
+		We see that this expression is implicit in $Y$, but we can still obtain the solution
+		\begin{equation}
+		\begin{split}
+			Y + \hat\G_1 Y = Y(\I + \hat \G_1)& =\hat\G_1 U \\
+			Y &= (\I + \hat \G_1)^{-1} \hat \G_1 U
+		\end{split}
+		\end{equation}
+		This solution is obtained by inverting the matrix $\I + \hat \G_1$ and this operation is possible if the matrix is \textit{\de{well-posed}}, condition that happens every time the matrix $\I + \D_1$ is invertible. By performing the analysis in the states space we have in fact 
+		\begin{align*}
+			y & = \C_1 x_1 + \D_1 u_1 = \C_1 x_1 + \D_1 (u-y) \\
+			(\I + \D_1) y & = \C_1 x_1 + \D_1 u
+		\end{align*}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
