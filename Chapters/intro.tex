@@ -75,6 +75,26 @@
 	
 	\textbf{ESEMPI DEI DIVERSI TIPI DI SISTEMI}
 	
+	\begin{example}{: linear time-variant dynamical system}
+		Let's consider the model of a 3 year course of an university with the goal of study the behaviour of students. Considering the graphs that follows, we denote as $u$ the number of students registering at the first year, while $\alpha_i \in [0,1]$ is the relative value of students that passes to the next year/graduates; $y$ finally represent the number of student graduated. In this case the states $x_i$ are representing the number of student in each year of  the course. This models assumes that no student drops the course (more complex models can indeed consider such phenomena).
+		\begin{center}
+			\tikzfigure{university}
+		\end{center}
+		
+		We can see that this dynamical system is discrete-time (the system is considered to evolved each year at the start of the academic year); analysing the graph we observe that each next year the number of student in each \textit{class} ($x_i$) depends on the number of the one passed from the previous course ($\alpha_i x_{i-1}$) and the one that didn't passed ($(1-\alpha_i)x_i$), hence we have that
+		\[\begin{cases}
+			x_1^+ & = (1-\alpha_1)x_1 + u \\
+			x_2^+ & = (1-\alpha_2)x_2 + \alpha_1 x_1 \\
+			x_3^+ & = (1-\alpha_3)x_3 + \alpha_2 x_2 \\
+			y & = \alpha_3 x_3
+		\end{cases}\]	
+		In this case if we assume that $\alpha_i$ are constant value, the model that we obtain doesn't suit the real behaviour of the course where problems might happen (for example a \textit{evil teacher} reduces the rate of passed students one year, reducing $\alpha_i$),	hence we have a system that's time-variant ($\alpha_i$ depends on time $t$) while the model is still linear, because it can be expressed as
+		\begin{align*}
+			x^+ = \vet{x_1^+ \\ x_2^+ \\ x_3^+} & = \mat{1-\alpha_1(t) & 0 & 0 \\ \alpha_1(t) & 1-\alpha_2(t) & 0 \\ 0 & \alpha_2(t) & 1-\alpha_3(t)} \vet{x_1 \\ x_2 \\ x_3} + \vet{1 \\0 \\0 } u = \A(t)x + \B(t)u \\
+			y & = \mat{0 & 0 & \alpha_3(t)} \vet{x_1 \\ x_2 \\ x_3} + \mat{0} u = \C(t)x + \D(t) u
+		\end{align*}
+	\end{example}
+	
 \section{Linear time-invariant systems and transfer functions}
 	As equations \ref{eq:dyn:LTIdiscrete} and \ref{eq:dyn:LTIcontinuous} stated, \de{linear time-invariant} \textbf{LTI} systems can be described in matrix form as
 	\[ \begin{cases}
@@ -140,7 +160,7 @@
 		\end{array} 
 	\end{bmatrix} \vet{x \\ u }\]
 	
-	\subsection{Parallel connection}
+	\subsection*{Parallel connection}
 		\begin{figure}[b!]
 			\centering
 			\tikzfigure{parallel}
@@ -167,7 +187,7 @@
 			\end{array}} \vet{x_1 \\ x_2 \\ u}
 		\end{equation}
 	
-	\subsection[Series connection]{Series (cascade) connection}
+	\subsection*{Series (cascade) connection}
 		A series connection (figure \ref{fig:dyn:series}) between two system is implemented by feeding the input of $\Sigma_2$ with the output of $\Sigma_1$; in this case the input-output of the overall system can be regarded in the Laplace/Z transform as
 		\begin{equation}
 		\begin{aligned}
@@ -198,7 +218,7 @@
 			\caption{black box representation of a series connection between two systems.} \label{fig:dyn:series}
 		\end{figure}
 	
-	\subsection{Feedback connection}	
+	\subsection*{Feedback connection}	
 		\begin{figure}[bt]
 			\centering
 			\tikzfigure{feedback}
@@ -238,25 +258,155 @@
 		\end{array} }
 		\end{equation}
 	
+\section{Realization theory}
+	Given a rational polynomial $g(s)$ so defined as the ratio between two polynomial $n(s)/d(s)$ (this expression indeed represent the case of a one dimensional transfer function), such function is said
+	\begin{itemize}
+		\item \textbf{strictly proper} if the degree $\#n(s)$ of the denominator is less then the degree $\#d(s)$ od the denominator; this means that
+		\[ \lim_{s\rightarrow \infty} g(s) = 0 \]
+		\item \textbf{proper} if in general we have $\#n(s) \leq \#d(s)$, but more specifically it has to be
+		\[ \lim_{s\rightarrow \infty} g(s) \neq \infty \]
+		\item every time we have $\#n(s) > \#d(s)$, the rational polynomial is defined as \textbf{improper} and has
+		\[ \lim_{s\rightarrow \infty} g(s) = \infty \]
+	\end{itemize}	
+	A rational polynomial $G(s)$ is \textbf{biproper} if both $g$ and it's inverse $g^{-1}$ are propers. Extending this concepts to a transfer function $\hat \G(s)$ (that's in general a matrix), the system is (strictly) proper if all it's entries are (strictly) proper; if one entry is improper, then $\hat \G(s)$ is also improper.
+	
+	In general it's proven that for linear time-invariant systems the transfer function $\hat G(s)$ is composed by a strictly proper and a proper term as
+	\begin{equation} \label{eq:dyn:temp2}
+		\hat \G(s) = \underbrace{\C(s\I - \A)^{-1}\B}_\textrm{strictly proper} + \underbrace{\D}_\textrm{proper}
+	\end{equation}
 		
+	\paragraph{Realization} Given a transfer function $\hat \G(s)$, we say that the linear time-invariant system in the form
+	\[ \begin{cases}
+		\delta x = \A x + \B u \qquad x(0) = x_0\\ y = \C x + \D u 
+	\end{cases} \] 
+	is a \de{realization} of the transfer function $\hat G$ if equation \ref{eq:dyn:temp2} holds. \\
+	This states that a LTI system characterized by the matrices $\A,\B,\C,\D$ is the realization of $\hat G(s)$ if it happens that $\hat G(s) = \C(s\I - \A)^{-1}\B + \D$. We also define two realization as \de{zero state equivalent} if they realise the same transfer function $\hat G(s)$.
 		
+	\subsection*{Realizations and transfer functions}
+		An important theorem states that a transfer function $\hat \G(s)$ can be \textbf{realised} by an LTI system in the \textit{standard form} \textbf{if and only if} the rational function $\hat \G(s)$ is \textbf{proper}.
 		
+		\paragraph{Proof pt. 1} We can prove the \textit{only if} conditions stating
+		\[ \mat{\begin{array}{c|c}
+				\A & \B \\ \hline \C & \D
+		\end{array}} \mapsto \hat \G(s) \]
+		the proof is straightforward: as \ref{eq:dyn:temp2} states, given the constant matrices $\A,\B,\C,\D$ the resulting transfer function is strictly proper for the term $\C(s\I-\A)^{-1}\B$ and becomes proper only in the case when $\D\neq 0$.
 		
+		\paragraph{Proof pt. 2} More complex is proving the \textit{if} condition that starting from the transfer function computes the \textit{characteristic} matrices of LTI systems:
+		\[ \hat \G(s) \mapsto \mat{\begin{array}{c|c}
+				\A & \B \\ \hline \C & \D
+		\end{array}}  \]
+		We want now to prove that if the transfer function $\hat G(s)$ is proper then it state space representation exists. Determining the non-strictly proper element $\D$ is straightforward, in fact it can be computed simply as the limit
+		\[ \mathcal D = \lim_{s\rightarrow \infty} \hat \G(s) \]
+		We can so build the strictly proper transfer function as
+		\[ \hat \G_{sp}(s) = \B(s\I - \A)^{-1}\C = \Gs - \D\]
+		Building the polynomial $d(s)$ as the least common denominator of all the entries in the matrix $\hat \G_{sp}(s)$ and writing him in a form
+		\[ d(s) = s^n + \alpha_1 s^{n-1} + \alpha_2 s^{n-2}+ \dots + \alpha_{n-1} s + \alpha_n \]
+		we can rewrite the strictly proper part of the transfer function as a combination of matrices $N_i$ in the following way:
+		\[ \hat \G_{sp}(s) = \frac{N(s)}{d(s)} = \frac{N_1 s^{n-1} + N_2 s^{n-2} + \dots + N_{n-1} s + N_n }{d(s)} \]
+		With that said we have all the elements to compute the state space representation of the system: it can be proven in fact that the LTI has a state space representation in the form
+		\begin{equation} \label{eq:dyn:Gtostaterep}
+			\mat{\begin{array}{ c c c c | c}
+				-\alpha \I_k & - \alpha_2 \I_k & \dots & - \alpha_n \I_k & \I_k \\
+				\I_k & 0 & \dots & 0 & 0 \\
+				0 & \ddots & & 0 & \vdots \\
+				0 & 0& \I_k & 0 & 0 \\ \hline
+				N_1 & N_2 & \dots & N_m & \D
+			\end{array}}
+		\end{equation}
+		where $\I_k$ is the $k\times k$ identity matrix; this notation is called \de{controllable canonical form}.
 		
+		\begin{example}{: state representation from a transfer function}
+			Given a system characterized by a transfer function
+			\[ \Gs = \mat{\frac{4s-10}{s+1} & \frac{3}{s+2} \\ \frac{1}{s+2} & \frac{4}{s+1} } \]
+			in order to compute one it's representation the first thing to do is extract the output matrix $\D$ as
+			\[ \D = \lim_{s\rightarrow \infty} \Gs = \mat{4 & 0 \\ 0 & 0} \]
+			And so we can compute the strictly  proper part as
+			\begin{align*}
+				\hat G_{sp}(s) & = \Gs - \D = \mat{\frac{-14}{s+1} & \frac{3}{s+2} \\ \frac{1}{s+2} & \frac{4}{s+1} } \\
+				& = \frac 1 {(s+1)(s+2)} \mat{-14(s+2) & 3 (s+1) \\ 1(s+1) & 4(s+2)} = \frac 1{s^2 + 3s + 2} \mat{-14 s - 28 & 3s + 3 \\ s+1 & 4s + 8} \\
+				& = \frac{\mat{-14 & 3 \\ 1 & 4}s + \mat{-28 & 3 \\ 1 & 8} }{s^2 + 3s +2}
+			\end{align*}
+			Using equation \ref{eq:dyn:Gtostaterep} we can compute the state representation of the system using the yet computed denominator and matrices $N_i$ providing the result
+			\[ \mat{\begin{array}{c c c c | c c}
+				-3 & 0 & -2 & 0 & 1 & 0 \\
+				0 & -3 & 0 & -2 & 0 & 1 \\
+				1 & 0 & 0 & 0 & 0 & 0 \\
+				0 & 1 & 0 & 0 & 0 & 0 \\ \hline
+				-14 & 3 & -28 & 3 & 4 & 0 \\ 
+				1 & 4 & 1 & 8 & 0 & 0
+			\end{array}} \]
+			By computing $\C (s\I - \A)^{-1} \B + \D$ using the matrices yet obtain we can indeed see that, after some simplifications, that we obtain the original transfer function $\Gs$.
+		\end{example}
 		
+		\paragraph{Proof pt. 3} All that's left now is to prove that equation \ref{eq:dyn:Gtostaterep} indeed is a realization of the proper transfer function $\Gs$. In order to do so we consider we consider the sub-matrix $z(s)$ defined as
+		\[ z(s) = \mat{z_1^t & z_2^t & \dots & z_n^t} = (s\I - \A)^{-1} \B \qquad \Rightarrow \qquad (s\I-\A) z(s) = \B \]
+		Considering the \textit{lower part} of the matrices $\A$ and $\B$ (the last 3 rows in equation \ref{eq:dyn:Gtostaterep}), the multiplication results in the set of equalities
+		\[ s z_2 -z_1 = 0 \qquad sz_3 - z_2 = 0 \qquad \dots \qquad sz_n = z_{n-1} \]
+		Considering so that $z_n = \frac 1 s z_{n-1}$ but also $z_{n-1} = \frac 1 s z_{n-2}$ up to $z_2 = \frac 1 2 z_1$ we can determine the generic vector $z_k$ as
+		\begin{equation} \label{eq:dyn:temp3}
+			z_k = \frac 1{s^{k-1}} z_1
+		\end{equation}
+		Considering so now the multiplication $(s\I - \A)z(s) = \B$ using the top row of $\A,\B$ respect to the formulation in equation \ref{eq:dyn:Gtostaterep}, we have that
+		\[ (s+\alpha_1) z_1 + \alpha_2 z_2 + \dots + \alpha_n z_n = \I_k \]
+		hence for relation \ref{eq:dyn:temp3}
+		\[ \left( s + \alpha_1 + \frac{\alpha^2}{s} + \dots + \frac{\alpha_{n-1}}{s^{n-2}} + \frac{\alpha_n}{s^{n-1}} \right) z_1 = \I_k \]
+		Since the polynomial in the left-hand side is given by the ratio $\frac{d(s)}{s^{n-1}}$ we can define the sub-matrix $z$ as
+		\[ z(s) = \mat{z_1 \\ z_2 \\ \vdots \\ z_n} = \frac 1 {d(s)} \mat{s^{n-1}\I_k \\ s^{n-2}\I_k \\ \vdots \\ \I_k} \]
+		hence
+		\begin{align*}
+			\C(s\I-\A)^{-1} \B & = \C z(s) = \frac 1{d(s)} \mat{N_1 & N_2 & \dots  & N_n} \mat{s^{n-1}\I_k \\ s^{n-2}\I_k \\ \vdots \\ \I_k} \\
+			& = \hat \G_{sp}(s)
+		\end{align*}
 		
+		\subsubsection{LTI SISO system case and multiple realizations}		
+		 A SISO (single-input single-output) LTI system is characterized by a transfer function that's simply a rational polynomial in the form
+		\[ \Gs = \frac{\beta_1 s^{n-1} + \beta_2 s^{n-2} + \dots + \beta_{n-1} s + \beta_ m}{s^n + \alpha_1 s^{n-1} + \alpha_2 s^{n-2}+ \dots + \alpha_{n-1} s + \alpha_n } \]
+		Recalling the results of equation \ref{eq:dyn:Gtostaterep}, a realization of this kind of system is characterized by the matrices
+		\[ \A = \mat{-\alpha_1 & - \alpha_2 & \dots & - \alpha_{n-1} & - \alpha_n \\
+		1 & 0 & \dots & 0 & 0 \\
+		0 & 1 & \dots & 0 & 0 \\ 
+		\vdots & \vdots & \ddots & \vdots & \vdots \\
+		0 & 0 & \dots & 1 & 0 } \qquad \B = \mat{1 \\ 0 \\ \vdots \\ 0 \\ 0} \qquad \C \mat{\beta_1 & \beta_2 & \dots & \beta_{n-1} & \beta_n} \]
+		Figure \ref{fig:dyn:controllablecanonical} shows how a system described in a controllable canonical representation (as in this case) can be graphed.
 		
+		\begin{figure}[bht]
+			\centering \resizebox{0.9\linewidth}{!}{\tikzfigure{controlform}}
+				\caption{graph representation of an LTI SISO system expressed in the controllable canonical form; the $1/s$ blocks in practise are representing integrators of the input.} \label{fig:dyn:controllablecanonical}
+		\end{figure}
 		
+		In general this is not the lonely allowable representation of the transfer function $\Gs$, but there exists infinitely many ones. Considering $T$ as a non-singular matrix, we can define a new vector of the states $\tilde x = T x$ (hence $x = T^{-1} \tilde x$) that allows us to determine a new state space representation of the system, in fact we can build
+		\begin{equation*}
+		\begin{cases}
+			\delta \tilde x = T \, \delta x  = T \A x + T \B u = T A T^{-1} \tilde x + T\B u = \tilde \A \tilde x + \tilde \B u \\
+			\tilde y = \C x + \D u = \C T^{-1}\tilde x + \D u = \tilde \C \tilde x + \D u
+		\end{cases}
+		\end{equation*}
+		We can so state that the systems
+		\begin{equation}
+			\mat{\begin{array}{c|c}
+					\tilde \A & \tilde \B \\ \hline \tilde \C & \D
+			\end{array}} = \mat{\begin{array}{c|c}
+				T\A T^{-1} & T \B \\ \hline \C T^{-1} & \D
+			\end{array}} \qquad \textrm{and} \qquad \mat{\begin{array}{c|c}
+				\A & \B \\ \hline \C & \D
+			\end{array}}
+		\end{equation}
+		are \de{algebraically equivalent} and are indeed representations of the same transfer function $\Gs$. In this case the non-singular matrix $T$ is referred as \textbf{\textit{similarity/equivalence transformation}} and allows to describe the system into a different set of states. This operation can be useful because it might allow to express a system in a more suitable way for numerical computations.
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		An example of algebraically equivalent representation is the \de{observable canonical form} described as
+		\begin{equation}
+		\mat{\begin{array}{ c c c c | c}
+			-\alpha_1 & 1 & 0 & 0 & \beta_1 \\
+			\vdots & 0 & \ddots & 0 & \vdots  \\
+			-\alpha_{n-1} & 0 & 0 & 1 & \beta_{n-1} \\
+			-\alpha_n & 0 & \dots & 0 & \beta_n \\ \hline
+			1 & 0 & \dots & 0 
+		\end{array}}
+		\end{equation}
+	
+	
+		\begin{figure}[bht]
+			\centering \resizebox{0.9\linewidth}{!}{\tikzfigure{observableform}}
+			\caption{graph representation of an LTI SISO system expressed in the controllable canonical form; the $1/s$ blocks in practise are representing integrators of the input.} \label{fig:dyn:observablecanonical}
+		\end{figure}
 		

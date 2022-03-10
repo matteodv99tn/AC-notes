@@ -1,0 +1,137 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (0) at (0, 0) {$\frac 1 s$};
+		\node [style=none] (1) at (-1, 1.5) {};
+		\node [style=none] (2) at (1, 1.5) {};
+		\node [style=none] (3) at (1, -1.5) {};
+		\node [style=none] (5) at (-1, -1.5) {};
+		\node [style=none] (11) at (1, 0) {};
+		\node [style=none] (13) at (4.25, 0) {};
+		\node [style=none] (14) at (3.25, 0.5) {$x_{n-1}$};
+		\node [style=none] (15) at (3.25, -0.5) {$\dot x_{n}$};
+		\node [style=none] (16) at (5.25, 0) {$\frac 1 s$};
+		\node [style=none] (17) at (4.25, 1.5) {};
+		\node [style=none] (18) at (6.25, 1.5) {};
+		\node [style=none] (19) at (6.25, -1.5) {};
+		\node [style=none] (20) at (4.25, -1.5) {};
+		\node [style=none] (21) at (6.25, 0) {};
+		\node [style=none] (22) at (10.25, 0) {};
+		\node [style=none] (23) at (9.25, 0.5) {$x_n$};
+		\node [style=none] (24) at (-14, 0) {$\frac 1 s$};
+		\node [style=none] (25) at (-15, 1.5) {};
+		\node [style=none] (26) at (-13, 1.5) {};
+		\node [style=none] (27) at (-13, -1.5) {};
+		\node [style=none] (28) at (-15, -1.5) {};
+		\node [style=none] (29) at (-13, 0) {};
+		\node [style=none] (30) at (-9.75, 0) {};
+		\node [style=none] (31) at (-10.75, 0.5) {$x_1$};
+		\node [style=none] (32) at (-10.75, -0.5) {$\dot x_2$};
+		\node [style=none] (33) at (-8.75, 0) {$\frac 1 s$};
+		\node [style=none] (34) at (-9.75, 1.5) {};
+		\node [style=none] (35) at (-7.75, 1.5) {};
+		\node [style=none] (36) at (-7.75, -1.5) {};
+		\node [style=none] (37) at (-9.75, -1.5) {};
+		\node [style=none] (38) at (-3.5, 0) {};
+		\node [style=none] (39) at (-1, 0) {};
+		\node [style=none] (40) at (-2, 0.5) {$x_{n-2}$};
+		\node [style=none] (41) at (-2, -0.5) {$\dot x_{n-1}$};
+		\node [style=none] (42) at (-7.75, 0) {};
+		\node [style=none] (43) at (-6, 0) {};
+		\node [style=none] (44) at (-5.75, 0.5) {$x_2$};
+		\node [style=none] (45) at (-19, 0) {};
+		\node [style=none] (46) at (-15, 0) {};
+		\node [style=dot] (47) at (7.25, 0) {};
+		\node [style=dot] (48) at (2, 0) {};
+		\node [style=dot] (49) at (2, -3.75) {};
+		\node [style=none] (50) at (7.25, -3.75) {};
+		\node [style=none] (51) at (8, -2.75) {$-\alpha_n$};
+		\node [style=none] (52) at (3.25, -2.75) {$-\alpha_{n-1}$};
+		\node [style=none] (53) at (2, -4.25) {$\scriptstyle +$};
+		\node [style=dot] (54) at (-3, -3.75) {};
+		\node [style=dot] (55) at (-3, 0) {};
+		\node [style=dot] (56) at (-7, 0) {};
+		\node [style=dot] (57) at (-7, -3.75) {};
+		\node [style=dot] (58) at (-12, -3.75) {};
+		\node [style=dot] (59) at (-12, 0) {};
+		\node [style=dot] (60) at (-17, 0) {};
+		\node [style=none] (61) at (-6, -3.75) {};
+		\node [style=none] (62) at (-17, -3.75) {};
+		\node [style=none] (65) at (-17, 0.5) {$\scriptstyle +$};
+		\node [style=none] (66) at (-12, -4.25) {$\scriptstyle +$};
+		\node [style=none] (67) at (-7, -4.25) {$\scriptstyle +$};
+		\node [style=none] (68) at (-3, -4.25) {$\scriptstyle +$};
+		\node [style=none] (69) at (-1.75, -2.75) {$-\alpha_{n-2}$};
+		\node [style=none] (70) at (-6.25, -2.75) {$-\alpha_2$};
+		\node [style=none] (71) at (-11.25, -2.75) {$-\alpha_1$};
+		\node [style=dot] (72) at (7.25, 3.75) {};
+		\node [style=dot] (73) at (2, 3.75) {};
+		\node [style=dot] (74) at (-3, 3.75) {};
+		\node [style=dot] (75) at (-7, 3.75) {};
+		\node [style=none] (76) at (-12, 3.75) {};
+		\node [style=none] (77) at (-4, 3.75) {};
+		\node [style=none] (78) at (11, 3.75) {};
+		\node [style=none] (80) at (7.25, 4.25) {$\scriptstyle +$};
+		\node [style=none] (81) at (-7, 4.25) {$\scriptstyle +$};
+		\node [style=none] (82) at (-2, 4.25) {$\scriptstyle +$};
+		\node [style=none] (83) at (2, 4.25) {$\scriptstyle +$};
+		\node [style=none] (84) at (-11.5, 2.75) {$\beta_1$};
+		\node [style=none] (85) at (-6.5, 2.75) {$\beta_2$};
+		\node [style=none] (86) at (7.75, 2.75) {$\beta_n$};
+		\node [style=none] (87) at (3, 2.75) {$\beta_{n-1}$};
+		\node [style=none] (88) at (-2, 2.75) {$\beta_{n-2}$};
+		\node [style=none] (89) at (11.5, 3.75) {$y$};
+		\node [style=none] (90) at (-19.5, 0) {$u$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=Black filled] (5.center)
+			 to (3.center)
+			 to (2.center)
+			 to (1.center)
+			 to cycle;
+		\draw [style=Black Arrow] (11.center) to (13.center);
+		\draw [style=Black filled] (20.center)
+			 to (19.center)
+			 to (18.center)
+			 to (17.center)
+			 to cycle;
+		\draw [style=Black Arrow] (21.center) to (22.center);
+		\draw [style=Black filled] (28.center)
+			 to (27.center)
+			 to (26.center)
+			 to (25.center)
+			 to cycle;
+		\draw [style=Black Arrow] (29.center) to (30.center);
+		\draw [style=Black filled] (37.center)
+			 to (36.center)
+			 to (35.center)
+			 to (34.center)
+			 to cycle;
+		\draw [style=Black Arrow] (38.center) to (39.center);
+		\draw [style=Black Arrow] (42.center) to (43.center);
+		\draw [style=Dashed] (43.center) to (38.center);
+		\draw [style=Black Arrow] (45.center) to (46.center);
+		\draw [style=Black Arrow, in=360, out=180] (50.center) to (49);
+		\draw [style=Black Arrow] (48) to (49);
+		\draw [style=Black] (47) to (50.center);
+		\draw [style=Black Arrow] (56) to (57);
+		\draw [style=Black Arrow] (59) to (58);
+		\draw [style=Black Arrow] (55) to (54);
+		\draw [style=Black Arrow] (49) to (54);
+		\draw [style=Black Arrow] (61.center) to (57);
+		\draw [style=Black Arrow] (57) to (58);
+		\draw [style=Black Arrow] (62.center) to (60);
+		\draw [style=Black] (58) to (62.center);
+		\draw [style=Dashed] (54) to (61.center);
+		\draw [style=Black Arrow] (47) to (72);
+		\draw [style=Black Arrow] (72) to (78.center);
+		\draw [style=Black Arrow] (48) to (73);
+		\draw [style=Black Arrow] (73) to (72);
+		\draw [style=Black Arrow] (55) to (74);
+		\draw [style=Black Arrow] (74) to (73);
+		\draw [style=Black Arrow] (77.center) to (74);
+		\draw [style=Black Arrow] (56) to (75);
+		\draw [style=Black Arrow] (76.center) to (75);
+		\draw [style=Dashed] (75) to (77.center);
+		\draw [style=Black] (59) to (76.center);
+	\end{pgfonlayer}
+\end{tikzpicture}

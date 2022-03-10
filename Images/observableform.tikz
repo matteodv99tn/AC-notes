@@ -1,0 +1,137 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (49) at (9, 0) {$\frac 1 s$};
+		\node [style=none] (50) at (8, 1.5) {};
+		\node [style=none] (51) at (10, 1.5) {};
+		\node [style=none] (52) at (10, -1.5) {};
+		\node [style=none] (53) at (8, -1.5) {};
+		\node [style=none] (54) at (8, 0) {};
+		\node [style=none] (57) at (7, 0.5) {$\dot x_1$};
+		\node [style=none] (66) at (10, 0) {};
+		\node [style=none] (68) at (11, 0.5) {$x_1$};
+		\node [style=dot] (93) at (12, 0) {};
+		\node [style=none] (94) at (14, 0) {};
+		\node [style=dot] (100) at (6, 0) {};
+		\node [style=none] (106) at (12, -4) {};
+		\node [style=none] (107) at (6.75, -3) {$-\alpha_1$};
+		\node [style=none] (110) at (6.25, -0.25) {$\scriptstyle +$};
+		\node [style=none] (111) at (14.5, 0) {$y$};
+		\node [style=none] (112) at (5, 0.5) {$x_2$};
+		\node [style=dot] (113) at (6, -4) {};
+		\node [style=dot] (114) at (6, 4) {};
+		\node [style=none] (115) at (3, 0) {$\frac 1 s$};
+		\node [style=none] (116) at (2, 1.5) {};
+		\node [style=none] (117) at (4, 1.5) {};
+		\node [style=none] (118) at (4, -1.5) {};
+		\node [style=none] (119) at (2, -1.5) {};
+		\node [style=none] (120) at (2, 0) {};
+		\node [style=none] (121) at (1, 0.5) {$\dot x_2$};
+		\node [style=none] (122) at (4, 0) {};
+		\node [style=dot] (124) at (6, 0) {};
+		\node [style=dot] (125) at (0, 0) {};
+		\node [style=none] (126) at (0.25, -0.25) {$\scriptstyle +$};
+		\node [style=none] (127) at (-1, 0.5) {$x_3$};
+		\node [style=dot] (128) at (0, -4) {};
+		\node [style=dot] (129) at (0, 4) {};
+		\node [style=none] (130) at (0.75, -3) {$-\alpha_2$};
+		\node [style=none] (131) at (-7, 0) {$\frac 1 s$};
+		\node [style=none] (132) at (-8, 1.5) {};
+		\node [style=none] (133) at (-6, 1.5) {};
+		\node [style=none] (134) at (-6, -1.5) {};
+		\node [style=none] (135) at (-8, -1.5) {};
+		\node [style=none] (136) at (-8, 0) {};
+		\node [style=none] (137) at (-9, 0.5) {$\dot x_{n-1}$};
+		\node [style=none] (138) at (-6, 0) {};
+		\node [style=none] (139) at (-5, 0.5) {$x_{n-1}$};
+		\node [style=dot] (140) at (-4, 0) {};
+		\node [style=none] (141) at (-3, 0) {};
+		\node [style=dot] (142) at (-10, 0) {};
+		\node [style=none] (143) at (-4, -4) {};
+		\node [style=none] (144) at (-9, -3) {$-\alpha_{n-1}$};
+		\node [style=none] (145) at (-9.75, -0.25) {$\scriptstyle +$};
+		\node [style=none] (146) at (-11, 0.5) {$x_n$};
+		\node [style=dot] (147) at (-10, -4) {};
+		\node [style=dot] (148) at (-10, 4) {};
+		\node [style=none] (149) at (-13, 0) {$\frac 1 s$};
+		\node [style=none] (150) at (-14, 1.5) {};
+		\node [style=none] (151) at (-12, 1.5) {};
+		\node [style=none] (152) at (-12, -1.5) {};
+		\node [style=none] (153) at (-14, -1.5) {};
+		\node [style=none] (154) at (-14, 0) {};
+		\node [style=none] (155) at (-15, 0.5) {$\dot x_n$};
+		\node [style=none] (156) at (-12, 0) {};
+		\node [style=dot] (157) at (-10, 0) {};
+		\node [style=dot] (158) at (-16, 0) {};
+		\node [style=none] (159) at (-15.75, -0.25) {$\scriptstyle +$};
+		\node [style=dot] (161) at (-16, -4) {};
+		\node [style=dot] (162) at (-16, 4) {};
+		\node [style=none] (163) at (-15.25, -3) {$-\alpha_n$};
+		\node [style=none] (164) at (-0.75, 0) {};
+		\node [style=none] (165) at (-3, 4) {};
+		\node [style=none] (166) at (-1, 4) {};
+		\node [style=none] (167) at (-3, -4) {};
+		\node [style=none] (168) at (-1, -4) {};
+		\node [style=none] (169) at (-17, 4) {};
+		\node [style=none] (170) at (-4, 4) {};
+		\node [style=none] (171) at (5.5, 3) {$\beta_1$};
+		\node [style=none] (172) at (-0.5, 3) {$\beta_2$};
+		\node [style=none] (173) at (-10.75, 3) {$\beta_{n-1}$};
+		\node [style=none] (174) at (-16.5, 3) {$\beta_n$};
+		\node [style=none] (175) at (-4.75, 3) {$\beta_{n-2}$};
+		\node [style=none] (176) at (-17.5, 4) {$u$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=Black filled] (53.center)
+			 to (52.center)
+			 to (51.center)
+			 to (50.center)
+			 to cycle;
+		\draw [style=Black Arrow] (66.center) to (93);
+		\draw [style=Black Arrow] (93) to (94.center);
+		\draw [style=Black] (93) to (106.center);
+		\draw [style=Black] (106.center) to (113);
+		\draw [style=Black Arrow] (113) to (100);
+		\draw [style=Black Arrow] (114) to (100);
+		\draw [style=Black Arrow] (100) to (54.center);
+		\draw [style=Black filled] (119.center)
+			 to (118.center)
+			 to (117.center)
+			 to (116.center)
+			 to cycle;
+		\draw [style=Black Arrow] (122.center) to (124);
+		\draw [style=Black Arrow] (128) to (125);
+		\draw [style=Black Arrow] (129) to (125);
+		\draw [style=Black Arrow] (125) to (120.center);
+		\draw [style=Black filled] (135.center)
+			 to (134.center)
+			 to (133.center)
+			 to (132.center)
+			 to cycle;
+		\draw [style=Black Arrow] (138.center) to (140);
+		\draw [style=Black Arrow] (140) to (141.center);
+		\draw [style=Black] (143.center) to (147);
+		\draw [style=Black Arrow] (147) to (142);
+		\draw [style=Black Arrow] (148) to (142);
+		\draw [style=Black Arrow] (142) to (136.center);
+		\draw [style=Black filled] (151.center)
+			 to (150.center)
+			 to (153.center)
+			 to (152.center)
+			 to cycle;
+		\draw [style=Black Arrow] (156.center) to (157);
+		\draw [style=Black Arrow] (161) to (158);
+		\draw [style=Black Arrow] (162) to (158);
+		\draw [style=Black Arrow] (158) to (154.center);
+		\draw [style=Black Arrow] (164.center) to (125);
+		\draw [style=Dashed] (141.center) to (164.center);
+		\draw [style=Black] (169.center) to (165.center);
+		\draw [style=Black] (166.center) to (114);
+		\draw [style=Black] (161) to (147);
+		\draw [style=Black] (143.center) to (167.center);
+		\draw [style=Black] (168.center) to (113);
+		\draw [style=Dashed] (167.center) to (168.center);
+		\draw [style=Dashed] (165.center) to (166.center);
+		\draw [style=Black Arrow] (170.center) to (140);
+		\draw [style=Black Arrow] (143.center) to (140);
+	\end{pgfonlayer}
+\end{tikzpicture}

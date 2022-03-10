@@ -1,0 +1,59 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=none] (0) at (-2, 0) {};
+		\node [style=none] (1) at (0, 1) {};
+		\node [style=none] (2) at (2, 0) {};
+		\node [style=none] (3) at (0, -1) {};
+		\node [style=none] (4) at (-2, 0) {};
+		\node [style=none] (5) at (0, 0) {1$^{st}$ year};
+		\node [style=none] (6) at (1.25, -0.5) {$\scriptstyle x_1$};
+		\node [style=none] (8) at (1.25, 0.75) {};
+		\node [style=none] (9) at (3.5, 0) {};
+		\node [style=none] (10) at (5.5, 1) {};
+		\node [style=none] (11) at (7.5, 0) {};
+		\node [style=none] (12) at (5.5, -1) {};
+		\node [style=none] (13) at (3.5, 0) {};
+		\node [style=none] (14) at (5.5, 0) {2$^{nd}$ year};
+		\node [style=none] (15) at (6.75, -0.5) {$\scriptstyle x_2$};
+		\node [style=none] (16) at (4.25, 0.75) {};
+		\node [style=none] (18) at (3.5, 1.25) {$\alpha_1$};
+		\node [style=none] (19) at (6.75, 0.75) {};
+		\node [style=none] (20) at (9, 0) {};
+		\node [style=none] (21) at (11, 1) {};
+		\node [style=none] (22) at (13, 0) {};
+		\node [style=none] (23) at (11, -1) {};
+		\node [style=none] (24) at (9, 0) {};
+		\node [style=none] (25) at (11, 0) {3$^{rd}$ year};
+		\node [style=none] (26) at (12.25, -0.5) {$\scriptstyle x_3$};
+		\node [style=none] (27) at (9.75, 0.75) {};
+		\node [style=none] (28) at (9, 1.25) {$\alpha_2$};
+		\node [style=none] (29) at (12.25, 0.75) {};
+		\node [style=none] (30) at (15.25, 0.75) {};
+		\node [style=none] (31) at (14.5, 1.25) {$\alpha_3$};
+		\node [style=none] (32) at (-4.25, 0.75) {};
+		\node [style=none] (33) at (-1.25, 0.75) {};
+		\node [style=none] (34) at (-4.75, 0.5) {$u$};
+		\node [style=none] (35) at (15.75, 0.5) {$y$};
+	\end{pgfonlayer}
+	\begin{pgfonlayer}{edgelayer}
+		\draw [style=Black filled] (2.center)
+			 to [in=0, out=-90, looseness=0.75] (3.center)
+			 to [in=-90, out=-180, looseness=0.75] (4.center)
+			 to [in=180, out=90, looseness=0.75] (1.center)
+			 to [in=90, out=0, looseness=0.75] cycle;
+		\draw [style=Black filled] (11.center)
+			 to [in=0, out=-90, looseness=0.75] (12.center)
+			 to [in=-90, out=-180, looseness=0.75] (13.center)
+			 to [in=180, out=90, looseness=0.75] (10.center)
+			 to [in=90, out=0, looseness=0.75] cycle;
+		\draw [style=Black Arrow, bend left=45, looseness=0.50] (8.center) to (16.center);
+		\draw [style=Black filled] (22.center)
+			 to [in=0, out=-90, looseness=0.75] (23.center)
+			 to [in=-90, out=-180, looseness=0.75] (24.center)
+			 to [in=180, out=90, looseness=0.75] (21.center)
+			 to [in=90, out=0, looseness=0.75] cycle;
+		\draw [style=Black Arrow, bend left=45, looseness=0.50] (19.center) to (27.center);
+		\draw [style=Black Arrow, bend left=45, looseness=0.50] (29.center) to (30.center);
+		\draw [style=Black Arrow, bend left=45, looseness=0.50] (32.center) to (33.center);
+	\end{pgfonlayer}
+\end{tikzpicture}
