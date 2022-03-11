@@ -1,4 +1,4 @@
-\chapter{Dynamical systems}
+\chapter{Dynamical systems and linear systems theory}
 
 	This course will treat the \de{automatic control} of \de{dynamical systems}, hence it's necessary to firstly understand what a \textit{dynamical system} is and how it's described. In general such systems can be regarded as \textit{black box} that for a given \textbf{input} $u(t)$ determines an \textbf{output} $y(t)$; systems can be \textbf{continuous} or \textbf{discrete-time} depending on the type of \textit{time axis scale}, but also \textbf{hybrid} systems exists (as it will be studied).
 	
@@ -17,7 +17,7 @@
 	Given so the states $x(t)$, we can compute their evolution $x(t+1)$ as
 	\[ x(t+1) = \vet{x_1(t+1) \\ x_2(t+1)} = \vet{y(t+1) \\ y(t)} = \vet{y(t-1) + y(t) \\ y(t)} = \vet{x_2(t) + x_1(t) \\ x_1(t)}\]
 	Using linear algebra the evolution of the state can be regarded as a linear combination of the actual states, in fact
-	\begin{equation}
+	\begin{equation} \label{eq:dyn:temp4}
 		x(t+1) = \mat{1 & 1 \\ 1 & 0} \vet{x_1(t) \\ x_2(t)} = \A x(t)
 	\end{equation}
 	Having the eigenvalues of the matrix $\A$ equal to $\lambda_{1,2} = \frac{1 \pm \sqrt 5}{2}$ we will prove that the continuous explicit function that express the rabbit pairs $y$ as function of $t$ is
@@ -140,7 +140,7 @@
 	\end{equation}
 	As in the continuous case it's possible to compute the transform of the output $Y(z) = \ztransf{y(t)}$ as function of the spectrum $U(z) = \ztransf{x(t)}$ as
 	\begin{equation}
-		Y(z) = \underbrace{\left(\C (z\I - \A)^{-1} \B + \D\right)}_{= \hat \G(z)} U(z) + \underbrace{\C(s\I-\A)^{-1} \D z}_{\hat \psi(z)} x(0)
+		Y(z) = \underbrace{\left(\C (z\I - \A)^{-1} \B + \D\right)}_{= \hat \G(z)} U(z) + \underbrace{\C(z\I-\A)^{-1} \D z}_{\hat \psi(z)} x(0)
 	\end{equation}
 
 	\paragraph{Theorem} A fundamental theorem for continuous-time linear time-invariant systems states that \textit{the \textbf{transfer function} $\hat \G(s)$ and so the \textbf{impulse response} $\G(t)$ of such systems is computed as}
@@ -382,7 +382,7 @@
 		\end{cases}
 		\end{equation*}
 		We can so state that the systems
-		\begin{equation}
+		\begin{equation} \label{eq:dyn:algebraicequivalence}
 			\mat{\begin{array}{c|c}
 					\tilde \A & \tilde \B \\ \hline \tilde \C & \D
 			\end{array}} = \mat{\begin{array}{c|c}
@@ -403,10 +403,269 @@
 			1 & 0 & \dots & 0 
 		\end{array}}
 		\end{equation}
-	
+		The graph representation of such system is shown in figure \ref{fig:dyn:observablecanonical}.
 	
 		\begin{figure}[bht]
 			\centering \resizebox{0.9\linewidth}{!}{\tikzfigure{observableform}}
 			\caption{graph representation of an LTI SISO system expressed in the controllable canonical form; the $1/s$ blocks in practise are representing integrators of the input.} \label{fig:dyn:observablecanonical}
 		\end{figure}
+	
+\section{Solution of linear time-varying systems}
+	\subsection*{Continuous-time linear time-variant systems}
+	Given a continuous-time linear time-variant  system (CT-LTV), it's solution must be a function of the time $t$ and must be differentiable (in order to be the solution of the differential equations). In particular the zero input response of the system expressed as
+	\[ \dot x = \A(t) x \hspace{2cm} x(t_0 ) = x_0 \]
+	can be computed using the \de{Peano-Baker series}, a matrix $\Phi(t,t_0) \in \mathds R^{n\times n}$ defined as
+	\begin{equation} \label{eq:dyn:ct-statetransition}
+	\begin{split}
+		\Phi(t,t_0) = \I + & \int_{t_0}^t \A(s_1)\, ds_1 + \int_{t_0}^t \A(s_1) \int_{t_0}^{s_1} \A(s_2)\, ds_2\, ds_1 + \\ & \hspace{1cm}+ \int_{t_0}^t \A(s_1) \int_{t_0}^{s_1} \A(s_2) \int_{t_0}^{s_2} \A(s_3)\, ds_3\, ds_2\, ds_1 + \dots
+	\end{split}
+	\end{equation}
+	The matrix $\Phi$ is mostly referred as the \de{state transition matrix} and is characterized by the following property:
+	\begin{enumerate}[\itshape i)]
+		\item it has that $\Phi(t,t) = \I$ for any $t\in \mathds R$; this result come just by the definition of the state transition matrix: considering in fact that for the integrals $\int_a^a f(x)\, dx = 0$, then the evaluation for $t=t_0$ cancels all the terms unless the identity matrix;
+		
+		\item a second important property is associated to the derivation of $\Phi$; knowing that $\frac d{dt} \int_a^t f(\tau) \, d\tau = f(\tau)$, them we can show that
+		\begin{align*}
+			\frac d{dt} \Phi(t,t_0) & = 0 + \A(t) + \A(t) \int_{t_0}^t \A(s_2) \, ds_2 + \A(t) \int_{t_0}^{t} \A(s_2) \int_{t_0}^{s_2} \A(s_3)\, ds_3\, ds_2 + \dots \\
+			& = \A(t) \Phi(t,t_0)
+		\end{align*}	
+	\end{enumerate}
+	
+	With this property states we can compute and prove that the zero input response solution of a continuous-time linear system is determined as
+	\begin{equation} \label{eq:dyn:zeroinputres}
+		x(t) = \Phi(t,t_0) x_0 \hspace{2cm} \forall t 
+	\end{equation}
+	This solution is also proven to be unique (but we won't prove that). Equation \ref{eq:dyn:zeroinputres} can be proven considering that $x(t_0)$ gives indeed $\Phi(t_0,t_0) x_0 = \I x_0 = x_0$ using property \textit{i)}. To generally prove that this formulation is also solution to the original state equation $\dot x(t) = \A(t) x(t)$ we can just take the derivative of the suggested solution $\Phi(t,t_0) x_0$ respect to time and using property \textit{ii)} we indeed have
+	\[ \dot x(t) = \frac{d}{dt}\Big( \Phi(t,t_0) x_0 \Big) = \A(t) \phi(t,t_0) x_0 = \A(t) x(t) \]
+	
+	In order now to further extend the solution in case of non-zero inputs it's mandatory to define other 2 properties for the state transition matrix:	
+	\begin{itemize}
+		\item[\textit{iii)}] each $i$-th column of the matrix $\Phi(t,t_0)$ is the unique solution at the problem
+		\[ \dot x = \A(t) x \qquad \textrm{with } x(t_0) = \vet{0 \\ \vdots \\ 0 \\ 1 \\ 0 \\ \vdots \\ 0} = e_i \] 
+		where the \textit{one} is placed in the $i$-th position of the vector $x_0$, meaning that's the $i$-th canonical base $e_i$. This property is very useful for computation because it allow to decompose the study of the solution $x(t)$ by independently solving all the states;		
+		
+		\item[\textit{iv)}] it holds the \textbf{semi-group property} stating that 
+		\[ \Phi(t,s) \Phi(s,\tau)= \Phi(t,\tau) \hspace{2cm} \forall t,s,\tau \in \mathds R \]
+		We can in fact consider that, given the initial state $x_0$ at time $t_0$, the state at a second timespan $t_1$ is regarded as $x(t_1) = \Phi(t_1,t_0) x_0$. Considering now a second time $t_2$ we have that
+		\begin{align*}
+			x(t_2) = \Phi(t_2,t_1) x(t_1) & = \Phi(t_2,t_1) \Phi(t_1,t_0) x_0  \\
+			& \Phi(t_2,t_0) x_0
+		\end{align*}
+		Note that the semi-group property doesn't set any requirement in the \textit{position} of the times $t,s,\tau$ that can in fact be also \textit{back in time}.
+		
+		\item[\textit{v)}] due to the semi-group property yet stated we have that the state transition matrix $\Phi(t,t_0)$ is always invertible (hence is non-singular) and it's inverse is equal to $\Phi(t,s) = \Phi(s,t)$. We can in fact see that 
+		\[ \Phi(t,s) \Phi(s,t) = \Phi(t,t) = \I \hspace{2cm} \forall t,s \in \mathds R \] 
+	\end{itemize}
+	
+	\paragraph{Addition of the inputs} The more general unique solution of a CT-LTV system defined by the state space representation
+	\[ \begin{cases}
+		\dot x = \A(t) x + \B(t) u \hspace{1.4cm} x(t_0) = x_0\\ 
+		y = \C(t) x + \D(t) u
+	\end{cases} \]
+	is determined by equation
+	\begin{equation}
+	\begin{split}
+		x(t) & = \overbrace{\Phi(t,t_0) x_0}^\textrm{zero-input res.} + \overbrace{\int_{t_0}^t \Phi(t,\tau) \B(\tau) u(\tau) \, d\tau}^\textrm{zero-state response} \\
+		y(t) & = \underbrace{\C(t) \Phi(t,t_0) x_0}_\textrm{homogeneous res.} + \underbrace{ \int_{t_0}^t \C(\tau) \Phi(t,\tau) \B(\tau) u(\tau)\, d\tau + \D(t) u(t) }_\textrm{forced response}
+	\end{split}
+	\end{equation}
+	TO prove that the provided solution works (we won't prove that's unique, but it happens so) we can simply derive in time the state solution and watch that matches the state equation $\dot x = \A(t) x + \B(t) u$. In order to do so we have to consider the following property in the derivation of composed function in integration, in fact
+	\[ \frac{d}{dt} \int_{t_0}^t f(t,\tau)\, d\tau = f(t,t) + \int_{t_0}^t \frac{d}{dt}f(t,\tau)\, d\tau \]
+	With this stated we have
+	\begin{align*}
+		\dot x(t) & = \frac{d}{dt} \left( \Phi(t,t_0) x_0 + \int_{t_0}^t \Phi(t,\tau) \B(\tau) u(\tau) \, d\tau \right) \\
+		& = \A(t) \Phi(t,t_0) x_0 + \Phi(t,t) \B(t)u(t) + \int_{t_0}^t \frac{d\Phi}{dt} \B(\tau) u(\tau)\, d\tau \\
+		& = \A(t)\Phi(t,t_0) x_0 \B(t) u(t) +  \int_{t_0}^t \A(t) \Phi(t,\tau) \B(\tau) u(\tau)\, d\tau \\
+		& = \A(t) \underbrace{\left( \Phi(t,t_0) + \int_{t_0}^t \Phi(t,\tau) + \B(\tau) u(\tau)\, d\tau \right)}_{=x(t)} + \B(t)u(t)
+	\end{align*}
+	
+	\subsection*{Discrete-time linear time-variant systems}
+	Given a discrete-time linear time-variant DT-LTV system, the unique solution of the homogeneous term $x^+ = \A(t) x$ subject to an initial state $x(t_0) = x_0$ is determined by the expression
+	\begin{equation}
+		x(t) = \Phi(t,t_0) x_0 \hspace{2cm} x_0 \in \mathds R^n, \forall t \geq t_0
+	\end{equation}
+	\begin{note}
+		In this case the solution is valid for time $t$ grater or equal to $t_0$; in the continuous time case, equation \ref{eq:dyn:zeroinputres} is valid also for $t < t_0$ due to the semi-group property; for discrete-time system the matrix $\Phi(t,t_0)$ can sometimes be singular, meaning that it cannot be inverted as it will be shown.
+	\end{note} \noindent
+	In this case $\Phi(t,t_0)$ is the \de{discrete-time state transition matrix} defined as
+	\begin{equation} \label{eq:dyn:peanodiscrete}
+		\Phi(t,t_0) = \begin{cases}
+			\I & t = t_0 \\
+			\A(t-1) \A(t-2) \dots \A(t_0+1) \A(t_0) \hspace{1cm} & t > t_0
+		\end{cases}
+	\end{equation}
+	Such definition can be inductively retrieved: considering in fact that the state at the step $t_0+1$ can be computed as $x(t_0 + 1) + \A(t_0) x_0$ but also $x(t_0 + 2) = \A(t_0+1) x(t_1) = \A(t_0+2) \A(t_0+1) x_0$. Inductively it's proven how the discrete-time state transition matrix was defined. This formulation should be extended also to the \textit{backward times}, for $t < t_0$, in fact considering
+	\[ x(\underbrace{t+1}_{=t_0}) = \A(t) x(t) \hspace{1.4cm} \Rightarrow \hspace{1.4cm} x(t) = \A^{-1}(t_0 - 1) x(t_0) \]
+	This operation is feasible if and only if the matrix $\A(t_0)$ is non-singular that hence can be inverted, but this condition isn't stated a priori.
+	
+	As for the continuous time case, the general solution of the discrete-time linear time-variant systems of the form
+	\[ \begin{cases}
+		x^+ = \A(t) x + \B(t) u \hspace{1.4cm} x(t_0) = x_0\\ 
+		y = \C(t) x + \D(t) u
+	\end{cases} \]
+	is determined by the functions
+	\begin{equation}
+	\begin{split}
+		x(t) & = \Phi(t,t_0) x_0 + \sum_{\tau=0}^{t-1} \Phi(t,\tau+1) \B(\tau) u(\tau) \\
+		y(t) & =  \C(t) \Phi(t,t_0) x_0 + \sum_{\tau=0}^{t-1} \C(\tau) \Phi(t,\tau+1) \B(\tau) u(\tau)  + \D(t)u(t)
+	\end{split}
+	\end{equation}
+
+\section{Solutions to linear time-invariant systems}
+	\subsubsection*{Discrete-time case}
+	Starting with the case of discrete-time case, if the system is time invariant than it means that the matrices $\A,\B,\C,\D$ does not depends on time. Considering the definition of Peano-Bakers series for discrete-time systems (equation \ref{eq:dyn:peanodiscrete}), knowing that $\A(t)$ is constant (and is so regarded as $\A$), then it means that the state transition matrix can be regarded as
+	\begin{equation}
+		\Phi(t,t_0) = \A^{t-t_0} \hspace{2cm} \forall t\geq t_0
+	\end{equation}
+	where conventionally $\A^0 = \I$. With that we can rewrite the solutions of the DT-LTI system as
+	\begin{equation}
+	\begin{split}
+		x(t) & = \A^{t-t_0} x_0 +  \sum_{\tau=0}^{t-1} \A^{t-\tau-1} \B u(\tau) \\
+		y(t) & = \C \A^{t-t_0} + \sum_{\tau=0}^{t-1} \C \A^{t-\tau -1} \B u(\tau) + \D u(t)
+	\end{split}
+	\end{equation}
+	We refer to $\A^t$ (with $t\in \mathds Z$) as the \de{matrix power} and it will be the goal in the definition of the solution is to identify a \textit{clever} way to compute it's value (because numerically it's not feasible to perform matrix multiplication at each iteration); such problem will be fixed later with the definition of the Jordan normal form for matrices.
+	
+	\subsubsection{Continuous-time case}
+	Considering now the continuos-time case for LTI systems, the definition of the Peano-Baker series (equation \ref{eq:dyn:ct-statetransition}, page \pageref{eq:dyn:ct-statetransition}) can be simplified: the matrices $\A$ can in fact be taken outside the integral terms resulting in
+	\begin{align*}
+		\Phi(t,t_0) & = \I + \A(t-t_0) + \A^2 \frac{(t-t_0)^2}{2} + \A^3 \frac{(t-t_0)^3}{2\cdot 3} + \dots \\ & = \sum_{k=0}^{\infty} \A^k \frac{(t-t_0)^k}{k!}
+	\end{align*}
+	This definition resembles the exponential; considering in fact the Taylor series expansion of the exponential is $e^x = \sum_{k=0}^\infty \frac 1{k!}x^k$, we can determine the state transition matrix as the \de{exponential matrix}
+	\begin{equation}
+		\Phi(t,t_0) = e^{\A(t-t_0)}
+	\end{equation}
+	hence the unique solution of a CT-LTI system is provided by the expression
+	\begin{equation}
+	\begin{split}
+		x(t) & = e^{\A(t-t_0)} x_0 + \int_{t_0}^t e^{\A(t-\tau)} \B u(\tau) \, d\tau \\
+		y(t) & = \C e^{\A(t-t_0)} x_0 + \int_{t_0}^t \C e^{\A(t-t_0)} \B u(\tau)\, d\tau + \D u(t)
+	\end{split}
+	\end{equation}
+	
+	Relevant properties of the exponential matrix are
+	\begin{enumerate}[\itshape i)]
+		\item that each $i$-th column of the matrix $e^{\A t}$ is the unique solution of the problem
+		\[ \dot x(t) = \A x(t) \hspace{2cm} \textrm{with } x(0)= e_i \]
+		\item it still holds the semi-group property stating that $\Phi(t,\tau) \Phi(\tau,s) = \Phi(t,s)$ ($\forall t,s,\tau$); by an application point of view it means that for the exponential matrix
+		\[ e^{\A t} e^{\A s} = e^{\A(t+s)} \]
+		\item it's always invertible, in fact from the semi-group property we have that $e^{\A t} e^{-\A t} = e^{\A 0} = \I$ and so it means that $e^{\A t}$ is always non-singular (hence invertible) and its inverse is defined as
+		\[ \big(e^{\A t} \big)^{-1} = e^{-\A t} \]
+		\item for any matrix $\A \in \mathds R^{n\times n}$ it holds the following \textit{"commutative"} property:
+		\[ \A e^{\A t} = e^{\A t} \A \hspace{2cm} \forall t \]
+		
+		\item there exists $n$ functions $\alpha_i(t)$ such that
+		\[ e^{\A t} = \sum_{k=0}^{n-1} \alpha_k (t) \A^k \]
+		
+	\end{enumerate}
+	
+	\paragraph{Cayley-Hamilton theorem} The \textbf{Cayley-Hamilton theorem} states that { \itshape for each matrix $\A \in \mathds R^{n\times n}$ with characteristic polynomial
+	\[ p_\A(s) = \det (s\I -\A) = s^n + a_1 s^{n-1} + \dots + a_{n-1} s + a_n \] then  $\A$ is a matrix solution of this polynomial, meaning that
+	\[ \A^n + a_1 \A^{n-1} + \dots a_{n-1} \A + a_n \I = 0 \] }
+	In this case $0$ is a $n\times n$ matrix of zeros. By reversing this quantity we can indeed see that
+	\[ \A^n = - \big( a_1 \A^{n-1} + \dots a_{n-1} \A + a_n \I \big) \]
+	and so by multiplying both sides of the equation by $\A$ allows to compute the exponential $\A^{n+1}$ as
+	\begin{align*}
+		\A^{n+1} & = -\A^n a_1 - a_2 \A^{n-1} - \dots - a_{n-1}\A^2 - a_n \A  \\
+		& = a_1\big(a_1 \A^{n-1} + \dots + za_{n-1} \A + a_n \I \big) - a_2 \A^{n-1} - \dots - a_{n-1}\A^2 - a_n \A \\
+		& = (a_1^2 - a_2) \A^{n-1} + (a_1 a_2 - a_3) \A^{n-2} + \dots + (a_1 a_{n-1} - a_n) \A + a_1 a_n \I - \dots -a_{n-1} \A^2
+	\end{align*}
+	In general this proposition can be extended and any exponential of a matrix $\A \in \mathds R^{n\times n}$ can be regarded as a linear combination of the first $n$ exponentials of matrix $\A$:
+	\begin{equation}
+		\A^h = \sum_{k=0}^{n-1} c_{h,k} \A^k
+	\end{equation}
+
+	\subsection{Jordan normal form}
+		As was show in equation \ref{eq:dyn:algebraicequivalence} (page \pageref{eq:dyn:algebraicequivalence}), using a transformation matrix $T$ a linear system characterized by a state space representation
+		\[ \begin{cases}
+			\delta x = \A x + \B u \\ y = \C x + \D u
+		\end{cases} \]
+		can be transformed in a algebraically equivalent representation that could have resulted in a easier computation model. From an ideal point of view the \textit{best} solution we can get after transformation is a \textbf{diagonal state matrix} in the form
+		\[ T \A T^{-1} = \mat{ \lambda_1 & 0 & \dots & 0 \\
+		0 & \lambda_2 & \ddots  & \vdots \\ 
+		\vdots & \ddots & \ddots & 0 \\
+		0 & \dots & 0 & \lambda_n } \]
+		where $\lambda_i$ are the eigenvalues of the \textit{original} matrix $\A$ (values that are always shared in each algebraic equivalent representation of the same system).
+		
+		A problem of this kind of formulation is that in practise not all matrices $\A$ are diagonalizable, and in particular this happens when the geometric multiplicity doesn't match the algebraic multiplicity of the related eigenvalues.
+		
+		A solution of this problem is provided by Jordan with a theorem stating that { \itshape for each matrix $\A \in \mathds C^{n\times n}$ with eigenvalues $\lambda_1, \dots, \lambda_m \in \mathds C$ there exists an non-singular (hence invertible) matrix $T \in \mathds C^{n\times n}$ such that
+		\begin{equation}
+			\J = T \A T^{-1} = \mat{ J_1 & 0 & \dots & 0 \\
+				0 & J_2 & \ddots  & \vdots \\ 
+				\vdots & \ddots & \ddots & 0 \\
+				0 & \dots & 0 & J_l } \quad \in \mathds C^{n\times n} 
+		\end{equation} where $J_i$ are matrices in the form
+		\begin{equation}
+			J_i = \mat{\lambda_i & 1 & 0 & \dots & 0 \\
+			0 & \lambda_i & 1 & \dots & 0 \\
+			0 & 0 & \lambda_i & \dots & 0 \\
+			\vdots & \vdots & \ddots & \vdots \\
+			0 & 0 & 0 & \dots & \lambda_i } \quad \in \mathds C^{n_i\times n_i}
+		\end{equation} }
+	
+		The matrix $\J$ is known as the \de{Jordan normal form} of $\A$ and is proven to be unique (upon rearrangement of the sub-matrices $J_i$). Note that in general sub-matrices $J_i,J_j$ (with $i\neq j$) might be constructed with the same eigenvalue $\lambda_k$ but what might change are their dimension ($n_i\neq n_j$). \\		
+		The number of \textit{blocks} in the Jordan normal form are $l \leq n$ and are associated to each linearly independent eigenvectors of $\A$ (is proven that at least one eigenvector exists for each matrix $\A$ and there can be maximum $n$ linearly independent ones).
+		
+		A matrix is so called \textbf{semi-simple} (or \textbf{diagonalizable}) if its Jordan normal form is diagonal. In particular given a matrix $\A \in \mathds C^{n\times n}$ the 3 following statements are equivalents:
+		\begin{itemize}
+			\item $\A$ is semi-simple;
+			\item $\A$ has $n$ linearly independent eigenvectors;
+			\item $p(\A) \neq 0$ for all non-zero polynomials $p(s)$ having a degree less then $n$.
+		\end{itemize}
+	
+	\subsubsection{Matrix power}
+		The power matrix value can be \textit{easily} determined considering the Jordan normal form of the matrix on which we want to compute the power $\A^t$; in particular we can see that
+		\[ \A^ t = \underbrace{ \overbrace{T^{-1} \J T}^{=\A}  T^{-1} \J T \dots T^{-1} \J T }_{t \textrm{ times } }  \]
+		Observing that \textit{in the middle} the terms $T T^{-1}$ cancels out (they evaluate to the identity matrix $\I$) what we obtain is that
+		\begin{equation}
+			\A^t = T^{-1} \J^t T
+		\end{equation}
+		where the power of a matrix in Jordan forms evaluates to
+		\begin{equation}
+			\J^t = \mat{J_1^t \\ & J_2^t \\ && \ddots \\ &&& J_l^t}
+		\end{equation} 
+		where
+		\[ J_i^t = \mat{ 
+			\lambda_i^t & t \lambda_i^{t-1} & \frac{t! \lambda_i^{t-2 }}{(t-2)! 2!} & \frac{t! \lambda_i^{t-3 }}{(t-3)! 3!} & \dots & \frac{t! \lambda_i^{t-n_i+1}}{(t-n_i+1)!(n_i-1)!} \\
+			0&\lambda_i^t & t \lambda_i^{t-1} &  \frac{t! \lambda_i^{t-2 }}{(t-2)! 2!} &  \dots & \frac{t! \lambda_i^{t-n_i+2}}{(t-n_i+2)!(n_i-2)!}\\
+			\vdots & \ddots &\lambda_i^t &  t \lambda_i^{t-1} & \dots & \frac{t! \lambda_i^{t-n_i+3}}{(t-n_i+3)!(n_i-3)!} \\
+			\vdots && \ddots & \ddots & \ddots & \vdots\\
+			\vdots&&& \ddots &\lambda_i^t &  t \lambda_i^{t-1} &\\
+			0& \dots& \dots & \dots& 0&\lambda_i^t &  \\			
+		 } \]
+		
+		\paragraph{Fibonacci sequence} Recalling the Fibonacci state representation reported in equation \ref{eq:dyn:temp4} (page \pageref{eq:dyn:temp4}), we have that the problem was described as
+		\[ x^+ = \mat{1 & 1 \\ 1 & 0} x \hspace{2cm} y = \mat{1 & 0} x \hspace{2cm} x(0) = \vet{0 \\ 1} \]
+		In this case the polynomial characteristic of the state matrix $\A \in \mathds R^{2\times 2}$ evaluates as $p_\A(s) = s^2-s-1$ whose roots (hence eigenvalues of $\A$) are $s_{1,2} = \frac{1\pm \sqrt 5}{2}$. Having two distinct eigenvalues this means that the Jordan normal form of $\A$ is the diagonal matrix
+		\[ \J= \mat{\frac{1+\sqrt 5}{2} & 0 \\ 0 & \frac{1-\sqrt 5}{2}} \]
+		In order now to determine the transformation matrix $T \in \mathds R^{2\times 2}$ we need to solve the linear system $T\A = \J T$, hence
+		\[ \mat{t_1 & t_2 \\ t_3 & t_4} \mat{1 & 1 \\ 1 & 0} = \mat{\frac{1+\sqrt 5}{2} & 0 \\ 0 & \frac{1-\sqrt 5}{2}} \mat{t_1 & t_2 \\ t_3 & t_4} \qquad \Rightarrow \qquad \begin{cases}
+			t_1 + t_2  & = \frac{1+\sqrt 5}{2} t_1 \\
+			t_1  & = \frac{1+\sqrt 5}{2} t_2 \\
+			t_3 + t_4 & = \frac{1-\sqrt 5}{2} t_3 \\
+			t_3 & =  \frac{1-\sqrt 5}{2 } t_4
+		\end{cases}   \]
+		From the first and third equation we can determine
+		\[ t_2 = - \frac{1-\sqrt 5}{2}t_1 \hspace{2cm} t_4 = - \frac{1+\sqrt 5}{2} t_3 \]
+		that satisfy both second and fourth equations $\forall t_1,t_3 \in \mathds R$. In order not to have a singular matrix any value $t_1,t_3\neq 0$ is allowed and so we can arbitrarily chose $t_1 = t_3 = -1$ obtaining the transformation matrix
+		\[ T = \mat{-1 & \frac{1-\sqrt 5}{2} \\ -1 & \frac{1+\sqrt 5}{2} } \qquad \Rightarrow \qquad T^{-1} = \frac1{-\sqrt 5} \mat{\frac{1+\sqrt 5}{2} & - \frac{1-\sqrt 5}{2} \\ 1 & -1} \]
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
