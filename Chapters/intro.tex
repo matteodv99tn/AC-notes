@@ -571,7 +571,7 @@
 		& = (a_1^2 - a_2) \A^{n-1} + (a_1 a_2 - a_3) \A^{n-2} + \dots + (a_1 a_{n-1} - a_n) \A + a_1 a_n \I - \dots -a_{n-1} \A^2
 	\end{align*}
 	In general this proposition can be extended and any exponential of a matrix $\A \in \mathds R^{n\times n}$ can be regarded as a linear combination of the first $n$ exponentials of matrix $\A$:
-	\begin{equation}
+	\begin{equation} \label{eq:lin:cayley}
 		\A^h = \sum_{k=0}^{n-1} c_{h,k} \A^k
 	\end{equation}
 
@@ -618,22 +618,31 @@
 		The power matrix value can be \textit{easily} determined considering the Jordan normal form of the matrix on which we want to compute the power $\A^t$; in particular we can see that
 		\[ \A^ t = \underbrace{ \overbrace{T^{-1} \J T}^{=\A}  T^{-1} \J T \dots T^{-1} \J T }_{t \textrm{ times } }  \]
 		Observing that \textit{in the middle} the terms $T T^{-1}$ cancels out (they evaluate to the identity matrix $\I$) what we obtain is that
-		\begin{equation}
+		\begin{equation} \label{eq:lin:powermatrix}
 			\A^t = T^{-1} \J^t T
 		\end{equation}
 		where the power of a matrix in Jordan forms evaluates to
-		\begin{equation}
+		\begin{equation} \label{eq:lin:Ji}
 			\J^t = \mat{J_1^t \\ & J_2^t \\ && \ddots \\ &&& J_l^t}
 		\end{equation} 
 		where
-		\[ J_i^t = \mat{ 
+		\begin{equation} J_i^t = \mat{ 
 			\lambda_i^t & t \lambda_i^{t-1} & \frac{t! \lambda_i^{t-2 }}{(t-2)! 2!} & \frac{t! \lambda_i^{t-3 }}{(t-3)! 3!} & \dots & \frac{t! \lambda_i^{t-n_i+1}}{(t-n_i+1)!(n_i-1)!} \\
 			0&\lambda_i^t & t \lambda_i^{t-1} &  \frac{t! \lambda_i^{t-2 }}{(t-2)! 2!} &  \dots & \frac{t! \lambda_i^{t-n_i+2}}{(t-n_i+2)!(n_i-2)!}\\
 			\vdots & \ddots &\lambda_i^t &  t \lambda_i^{t-1} & \dots & \frac{t! \lambda_i^{t-n_i+3}}{(t-n_i+3)!(n_i-3)!} \\
 			\vdots && \ddots & \ddots & \ddots & \vdots\\
 			\vdots&&& \ddots &\lambda_i^t &  t \lambda_i^{t-1} &\\
 			0& \dots& \dots & \dots& 0&\lambda_i^t &  \\			
-		 } \]
+		 } \end{equation}
+		
+		\paragraph{Region of convergence of the system} Considering that the homogeneous response of the discrete time system $x(t+1) = \A x(t)$ (with $x(0) = x_0$) is determines as
+		\[ x(t)= \A^t x_0 \]
+		In order to have a convergent solution we want to ensure that $\lim_{t\rightarrow\infty} \A^t$ tends to zero (or at least it doesn't diverge), in the sense that all it's entry are zero (or non-diverging). Considering that the matrix power $\A^t$ can be regarded as $T^{-1}\J T$, the limit is intrinsecally transmitted to the Jordan normal form matrix $\J$ for which we can state
+		\[ \lim_{t\rightarrow\infty} \J^t = 0 \qquad \Leftrightarrow \qquad \lim_{t\rightarrow\infty} J_i^t = 0 \quad \forall i  \]
+		Considering the formal definition of the sub-matrix power $J_i^t$ shown in equation \ref{eq:lin:Ji}, we observe that each entry of the matrix is made by the eigenvalue $\lambda_i$ to the power of $t$ and a polynomial of $t$. Considering that the exponential asymptotically grows/decreases faster then polynomial we observe that whenever $|\lambda_i| \leq 1$ then all entries converges to 0. We can so state that if all eigenvalues $\lambda_i$ of the state matrix $\A$ have a magnitude less then 1, then the system converges to a null solution.
+		
+		In contrary if we consider $|\lambda_i|>1$ the exponential $\lambda_i^t$ explodes to infinity for $t\rightarrow \infty$, hence the systems behaviour diverges. All that's left to analyse is the case where $\J^t$ (for $\rightarrow \infty$) doesn't diverge and this happens when $|\lambda_i| = 1$ (where $1^t \xrightarrow{t\rightarrow \infty} 1$), but in order to ensure that the matrix exponential doesn't diverge we have to impose that $n_i = 1$ (in this case we don't have entries with diverging polynomials). In general we can so state that
+		\[ \lim_{t\rightarrow\infty} \A^t \neq \infty \quad \Leftrightarrow \quad \lim_{t\rightarrow\infty} J_i^t \neq \infty  \  \forall i \quad \Leftrightarrow \quad |\lambda_i| \leq 1 \textrm{ and if } |\lambda_i|=1  \Rightarrow n_i=1 \]
 		
 		\paragraph{Fibonacci sequence} Recalling the Fibonacci state representation reported in equation \ref{eq:dyn:temp4} (page \pageref{eq:dyn:temp4}), we have that the problem was described as
 		\[ x^+ = \mat{1 & 1 \\ 1 & 0} x \hspace{2cm} y = \mat{1 & 0} x \hspace{2cm} x(0) = \vet{0 \\ 1} \]
@@ -646,26 +655,202 @@
 			t_3 + t_4 & = \frac{1-\sqrt 5}{2} t_3 \\
 			t_3 & =  \frac{1-\sqrt 5}{2 } t_4
 		\end{cases}   \]
-		From the first and third equation we can determine
-		\[ t_2 = - \frac{1-\sqrt 5}{2}t_1 \hspace{2cm} t_4 = - \frac{1+\sqrt 5}{2} t_3 \]
-		that satisfy both second and fourth equations $\forall t_1,t_3 \in \mathds R$. In order not to have a singular matrix any value $t_1,t_3\neq 0$ is allowed and so we can arbitrarily chose $t_1 = t_3 = -1$ obtaining the transformation matrix
-		\[ T = \mat{-1 & \frac{1-\sqrt 5}{2} \\ -1 & \frac{1+\sqrt 5}{2} } \qquad \Rightarrow \qquad T^{-1} = \frac1{-\sqrt 5} \mat{\frac{1+\sqrt 5}{2} & - \frac{1-\sqrt 5}{2} \\ 1 & -1} \]
+		hence
+		\[ t_1 = \frac{1+\sqrt 5}{2}t_2 \hspace{2cm} t_3 = \frac{1-\sqrt 5}{2} t_4 \hspace{2cm} \forall t_2,t_4 \]
+		In order not to have a singular matrix we have to chose value $t_2,t_4 \neq 0$; picking for simplicity $t_2 = t_4 = 2$ the transformation matrix we obtain is
+		\[ T = \mat{ 1 + \sqrt 5 & 2 \\ 1- \sqrt 5 & 2 } \hspace{1.2cm} \Rightarrow \hspace{1.2cm} T^{-1} = \frac{1}{4\sqrt 5} \mat{ 2 & - 2 \\ - (1-\sqrt 5) & 1 + \sqrt 5 } \]
+		Using equation \ref{eq:lin:powermatrix} we can compute the matrix power $\A^t$ as $T^{-1} \J T$; to ease the computation we can see that $1+\sqrt 5 = 2 \lambda_1$ and $1-\sqrt 5 = 2 \lambda_2$ we can write the equation as
+		\begin{align*}
+			\A^t & = \frac{1}{4\sqrt 5} \mat{ 2 & - 2 \\ -2\lambda_2 & 2\lambda_1} \mat{ \lambda_1^t & 0 \\ 0 & \lambda_2^t}  \mat{ 2\lambda_1 & 2 \\ 2\lambda_2 & 2 } = \frac 1{\sqrt 5} \mat{ 1 & - 1 \\ -\lambda_2 & \lambda_1} \mat{ \lambda_1^t & 0 \\ 0 & \lambda_2^t}  \mat{ \lambda_1 & 1 \\ \lambda_2 & 1 } \\
+			& = \frac 1{\sqrt 5} \mat{ 1 & - 1 \\ -\lambda_2 & \lambda_1} \mat{ \lambda_1^{t+1} & \lambda_1^t \\\lambda_2^{t+1} & \lambda_2^t } = \frac 1 {\sqrt 5} \mat{\lambda_1^{t+1} - \lambda_2^{t+1} & \lambda_1^t - \lambda_2^t \\ - \lambda_1^{t+1} \lambda_2 + \lambda_1 \lambda_2^{1+t} & - \lambda_1^t \lambda_2 + \lambda_1 \lambda_2^t}
+		\end{align*}
+		Computing the homogeneous solution of the system as $y(t) = \C\A^t x_0$, given the particular formulation of the matrices $\C$ and $x_0$ means that the output $y(t)$ is determined by the second entry in the first column, hence
+		\begin{align*}
+			y(t) & =  \mat{1 & 0} \frac 1 {\sqrt 5} \mat{\lambda_1^{t+1} - \lambda_2^{t+1} & \lambda_1^t - \lambda_2^t \\ - \lambda_1^{t+1} \lambda_2 + \lambda_1 \lambda_2^{1+t} & - \lambda_1^t \lambda_2 + \lambda_1 \lambda_2^t} \vet{0 \\ 1}  = \frac 1{\sqrt 5}\left(\lambda_1^t - \lambda_2^t\right) \\ & = \frac 1{\sqrt 5} \left[ \left( \frac{1 + \sqrt 5}{2} \right)^t - \left( \frac{1 - \sqrt 5}{2} \right)^t \right] 
+		\end{align*}
+			
+	
+	\subsubsection{Matrix exponential}
+		If we want to compute the exponential $e^{\A t}$ of the matrix $\A$ with Jordan normal form $\J$ we can use the fact that the exponential of such Jordan form is
+		\begin{equation} \label{eq:lin:jordanexponential}
+			e^{\J t} = \mat{ e^{J_1 t} && 0\\ & \ddots \\ 0 & &  e^{J_lt} }
+		\end{equation}
+		where $e^{J_it}\in \mathds R^{n_i\times n_i}$ is defined as 
+		\begin{equation}
+			e^{J_i t} = e^{\lambda_i t} \mat{ 1 & t & \dots & \frac{t^{n_i-1}}{(n_i-1)!} \\
+			& \ddots & \ddots & \vdots \\
+			&& \ddots & t	\\ &&& 1	}
+		\end{equation}
 		
+		Considering now the Cayley-Hamilton theorem (equation \ref{eq:lin:cayley}, page \pageref{eq:lin:cayley}) we have that the matrix exponential can be regarded as a linear combination of the first $n$ matrix powers as
+		\[ e^{\A t} = \sum_{k=0}^{n-1} \alpha_k(t) \A^k \]
+		Knowing so that $\A= T^{-1} \J T$ we can rewrite
+		\begin{equation} \label{eq:lin:exponentialmatrix}
+		\begin{split}
+			e^{\A t} & = \sum_{k=0}^{n-1} \alpha_k(t) T^{-1} \J^k T = T^{-1} \left( \sum_{k=0}^{n-1} \J^k \right) T \\
+			& = T^{-1} e^{\J t} T
+		\end{split}
+		\end{equation}
+		on which we can compute the formal definition of the Jordan form exponential as shown in equation \ref{eq:lin:jordanexponential}.
 		
+		\paragraph{Region of convergence} Considering so that the exponential $e^{\J t}$ is the unique solution of the problem $\dot x(t) = \J x(t)$ with $x(0) = \I$, we can so analyse the asymptotic behaviour of the system (as was done for the discrete-time ones). In general the eigenvalues an be complex ($\lambda_i = \alpha_i + j \beta_i \in \mathds C$) and we can show that the sub-matrix exponentials $e^{J_it}$ converges for $t\rightarrow \infty$ if and only if the real part $\alpha_i$ of the eigenvalues is strictly negative; at contrary if $\alpha_i > 0$ what we obtain is that the term $e^{\lambda_i t}$ premultiplying the whole matrix diverges and hence $\J$.
 		
+		In the case where $\alpha_i = 0$ we have the case of discrete-time systems: if the dimension $n_i$ is unitary then $e^{J_i}$ is a constant (non-infinite) 1-dimensional matrix, while if $n_i>1$ the upper triangular terms polynomially explodes to $\infty$:
+		\[ \lim_{t\rightarrow\infty} e^{\A t} \neq \infty \quad \Leftrightarrow \quad \lim_{t\rightarrow\infty} e^{J_i t} \neq \infty  \  \forall i \quad \Leftrightarrow \quad \Re{\lambda_i} \leq 0 \textrm{ and if } \Re{\lambda_i} = 0 \Rightarrow n_i=1 \]
 		
+		\paragraph{Example} Given the continuous time LTI system characterized by the state matrix
+		\[ \A= \mat{ 5 & 3 \\ -6 & -4} \]
+		in order to compute it's exponential $e^{\A t}$ we have to firstly determine it's Jordan normal form $\J$. This can be achieved by firstly determining the eigenvalues of the matrix; knowing that the characteristic polynomial is $p(\lambda) = (5 - \lambda)(-4-\lambda) + 6\cdot 3 = \lambda^2 - \lambda - 2$ we can compute it's roots and hence determine $\J$:
+		\[ \lambda_{1,2} = \frac{1\pm \sqrt 9}{2} \hspace{1.2cm} \Rightarrow \hspace{1.2cm} \J= \mat{ 2 & 0 \\ 0 & -1} \]
+		With this result we have to compute the transformation matrix $T$ by imposing that $\J T = T A$ and solving the related linear system in the unknowns entries of $T$:
+		\[ \mat{ 2 & 0 \\ 0 & -1} \mat{t_1 & t_2 \\ t_3 & t_4} = \mat{t_1 & t_2 \\ t_3 & t_4} \mat{ 5 & 3 \\ -6 & -4} \]
+		\[ \begin{cases}
+			2 t_1 & = 5 t_1 - 6t_2 \\
+			2 t_2 & = 3 t_1 - 4 t_2 \\
+			-t_3 & = 5 t_3 - 6 t_4 \\
+			-t_4 & = 3t_3 - 4 t_4
+		\end{cases} \qquad \Rightarrow \quad \begin{cases}
+			2t_2 = t_1 \\
+			t_3 = t_4
+		\end{cases} \]
+		Choosing as free parameters $t_1 = t_3 = 1$ for simplicity we obtain the transformation matrix
+		\[ T = \mat{2 & 1 \\ 1 & 1} \hspace{1.2cm} \Rightarrow \hspace{1.2cm} T^{-1} = \mat{  1 & - 1 \\ - 1 & 2} \]
+		We can finally compute the exponential matrix $e^{\A t}$ as $T^{-1} e^{\J t} T$ (equation \ref{eq:lin:exponentialmatrix}):
+		\begin{align*}
+			e^{\A t} & = \mat{  1 & - 1 \\ - 1 & 2} \mat{e^{2t} & 0 \\ 0 & e^{-t} } \mat{2 & 1 \\ 1 & 1} = \mat{  1 & - 1 \\ - 1 & 2}  \mat{ 2 e^{2t} & e^{2t} \\ e^{-t} & e^{-t} } \\
+			& = \mat{2 e^{2t} -e^{-t} & e^{2t} - e^{-t} \\ -2 e^{2t} + 2 e^{-t} & -e^{2t} + 2 e^{-to} }
+		\end{align*}
 		
+\section{Internal / Lyapunov stability}
+	\paragraph{Norms for vector} In order to start the discussion regarding the stability of linear systems, we have to recall the norms for vector and matrices. Given a vector $x\in \mathds R^n$, we define it's \de{norm} $x\mapsto |x|$ an operation that satisfy the following properties:
+	\begin{align*}
+		i) \qquad & |x|\geq 0 \ \forall x\in  \mathds R^n \quad \textrm{and} \quad |x|=0 \ \Leftrightarrow \ x = 0 \\
+		ii) \qquad & |x+y| \leq |x|+|y| \qquad \forall x,y\in \mathds R^n \\
+		iii) \qquad & |ax| =|a|\, |x| \qquad \forall x\in \mathds R^n,a\in \mathds R 
+	\end{align*}
+	Matching this definition we can define different kinds of norms:
+	\begin{itemize}
+		\item the \textit{one norm} $|\cdot|_1$ defined as
+		\begin{equation}
+			|x|_1 = \sum_{i=1}^{n} |x_i|
+		\end{equation}
+		\item the \textit{two norm} $|\cdot|_2$ (euclidean norm) defined as
+		\begin{equation} \label{eq:lin:euclideannorm}
+			|x|_2 = \sqrt{ \sum_{i=1}^n |x_i|^2 }
+		\end{equation}
+		\item the \textit{infinity norm} $|\cdot|_\infty$ defined as
+		\begin{equation}
+			|x|_\infty = \max_{i=1,\dots, n} |x_i|
+		\end{equation}
+		\item this previous concepts can be generalized by the concept of \textit{p norm} $|\cdot|_p$ defined as
+		\begin{equation}
+			|x|_p = \sqrt[p]{ \sum_{i=1}^n |x_i|^p}
+		\end{equation}
+	\end{itemize}	
+	All this norms are \de{equivalents}: for any norm $p_1,p_2 \in [1,\infty)$ there exists two constants $c_1,c_2\in \mathds R$ such that
+	\[ c_1 |x|_{p_1} \leq |x|_{p_2} \leq c_2 |x|_{p_1} \hspace{1cm} \forall x \in \mathds R^n \]
+ 
+	\paragraph{Norms for matrix} The definition of norm can be extended also in case of matrices; in this case the 3 property of the norm must be respected but given a matrix $A \in \mathds R^{m\times n}$ with $m$ rows and $n$ columns we can compute its norm $\| A\|$ in different ways:
+	\begin{itemize}
+		\item \textit{one norm} $\|\cdot\|_1$ defined as
+		\begin{equation}
+			\|A\|_1 = \max_{j=1,\dots, n} \sum_{i=1}^m |a_{ij}|
+		\end{equation}
+		If we consider the matrix as the \textit{concatenation} of $n$ column vectors $v_i \in \mathds R^m$, then this norm can be regarded as the maximum one norm $|v_i|_1$ among such vectors.
 		
+		\item \textit{infinity norm} $\|\cdot\|_\infty$ defined as
+		\begin{equation}
+			\|A\|_\infty = \max_{i = 1,\dots,m} \sum_{j=1}^n |a_{ij}|
+		\end{equation}
+		\item \textit{two norm} $\|\cdot\|_2$ defined as
+		\begin{equation}
+			\|A\|_2 = \sigma_{\max}\{ A \} = \sqrt{\lambda_{max} \{ A^t A \}  }
+		\end{equation}
+		We denote with $\sigma\{A\}$ the \textbf{singular values} of the matrix $A$ and are computed as the square root of the eigenvalues of the square matrix $A^t A \in \mathds R^{n\times n}$; in particular the two norm corresponds to the maximum singular value of the matrix $A$. Considering that a vector can be regarded as a matrix $\mathds R^{m\times 1}$ this definitions coincide with the euclidean norm for vectors (equation \ref{eq:lin:euclideannorm}).
 		
+		\item \textit{Frobenius norm} $\|\cdot\|_F$ defined as
+		\begin{equation}
+			\|A\|_F = \sqrt{ \sum_{i=0}^m \sum_{j=0}^n a_{ij}^2 } = \sqrt{ \sum_{i=0}^n \sigma_i^2\{A\} }
+		\end{equation} 
+		Also in this case if we consider a vector as a matrix $\mathds R^{m\times 1}$ the computation of the Frobenius norm coincides with the euclidean/two norm (equation \ref{eq:lin:euclideannorm}) but in general for arbitrarily large matrices $\|A\|_2 \leq \|A\|_F$.
+	\end{itemize}
+	
+	\begin{example}{: two vs Frobenius norm}
+		Considering the matrix
+		\[ A = \mat{ 2 & 0 \\ 0 & 1} \] 
+		in order to determine both two and Frobenius norm we have to compute the singular values of the matrix, and to do so we have to compute the matrix $A^tA$ that results in
+		\[ A^tA = \mat{4 & 0 \\ 0 & 1} \]
+		Being this matrix diagonal, the two eigenvalues are $\lambda_1 = 4$ and $\lambda_2 = 1$ that, squared, results in the singular values $\sigma_1 = 2$, $\sigma_2 = 1$. We can so compute the two norms as
+		\[ \| A\|_2 = \sigma_{max} = \sigma_1 = 2 \qquad \neq \qquad \|A\|_F = \sqrt{\sigma_1^2 + \sigma_2^2} = \sqrt{4 + 1} = \sqrt 5 \]
+		We just showed with an example that in general Frobenius and two norms doesn't usually coincides for matrices of arbitrary dimensions.
+	\end{example}
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	Also matrix norms are \textbf{equivalent}, meaning that for any norm $p_1,p_2 \in \{ 1,2,F,\infty\}$ there exists two constants $c_1,c_2\in \mathds R$ such that
+	\[ c_1 \|A\|_{p_1} \leq \|A\|_{p_2} \leq c_2 \|A\|_{p_1} \qquad \forall A \in \mathds V \]
+	Matrix norms are also \textbf{sub-multiplicative}, meaning that
+	\[ \|A B\|_p \leq \|A\|_p \|B\|_p \qquad \forall A,B\in \mathds V,\ \forall p \in \{1,2,F,\infty\} \]
+	
+	\paragraph{Induced norm} Given a matrix $A \in \mathds R^{m\times n}$ and a vector $x \in \mathds R^{n}$, the product $A x$ results in a $\mathds R^n$ vector on which we can compute the norm. Considering so the sub-multiplicative property we have that
+	\[ | A x|_p \leq \|A\|_p |x|_p \qquad \Rightarrow \qquad \|A\|_p \geq \frac{|A x|_p}{|x|_p} \]
+	For $p\in \{ 1,2,\infty\}$ we have that the associated norms are \textbf{subordinate}, meaning that we can compute the norm $\|A\|_p$ as
+	\begin{equation}
+		\|A\|_p = \max_{x\neq0} \frac{|Ax|_p}{|x|_p}
+	\end{equation}
+	Note that the Frobenius norm isn't subordinate, hence this relation can't be applied.
+	
+	\subsection*{Lyapunov stability for linear system}
+	Given a linear system (both discrete/continuous-time, time-varying/invariant) described as
+	\[ \begin{cases}
+		\delta x = \A x + \B u \qquad x(t_0) = x_0 \\ y= \C x + \D u
+	\end{cases} \]
+	we say that
+	\begin{itemize}
+		\item is \de{Lyapunov} (or \textit{marginally}) \de{stable} if for each initial state $x_0$ there exists a constant $M\in \mathds R$ (that depends of course on $x_0$) such that the zero input response satisfies
+		\[ |x(t)| \leq M \qquad \forall t\geq t_0,t_0 \geq 0 \]
+		\item is (Lyapunov) \de{asymptotically stable} if it's Lyapunov stable and all solutions satisfy
+		\[ \lim_{t\rightarrow \infty} |x(t)|=0 \qquad \forall x_0 \]
+		\item is (Lyapunov) \de{exponentially stable} if it's asymptotically stable and exists constants $c>0, \lambda > 0, \mu \in [0,1)$ such that
+		\begin{align*}
+			& |x(t)| \leq ce^{-\lambda(t-t_0)} |x_0| \qquad \forall x_0,t_0 &&  \textrm{for continuous-time systems} \\
+			& |x(t)| \leq c\mu^{t-t_0} |x_0| \qquad \forall x_0,t_0 &&  \textrm{for discrete-time systems} 
+		\end{align*}
+		\item a system is \de{unstable} if it's not Lyapunov stable.
+	\end{itemize}
+	We can see that this conditions are always more stringent, hence we can say that
+	\[ \textrm{exponential stability} \quad \Rightarrow \quad \textrm{asymptotic stability} \quad \Rightarrow \quad \textrm{Lyapunov stability} \]
+	From what concerns Lyapunov, stability is analysed regarding the homogeneous (zero input) response and, as was previously described, the solution can be described using the state transition matrix $\Phi$, hence we can consider:
+	\[ |x(t)| = |\Phi(t,t_0)x_0| \leq \|\Phi(t,t_0)\|\, |x_0| \qquad \forall x_0 \]
+	From what concerns the Lyapunov stability this means that the norm of the state transition matrix must be bounded, mathematically $\|\Phi(t,t_0)\| \leq M_\Phi$; the same idea holds for both the asymptotic ($\lim_{t\rightarrow \infty} \|\Phi(t,t_0) = 0$) and exponential stability, where $\|\Phi(t,t_0)\| \leq c e^{-\lambda(t-t_0)}$ (for continuous-time systems, but the same can be transliterated for discrete-time ones).
+	
+	We indeed see that \textbf{Lyapunov stability} only depends on the state transition matrix $\Phi(t,t_0)$, and not the initial condition $x_0$, hence is an \textbf{intrinsic property of the system} independently on the inputs and can be ensured by the analysis of the behaviour of the state transition matrix.
+	
+	\subsubsection{Linear time invariant systems}
+		Considering continuous-time time-invariant linear systems, we proved that the state transition matrix $\Phi(t,t_0)$ can be computed as the matrix exponential $e^{\A(t-t_0)}$ and, as was described, we showed that such matrix converged if $\Re{\lambda_i} < 0 \forall i$. In particular for continuous-time LTI systems we have 
+		\begin{align*}
+			\textrm{asymptotic stability} \quad & \Leftrightarrow \quad \Re{ \lambda_i\{\A\} } < 0 \ \forall i \\
+			\textrm{exponential stability} \quad & \Leftrightarrow \quad \Re{ \lambda_i\{\A\} } < 0 \ \forall i \\
+			\textrm{Lyapunov stability} \quad & \Leftrightarrow \quad \Re{ \lambda_i\{\A\} } \leq 0 \ \forall i \textrm{ and if } \Re{\lambda_j} = 0 \ \Rightarrow \ n_j = 0
+		\end{align*} 
+		We see so that for linear time-invariant systems asymptotic and exponential stability are \textit{coincident} concepts, meaning that they both happen at the same time.\\
+		Considering instead discrete-time LTI systems the state transition matrix $\Phi(t,t_0)$ is computed as the power $\A^{t-t_0}$ and, as was previously discussed, we can conclude that
+		\begin{align*}
+			\textrm{asymptotic stability} \quad & \Leftrightarrow \quad |\lambda_i\{\A\} < 1 \ \forall i \\
+			\textrm{exponential stability} \quad & \Leftrightarrow \quad |\lambda_i\{\A\} < 1 \ \forall i \\
+			\textrm{Lyapunov stability} \quad & \Leftrightarrow \quad |\lambda_i\{\A\} \leq 1 \ \forall i \textrm{ and if } |\lambda_j| = 1 \ \Rightarrow \ n_j = 0
+		\end{align*} 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 		
