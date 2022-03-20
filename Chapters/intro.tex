@@ -764,9 +764,9 @@
 		\end{equation}
 		\item \textit{two norm} $\|\cdot\|_2$ defined as
 		\begin{equation}
-			\|A\|_2 = \sigma_{\max}\{ A \} = \sqrt{\lambda_{max} \{ A^t A \}  }
+			\|A\|_2 = \sigma_{\max}\{ A \} = \sqrt{\lambda_{max} \{ A^T A \}  }
 		\end{equation}
-		We denote with $\sigma\{A\}$ the \textbf{singular values} of the matrix $A$ and are computed as the square root of the eigenvalues of the square matrix $A^t A \in \mathds R^{n\times n}$; in particular the two norm corresponds to the maximum singular value of the matrix $A$. Considering that a vector can be regarded as a matrix $\mathds R^{m\times 1}$ this definitions coincide with the euclidean norm for vectors (equation \ref{eq:lin:euclideannorm}).
+		We denote with $\sigma\{A\}$ the \textbf{singular values} of the matrix $A$ and are computed as the square root of the eigenvalues of the square matrix $A^T A \in \mathds R^{n\times n}$; in particular the two norm corresponds to the maximum singular value of the matrix $A$. Considering that a vector can be regarded as a matrix $\mathds R^{m\times 1}$ this definitions coincide with the euclidean norm for vectors (equation \ref{eq:lin:euclideannorm}).
 		
 		\item \textit{Frobenius norm} $\|\cdot\|_F$ defined as
 		\begin{equation}
@@ -778,8 +778,8 @@
 	\begin{example}{: two vs Frobenius norm}
 		Considering the matrix
 		\[ A = \mat{ 2 & 0 \\ 0 & 1} \] 
-		in order to determine both two and Frobenius norm we have to compute the singular values of the matrix, and to do so we have to compute the matrix $A^tA$ that results in
-		\[ A^tA = \mat{4 & 0 \\ 0 & 1} \]
+		in order to determine both two and Frobenius norm we have to compute the singular values of the matrix, and to do so we have to compute the matrix $A^TA$ that results in
+		\[ A^TA = \mat{4 & 0 \\ 0 & 1} \]
 		Being this matrix diagonal, the two eigenvalues are $\lambda_1 = 4$ and $\lambda_2 = 1$ that, squared, results in the singular values $\sigma_1 = 2$, $\sigma_2 = 1$. We can so compute the two norms as
 		\[ \| A\|_2 = \sigma_{max} = \sigma_1 = 2 \qquad \neq \qquad \|A\|_F = \sqrt{\sigma_1^2 + \sigma_2^2} = \sqrt{4 + 1} = \sqrt 5 \]
 		We just showed with an example that in general Frobenius and two norms doesn't usually coincides for matrices of arbitrary dimensions.
@@ -801,7 +801,7 @@
 	\subsection*{Lyapunov stability for linear system}
 	Given a linear system (both discrete/continuous-time, time-varying/invariant) described as
 	\[ \begin{cases}
-		\delta x = \A x + \B u \qquad x(t_0) = x_0 \\ y= \C x + \D u
+		\delta x = \A(t) x + \B(t) u \qquad x(t_0) = x_0 \\ y= \C(t) x + \D(t) u
 	\end{cases} \]
 	we say that
 	\begin{itemize}
@@ -839,18 +839,150 @@
 			\textrm{Lyapunov stability} \quad & \Leftrightarrow \quad |\lambda_i\{\A\} \leq 1 \ \forall i \textrm{ and if } |\lambda_j| = 1 \ \Rightarrow \ n_j = 0
 		\end{align*} 
 	
+	\subsection{Conditions for exponential stability}
+		\paragraph{Positive and negative definite matrices} In order to make assertions regarding the exponential stability of system, a recall of definition from linear algebra is required. Given a square matrix $Q\in \mathds R^{n\times n}$ \textbf{symmetric} (so such that $Q=Q^T$), we say that it is
+		\begin{itemize}
+			\item \de{positive definite}, noted as $Q>0$, if  $x^TQx > 0$ $\forall x\neq 0$;
+			\item \de{negative definite} ($Q<0$) if  $x^TQx < 0$ $\forall x\neq 0$;
+			\item \textbf{semi-positive definite} ($Q\geq0$) if  $x^TQx \geq 0$ $\forall x \in \mathds R^n$;
+			\item \textbf{semi-negative definite} ($Q\leq0$) if  $x^TQx \leq 0$ $\forall x \in \mathds R^n$.
+		\end{itemize}
+		\begin{note}
+			This definition is set for symmetric matrices $Q$, however in the more general case a matrix $Q\in \mathds R^{n\times n}$ is definite regarding only is symmetric part. Recalling the property for matrices calculations $(ABC)^T = C^TB^TA^T$ and observing that $x^T Q x$ is a scalar hence it's symmetric, we can see that
+			\[ x^TQx = \frac 1 2 \left( x^TQx + (x^TQx)^T \right) = \frac 1 2 \left( x^T Qx + x^T Q^t x \right) = x^T \frac{Q+ Q^T}{2} x = x^T Q_{symm} x \]
+			where $Q_{symm} = \frac{Q+Q^T}{2}$ is the symmetrical part of $Q$; the matrix $Q$ can in fact be consider as the sum $Q_{symm} + Q_{skew}$ where $Q_{skew} = \frac{Q-Q^T}2$ is the skew-symmetric part of $Q$ that results always in a zero-definite part.
+		\end{note}
 	
+		As a convention for any symmetric matrices $Q_1,Q_2$, with the notation $Q_1 > Q_2$ we imply that $Q_1-Q_2 >0$ or $Q_2-Q_1 < 0$. A results from linear algebra for any symmetric matrix $Q= Q^T\in \mathds R^{n\times n}$ the following statements are equivalents:
+		\begin{itemize}
+			\item $Q$ is positive definite;
+			\item all eigenvalues of $Q$ are positive and real evaluated;
+			\item the determinant of all the principle minors (the upper-left sub-matrices) are all positive definite. This is referred as the Sylvester criterion;
+			\item there exists a non-singular matrix $H\in \mathds R^{n\times n}$ such that $Q= H^TH$ as for the Cholesky upper-triangular factorization. This also implied that exists the root $K=\sqrt Q$, so $\exists K$ such that $Q = K K$.
+		\end{itemize}
+		As a consequence for \textbf{quadratic functions} (in the form $x^TQx$) it holds
+		\begin{equation} \label{eq:lin:sandwich}
+			\lambda_{min}\{ Q \} |x|^2_2 \leq x^T Q x \leq \lambda_{max} \{Q\} |x|_2^2 \qquad \forall x \in \mathds R^n
+		\end{equation}
+		
+		\paragraph{Theorem} For a continuous-time LTI system in the form $\dot x =\A x$ (hence only the zero input part) the following statements are equivalent:
+		\begin{enumerate}[\itshape (i)]
+			\item it is asymptotically stable;
+			\item it is exponentially stable;
+			\item the matrix $\A$ is \textit{Hurwitz}, meaning that all the eigenvalues have negative real part ($\Re{\lambda_i(A) } < 0$ $\forall i$);
+			\item for each symmetric positive definite matrix $Q=Q^T>0 \in \mathds R^{n\times n}$ there exists a symmetric matrix $P\in \mathds R^{n\times n}$ such that $P^T = P > 0$ and that satisfy the \de{Lyapunov equality}
+			\begin{equation} \label{eq:lin:lyapunovequality}
+				\A^T P + P\A = -Q 
+			\end{equation}
+			Moreover (as an extra fact), such matrix $P$ is also unique;
+			\item there exists a symmetric matrix $P = P^T > 0 \in \mathds R^{n\times n}$ that satisfies the \de{Lyapunov inequality}
+			\[ \A^T P + P\A < 0 \]
+		\end{enumerate}
+		From a computational point of view the last statement \textit{(v)}, associated to the so called \textbf{\textit{linear matrix inequality}}, somehow certifies the exponential stability. Lyapunov equality \textit{(iv)} is a stronger definition but more complex to compute and the inequality is usually preferred to assert the internal stability of the system.
+		
+		In general the implications \textit{(i)} $\Leftrightarrow$ \textit{(ii)} $\Leftrightarrow$ \textit{(iii)} were already previously discussed; relating \textit{(iv)} $\Rightarrow$ \textit{(v)} is somewhat trivial (while the reverse operation is mathematically impossible and requires to pass through \textit{(i)} of \textit{(ii)}), but in the next paragraph an analytical proof connecting \textit{(ii)} $\Rightarrow$ \textit{(iv)} and \textit{(v)} $\Rightarrow$ \textit{(ii)} will be presented.
+		
+		\paragraph{Proof 1: exponential stability implies the Lyapunov equality} We can show that one solution (and we will show that's also unique) of the system is characterized by the matrix $P$ defined as
+		\[ P = \int_0^\infty e^{\A^T t} Q e^{\A t}\, dt \]
+		This matrix solves the Lyapunov equality and so we have to show that's finite; in order to to so we can compute it's norm obtaining
+		\[ \|P\| = \left\| \int_0^\infty e^{\A^T t} Q e^{\A t}\, dt \right\| \leq \int_0^\infty \left\| e^{\A^T t} Q e^{\A t} \right\|\, dt \]
+		Using the sub-multiplicative property of the matrix norm we moreover obtain
+		\[ \|P\| = \int_0^\infty \left\| e^{\A^T t} \right\| \|Q\| \left\| e^{\A t}\right\|\, dt = \|Q\|\int_0^\infty \|e^{\A t}\|^2\, dt \]
+		As a property for any square matrix $A\in \mathds R^{n\times n}$, denoting with $\mu\{A\} = \max_i \Re{\lambda_i(A)}$ it's \textbf{spectral abscissa}, we have that $\forall \lambda > \mu\{A\}$ there exists a constant $k\in \mathds R$ such that $\|e^{At}\| \leq k e^{\lambda t}$ $\forall t>0$. We can so rewrite the norm inequality as
+		\[ \|P\| \leq \|Q\| \int_0^\infty k e^{2\lambda t}\, dt \]
+		Considering that we started with the assumption that the system is exponentially stable, then it means that all the eigenvalues $\lambda_i$ have a real negative part (hence $\lambda$ in the reported integral is negative) meaning that the integral (and so the norm) converges to a finite number.
+		
+		We can now show that the so computed matrix $P$ is the solution of the Lyapunov equality: by plugging such definition in equation \ref{eq:lin:lyapunovequality} what we obtain is
+		\begin{align*}
+			\A^T P + P \A & = \int_0^\infty \A^T e^{\A^T t} Q e^{\A t}\, dt + \int_0^\infty e^{\A^T t} Q e^{\A t} \A \, dt \\
+			& = \int_0^\infty \left( \A^T e^{\A^T t} Q e^{\A t} + e^{\A^T t} Q e^{\A t} \A \right)\, dt
+		\end{align*}
+		Considering that $e^{\A^T t}$ can be regarded as $\left(e^{\A t} \right)^T$, the whole term in the parenthesis can be interpreted as the derivative $\frac d{dt} \left( e^{\A^Tt} Q e^{\A t}\right)$ then the evaluation of the integrals reduces to
+		\begin{align*}
+			\A^T P + P\A & = \left[  e^{\A^Tt} Q e^{\A t} \right] \Bigg|_{t=0}^\infty = 0 - \I Q \I \\
+			& = -Q
+		\end{align*}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		That concluded the proof that such matrix $P$ is indeed the solution of the Lyapunov equality but we also have to show that $P$ is positive definite; this can be considered computing the product
+		\[ z^T P z = \int_0^\infty z^T e^{\A^T t} Q e^{\A t} z\, dt \hspace{2cm} \forall z\in \mathds R^{n}/\{0\}  \]
+		Observing that the product $e^{\A t} z$ evaluates always in a non-zero vector $w(t)$ we can interpret the previous expression as
+		\[ z^TPz = \int_0^\infty w^T(t) Q  w(t)\, dt \geq \lambda_{min}\{Q\} \int_0^1 |w(t)|^2 \, dt > 0 \]
+		where the inequality has been obtained considering that $w^T Q w(t)$ is a quadratic function and hence we can apply the \textit{sandwich inequality} (equation \ref{eq:lin:sandwich}).
+		
+		Lastly we can show that the solution $P$ is unique; if we assume that $P_1,P_2$ are two solution of the Lyapunov equation this means that they both satisfy
+		\[ \begin{cases}
+			\A^T P_1 + P_1 \A = - Q \\ \A^T P_2 + P_2 \A = -Q
+		\end{cases} \]
+		Subtracting the second equation to the first evaluates to $\A^T(P_1-P_2) + (P_1-P_2) \A= 0$; pre-multiplying by a factor $e^{\A^T t} \neq 0$ and post-multiplying by $e^{\A t} \neq 0$ both terms we return to the case
+		\begin{align*}
+			e^{\A^T t} \A^T(P_1-P_2)e^{\A t} +	e^{\A^T t} (P_1-P_2) \A e^{\A t}  & = 0 \\
+			\A^T e^{\A^T t} (P_1-P_2)e^{\A t} +	e^{\A^T t} (P_1-P_2) \A e^{\A t}  & = \\
+			\frac{d}{dt} \left( e^{\A^T t} (P_1-P_2) e^{\A t} \right) & = 
+		\end{align*}
+		This means that the product $e^{\A^Tt}(P_1-P_2) e^{\A t}$ is constant; knowing that for $t\rightarrow \infty$ the exponential $e^{\A t}$ evaluates to zero, in order to ensure that the term remains constant we need to have $P_1 - P_2 = 0$, hence the two solutions $P_1,P_2$ must coincide.
+		
+		\paragraph{Proof 2: Lyapunov inequality implies exponential stability} To show that a system withstand the Lyapunov inequality (so $\A^T P + T \A < $ and $P>0$) we have to use the \de{Lyapunov function} $\lyap(x)$ defined as
+		\begin{equation}
+			\lyap (x) = x^T P x \quad \in \mathds R \qquad \forall x\in \mathds R^n
+		\end{equation}
+		Observing that the result is a scalar, we can apply the \textit{sandwich} relation (equation \ref{eq:lin:sandwich}) to such formulation hence
+		\[ \lambda_{min}\{P\} |x|^2 \leq x^T P x \leq \lambda_{max}\{P\} |x|^2 \]
+		rewritten as
+		\[ c_1 |x|^2 \leq \lyap(x) \leq c_2 |x|^2 \qquad \forall x \in \mathds R^n \]
+		If we now take the directional derivative of the Lyapunov function with direction $x$ what we obtain is
+		\[ \frac{d\lyap (x)}{dt} = \frac{\partial \lyap}{\partial x} \frac{dx(t)}{dt} = \frac{\partial \lyap}{\partial x} \dot x = \frac{\partial \lyap}{\partial x} \A x = \nabla \lyap^T(x)  \A x = \left\langle \nabla \lyap(x), \A x \right\rangle \]
+		it's shown that the gradient $\nabla V = \nabla x^TPx$ is equals to $2P x$ and hence we can say
+		\begin{align*}
+			\left\langle \nabla \lyap (x), \A x \right\rangle & = 2 P_x \A x = x^T P \A x + x^T P \A x = x^T P \A x + x^T \A^T P^T x \\
+			&= x^T (P\A + \A^T P) x = -x^T \Sigma x
+		\end{align*}
+		Knowing that for \textit{(v)} the matrix $\A^T P + P \A$ is negative definite for the Lyapunov inequality, then it means that the matrix $\Sigma= - (P\A + \A^T P)$ is positive definite. Having from the \textit{sandwich} inequality that $\lambda_{min}\{\Sigma\} |x|^2 \leq x^T\Sigma x$ then it's also true that $- \lambda_{min}\{\Sigma\} |x|^2 \geq - x^T\Sigma x$: we can finally state that
+		\[ \left\langle \nabla \lyap(x), \A x \right\rangle \leq -\lambda_{min}\{\Sigma\} |x|^2 \leq -\lambda_{min}\{\Sigma\} \frac 1 {c_2} \lyap(x) =- c_3 \lyap^2(x) \]
+		where this relationships are commonly referred as \de{\textit{flow inequalities}}. In order to complete the proof we have to use the \textbf{comparison theorem} stating {\itshape given a scalar function $v(t)$ that's differentiable and such that $\dot v(t) \leq -\mu v(t)$ for all $t\geq t_0$ where $\mu \in \mathds R$ is a constant, then it happens that $v(t) \leq e^{-\mu(t-t_0)} v(t_0)$ for all $t\geq t_0$.} We can so state that for each solution $x(t)$ (for $t\geq t_0$) we can define the scalar function $v(t) = \lyap\big(x(t)\big)$ what we obtain from the flow inequality is that
+		\[ \dot v(t) = \big\langle \nabla \lyap\big(x(t)\big), \dot x(t) \big\rangle = \big\langle \nabla \lyap\big(x(t)\big), \A x(t) \big\rangle \leq - c_3 \lyap\big(x(t)\big)  \]
+		Applying the comparison theorem to such result we can express
+		\[ \lyap\big(x(t)\big) = v(t)\leq e^{-c_3(t-t_0)} v(t_0) = e^{-c_3(t-t_0)} \lyap \big(x(t_0)\big) \]
+		From the initial \textit{sandwich} of the proof we furthermore obtain
+		\[ c_1 |x(t)|^2 \leq \lyap\big(x(t)\big) \leq e^{-c_3 t} \lyap\big(x(t_0)\big) \leq e^{-c_3( t- t_0)} c_2 |x(t_0)|^2 \]
+		We can so prove the exponential decay of the solution by making explicit the inequality respect to it's norm:
+		\[ |x(t)|^2 \leq \frac{c_2}{c_1} e^{-c_3(t-t_0)} |x(t_0)|^2 \qquad \Rightarrow \qquad |x(t)| \leq \sqrt{\frac{c_2}{c_1}} e^{-\frac {c_3}2 (t-t_0)} |x(t_0)| \]
+		
+		\paragraph{Theorem for discrete-time system} For discrete-time LTI systems in the form $x^+ = \A x$ we can express similar equivalent statements as for the continuous-time one:
+		\begin{enumerate}[\itshape (i)]
+			\item it is asymptotically stable;
+			\item it is exponentially stable;
+			\item all the eigenvalues of $\A$ have a magnitude strictly lower then one ($|\lambda_i\{\A\}|\leq 1$ $\forall i$);
+			\item for each symmetric positive definite matrix $Q=Q^T>0 \in \mathds R^{n\times n}$ there exists a symmetric matrix $P\in \mathds R^{n\times n}$ such that $P^T A = PA > 0$ and that satisfy the \de{Lyapunov equality}
+			\[\A^T P \A - P = -Q\]
+			\item there exists a symmetric matrix $P = P^T > 0 \in \mathds R^{n\times n}$ that satisfies the \de{Lyapunov inequality}
+			\[ \A^T P \A - P < 0 \]
+			
+		\end{enumerate}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	
 		
