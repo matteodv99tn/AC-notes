@@ -1,0 +1,89 @@
+\chapter{Non-Linear Systems}
+	\de{Non-linear system} are characterized by a description in state space that in both continuous and discrete time case are
+	\begin{equation} \label{eq:nls:basic}
+		CT: \begin{cases}
+			\dot x = f(x,u) \\ 
+			y = h(x,u)
+		\end{cases} \hspace{2cm} DT: \begin{cases}
+			x^+ = f(x,u) \\ 
+			y = h(x,u)
+		\end{cases}
+	\end{equation}
+
+\section{Approximations to linear systems}
+	
+	Studying the behaviour of non-linear system is usually a complex task and so a \textit{good} idea is to somehow make the system linear in order to use the associated known results.
+	
+	\subsection{Feedback linearization}
+		In general mechanical system are described by models in the form
+		\[ M(q) \ddot q + C(q,\dot q) \dot q + K(q) q = u \]
+		where $M,C,K$ are matrices depending on the current position and/or velocity of the parameters $q$ of the system; $u$ is in general the applied force on the dynamical system that make it moves. A way to \textit{cancel out} the terms associated to $C,K$ is by simply choosing as control the function $u =C(\dot q,q)\dot q + K(q) q + M(q) v$ that so results in
+		\[ M(q) \ddot q + \cancel{C(q,\dot q) \dot q + K(q) q} = \cancel{C(\dot q,q)\dot q + K(q) q} + M(q) v \qquad \Rightarrow \qquad \ddot q = v \]
+		This result has been obtained considering that the matrix $M$ is always invertible (and for mechanical system such condition is satisfied). Such process is so called \de{feedback linearization} because it exploit a \textit{smart} choice on the control $u$ in order to have a linear relation between $\ddot q$ and a desired value $v$.
+	
+	\subsection{Linearization}
+		Considering a non-linear time invariant system (equation \ref{eq:nls:basic}) we call $\varphi(t):\mathds R^+\rightarrow \mathds R$ a \de{solution} of the system if it holds that
+		\[ \varphi(0) = x_0 \]
+		and 
+		\[ \left. \begin{aligned}
+			\dot \varphi(t) \\ \varphi^+
+		\end{aligned} \right\} = f\big(\varphi(t), u(t)\big) \qquad \forall t> 0 \]
+		Considering such definition we say that a pair state-input $(x\eq,u\eq)$ is an \de{equilibrium} for a non-linear time-invariant system if
+		\[ u(t) = u\eq \quad x(t) = x\eq \qquad \Rightarrow \qquad \varphi(t) = x\eq \quad \forall t>0 \]
+		This definition is so saying that a point to be an equilibrium must have a stationary solution that \textit{doesn't move}. As implication we have that for a continuous-time NL-TI system equilibriums are all point satisfying $\dot x = f(x\eq,u\eq) = 0$; similarly for discrete-time system the equilibrium can be obtaining imposing $x^+ = f(x\eq,u\eq) = x\eq$.
+		
+		\paragraph{Small perturbation condition and linear approximation} Considering now a \textit{small perturbation} both on the initial condition $\delta_{x(0)}$ and on the input signal $\delta_{u(t)}$ from the equilibrium position as
+		\[ x(0) = x\eq + \delta_{x(0)} \hspace{2cm} u(t) = u\eq + \delta_{u(t)}  \]
+		What we would like now to characterize is the \textit{deviation} of the states $\delta_{x(t)} = x(t) - x\eq$ and consequently of the output $\delta_{y(t)} = y(t) - y\eq$. Using the Taylor series expansion up to the first order we can indeed generate a \de{linear approximation} about the equilibrium point $(x\eq,u\eq)$:
+		\begin{equation}
+		\begin{aligned}
+			f(x,u) & = f(x\eq,y\eq) + \left.\pd f x \right|_{eq} (x-x\eq) + \left. \pd f u \right|_{eq} (u-u\eq) + \mathcal O \left( \left\| (\delta_x,\delta_u) \right\| \right) \\ 
+			h(x,u) & = h(x\eq,y\eq) + \left.\pd h x \right|_{eq} (x-x\eq) + \left. \pd h u \right|_{eq} (u-u\eq) + \mathcal O \left( \left\| (\delta_x,\delta_u) \right\| \right)
+		\end{aligned}
+		\end{equation}
+		where the general expression $\pd g z$ represents the jacobian of the map $g$ respect to the variable vector $z$. In this expression we indeed that such jacobians evaluated at the equilibrium point are indeed the matrices of the linearized system: $\A = \pd f x$, $\B = \pd f u$, $\C = \pd h x$ and $\D= \pd h u$. We can prove that the linearity strictly depends on the integral part can be obtained considering that
+		\[ \left. \begin{aligned}
+			CT:&& \qquad \dot \delta_x = \dot x - \dot x\eq = f(x,u)& \\
+			DT:&& \qquad \delta_x^+ = x^+ - x^{eq+} = f(x,u) - x\eq& 
+		\end{aligned} \right\}	 = f(x,u)  - f(x\eq,u\eq) \]
+		
+		Using Taylor series we have been able to approximate a non-linear system to an LTI system (for which analytical tool are acknowledged to compute the stability), however such operation can be performed to linearize a system with respect to a generic solution $\big(x^{sol}(t),u^{sol}(t)\big)$ of the non-linear system:
+		\[ \mat{\begin{array}{c|c}
+				\A(t) & \B(t) \\ \hline \C(t) & \D(t)
+		\end{array}} = \left. \mat{\begin{array}{c|c}
+			\pdl f x & \pdl f u \\ \hline \pdl h x & \pdl h u
+		\end{array}} \right|_{x^{sol}(t),u^{sol}(t)} \]
+		
+		\paragraph{Stability} In general the stability of a non-linear system strictly depends on the chosen equilibrium point (is not a system-related property as for linear systems); given a continuous time system characterized by the state equation $\dot x = f(x)$ and an equilibrium $x\eq$, then we say that that $x\eq$ is \de{locally exponentially stable} if there exists positive constants $c,\lambda,r>0$ such that
+		\[ |x(0) - x\eq| \leq r \qquad \Rightarrow \qquad |x(t) - x\eq| \leq c e^{-\lambda t} |x(0) - x\eq| \qquad \forall t\geq 0 \]
+		A similar definition holds for discrete-time non-linear system where instead we require
+		\[ |x(0) - x\eq| \leq r \qquad \Rightarrow \qquad |x(t) - x\eq| \leq c \mu^t |x(0) - x\eq| \qquad \forall t\geq 0 \qquad \textrm{with } c,\mu,r>0 \textrm{ and } \mu  < 1 \]
+		This mathematical definition express the \textit{start-close stay-close} stability statement; note that for non-linear system this is just a local property, hence there's a bound on the perturbation that results in a solution that reaches the initial equilibrium position.
+	
+		\paragraph{Theorem} Assuming that $f \in C^2$ is a function differentiable with continuity at least two time, if it's linearization about $x\eq$ is exponentially stable then it means that $x\eq$ is locally exponentially stable for $\delta x = f(x)$.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
