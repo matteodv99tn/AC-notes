@@ -302,11 +302,11 @@
 		Building the polynomial $d(s)$ as the least common denominator of all the entries in the matrix $\hat \G_{sp}(s)$ and writing him in a form
 		\[ d(s) = s^n + \alpha_1 s^{n-1} + \alpha_2 s^{n-2}+ \dots + \alpha_{n-1} s + \alpha_n \]
 		we can rewrite the strictly proper part of the transfer function as a combination of matrices $N_i$ in the following way:
-		\[ \hat \G_{sp}(s) = \frac{N(s)}{d(s)} = \frac{N_1 s^{n-1} + N_2 s^{n-2} + \dots + N_{n-1} s + N_n }{d(s)} \]
+		\[ \hat \G_{sp}(s) = \frac{N(s)}{d(s)} = \frac{N_1 s^{n-1} + N_2 s^{n-2} + \dots + N_{n-1} s + N_n }{ s^n + \alpha_1 s^{n-1} + \alpha_2 s^{n-2}+ \dots + \alpha_{n-1} s + \alpha_n} \]
 		With that said we have all the elements to compute the state space representation of the system: it can be proven in fact that the LTI has a state space representation in the form
 		\begin{equation} \label{eq:dyn:Gtostaterep}
 			\mat{\begin{array}{ c c c c | c}
-				-\alpha \I_k & - \alpha_2 \I_k & \dots & - \alpha_n \I_k & \I_k \\
+				-\alpha_1 \I_k & - \alpha_2 \I_k & \dots & - \alpha_n \I_k & \I_k \\
 				\I_k & 0 & \dots & 0 & 0 \\
 				0 & \ddots & & 0 & \vdots \\
 				0 & 0& \I_k & 0 & 0 \\ \hline
@@ -358,7 +358,7 @@
 			& = \hat \G_{sp}(s)
 		\end{align*}
 		
-		\subsubsection{LTI SISO system case and multiple realizations}		
+		\subsubsection{LTI SISO system case and multiple realizations} \label{sec:canonicalforms}
 		 A SISO (single-input single-output) LTI system is characterized by a transfer function that's simply a rational polynomial in the form
 		\[ \Gs = \frac{\beta_1 s^{n-1} + \beta_2 s^{n-2} + \dots + \beta_{n-1} s + \beta_ m}{s^n + \alpha_1 s^{n-1} + \alpha_2 s^{n-2}+ \dots + \alpha_{n-1} s + \alpha_n } \]
 		Recalling the results of equation \ref{eq:dyn:Gtostaterep}, a realization of this kind of system is characterized by the matrices
@@ -463,13 +463,13 @@
 		y = \C(t) x + \D(t) u
 	\end{cases} \]
 	is determined by equation
-	\begin{equation}
+	\begin{equation} \label{eq:lin:varconstsants}
 	\begin{split}
 		x(t) & = \overbrace{\Phi(t,t_0) x_0}^\textrm{zero-input res.} + \overbrace{\int_{t_0}^t \Phi(t,\tau) \B(\tau) u(\tau) \, d\tau}^\textrm{zero-state response} \\
 		y(t) & = \underbrace{\C(t) \Phi(t,t_0) x_0}_\textrm{homogeneous res.} + \underbrace{ \int_{t_0}^t \C(\tau) \Phi(t,\tau) \B(\tau) u(\tau)\, d\tau + \D(t) u(t) }_\textrm{forced response}
 	\end{split}
 	\end{equation}
-	TO prove that the provided solution works (we won't prove that's unique, but it happens so) we can simply derive in time the state solution and watch that matches the state equation $\dot x = \A(t) x + \B(t) u$. In order to do so we have to consider the following property in the derivation of composed function in integration, in fact
+	To prove that the provided solution works (we won't prove that's unique, but it happens so) we can simply derive in time the state solution and watch that matches the state equation $\dot x = \A(t) x + \B(t) u$. In order to do so we have to consider the following property in the derivation of composed function in integration, in fact
 	\[ \frac{d}{dt} \int_{t_0}^t f(t,\tau)\, d\tau = f(t,t) + \int_{t_0}^t \frac{d}{dt}f(t,\tau)\, d\tau \]
 	With this stated we have
 	\begin{align*}
@@ -958,31 +958,312 @@
 			\[ \A^T P \A - P < 0 \]
 			
 		\end{enumerate}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	
+
+\section{Linear quadratic regulator}
+	Assuming a continuous-time LTI system where all the staates can be measured, the best control system that we can use it the \de{linear quadratic regulator} that it's based on the minimization of the functional
+	\begin{equation}
+		\J := \int_0^\infty y^T(\tau) Q y(t) + u^T(\tau) R u(\tau)\, d\tau
+	\end{equation}
+	where $Q,R$ are two symmetric positive definite matrices. In particular the linear quadratic regular is based on the solution of the following optimal control problem known as the \textbf{\textit{Bayes Rule}}:
+	\begin{equation}
+		\J^* = \min_{u(t), \, t\geq 0} \J = \min_{u(t), \, t\geq 0} \int_0^\infty y^T(\tau) Q y(t) + u^T(\tau) R u(\tau)\, d\tau
+	\end{equation}
+	The matrices $Q,R$ are used respectively to evaluate (and penalize) the \textit{output} and \textit{control signal energy} of the system. \textbf{DA RICHIEDERE BENE QUESTA PARTE IL PERCHE}
+	
+	With the problem as here state, we can (partially) prove that the solution of the optimal control problem is characterized by the input
+	\begin{equation} \label{eq:lin:lqrsol}
+		u^*(t) = - K x(t)
+	\end{equation}
+	where $K$ is a matrix that has to be \textit{tuned} according to the chosen matrices $Q,R$ (but also on $\A,\B,\C,\D$ characterizing the system); note that the solution implies that all the states can be measured and used as input in the system.
+		
+	\paragraph{Feedback invariant} In order to prove that equation \ref{eq:lin:lqrsol} is indeed the argument minimizing the cost functional $\J$ we have to introduce the functional
+	\begin{equation} \label{eq:lin:feedbackinvariant}
+		\H\big(x(\cdot), u(\cdot)\big) := -\int_0^\infty \Big(\A x(t) + \B u(t)\Big)^T P x(t) + x^T(t) P \Big( \A x(t) + \B u(t)\Big)\, dt
+	\end{equation}
+	that is a \textbf{feedback invariant} property of the system (and depends only on the initial state) as long it holds that $\lim_{t\rightarrow \infty}(x) = 0$.
+	
+	We can prove that such functional is invariant substituting $\A x + \B u = \dot x$	and showing that
+	\begin{align*}
+		\H\big(x(\cdot), u(\cdot)\big) & = - \int_0^\infty \dot x^T P x +x^T P \dot x \, dt = - \int_0^\infty \frac d{dt} \left( x^T P x \right)\, dt = - \Big[ x^T(t) P x(t) \Big]_0^\infty \\ 
+		&  = -\cancel{x^T(\infty) P x(\infty)} + x^T(0) P x(0)  = x_0^T P x_0
+	\end{align*}
+	where the quadratic term $x^T(\infty) P x(\infty)$ has been cancelled due to the preliminary assumption that $x(\infty) = 0$.
+	
+	\paragraph{Proof} To prove that the solution $u^*(t) = -K x(t)$ is indeed the solution of the optimal control problem, we consider a system whose output depends only on the system (hence $\D$ is identically null for simplicity in calculation). Assuming that the functional $\J$ can be rewritten as
+	\[ \J = \H\big(x(\cdot), u(\cdot)\big) + \int_0^\infty \Lambda\big(x(t),u(t)\big) \, dt \]
+	where $\Lambda$ is a function characterized by having
+	\[ \min_u \Lambda\big(x,u\big) = 0 \qquad \forall x \]	
+	To show that this rewrite of the functional $\J$ is equal to the original statement we can add and subtract from the original definition the functional $\H$:
+	\[ \J = \int_0^\infty y^T(\tau) Q y(t) + u^T(\tau) R u(\tau)\, d\tau + \H(x,u) - \H(x,u) \]
+	Taking in the integral the expansion of $-\H$ and knowing that $y = \C x$ (that transposed evaluates to $(\C x)^T = x^T\C^T$) then we can rewrite
+	\begin{align*}
+		\J & = \int_0^\infty x^T\C^T Q \C x + u^TRu + \big( \A x + \B u \big)^T P x + x^T P\big(\A x+ \B u\big) \, d\tau + \H(x,u) \\
+		& = \int_0^\infty x^T\big(\C^T Q \C + \A^T P + PA \big) x + 2 x^T P \B u + u^T R u\, dt + \H(x,u)
+	\end{align*}
+	Knowing that the expected solution is in the form $ u + K x$, performing it's quadratic form respect to $R$ evaluates to
+	\[ \Lambda(x,u) = \big(u^T + x^T K^T\big) R\big(u + Kx\big) = u^T R u + x^TK^T R K x + 2 x^T K^T R u \]
+	Matching the \textit{mixed} quadratic form involving $x^T\cdot u$ in both $\J$ and $\Lambda$ allows to compute the value of the matrix $K$ as
+	\[ P\B = K^T R \qquad \Rightarrow \quad K^T = P\B R^{-1} \qquad \Rightarrow \quad K = \big(P\B R^{-1}\big)^T = \big(R^{-1}\big)^T \B^T P^T = R^{-1} \B^T P \]
+	With such choice we can rewrite the functional as
+	\begin{align*}
+		\J & = \H(x,u) + \int_0^\infty x^T\big(\C^T Q \C + \A^T P + PA \big) x + 2 x^T P \B u + u^T R u\, dt \\
+		& = \H(x,u) + \int_0^\infty x^T\big(\C^T Q \C + \A^T P + PA + P \B R^{-1} \B^TP - P \B R^{-1} \B^TP \big) x + 2 x^T P \B u + u^T R u\, dt
+	\end{align*}
+	We can so see that $x^T P \B R^{-1} \B^TP x$ matches the expansion of $\Lambda$ evaluated at $x^T K^T R K x$. With that in order to have a functional $\J$ in the form $\H(x,u) + \int_0^\infty \Lambda(x,u)\, dt$ we have to impose the condition on the quadratic term $x^T\cdot x$ determining the  \textbf{algebraic} \de{Riccati equation}:
+	\begin{equation}
+		\A^T P + P \A + \C^T Q \C - P \B R^{-1} \B^T P = 0
+	\end{equation}
+	The problem now is finding a symmetric positive definite matrix $P$ that satisfies such equation and if we ensure that $\lim_{t\rightarrow\infty}x(t) = 0$ then the solution $u^* = - Kx$ is the solution of the linear quadratic regulator; it also happens that the optimal value $\J^+$ evaluates to $H(x,u) = x_0^T P x_0$.		
+	
+	\textbf{RICONTROLLARE}
+	
+\section{Controllability}	
+	The main idea behind the \de{\textit{controllability}} is to determine what the inputs $u$ can \textit{accomplish} in the output depending on the initial states. Recalling that the whole response of a continuous-time linear time-varying system is made by a free and a forced term in the form
+	\[ x(t_1) = \Phi(t_1,t_0) x(t_0) + \int_{t_0}^{t_1} \Phi(t_1,\tau) \B (\tau) u(\tau) \, d\tau \]
+	
+	In particular given two times $t_1 > t_0 \geq 0$, we define with $\mathscr R[t_0,t_1]$ the \de{reachable set} (that's indeed a linear subspace) defined as
+	\begin{equation}
+		\mathscr R[t_1,t_2] = \left\{ x_1 \in \mathds R^n \ : \ \exists u \textrm{ such that } \int_{t_0}^{t_1} \Phi(t_1,\tau) \B(\tau) u(\tau) \, d\tau = x_1 \right\}
+	\end{equation}
+	The idea of the reachable set is to know which states the system can reach in the interval $[t_0,t_1]$ starting from a zero initial state $x(t_0) = 0$. Conversely the \de{controllable set} (that's a linear subspace) $\mathscr C[t_0,t_1]$ as the set of all the initial states $x_0 = x(t_0)$ resulting in a zero final state $x(t_1) = 0$:
+	\begin{equation}
+	\begin{aligned}
+		\mathscr C[t_1,t_2] & = \left\{ x_0 \in \mathds R^n \ : \ \exists u \textrm{ such that } \int_{t_0}^{t_1} \Phi(t_0,\tau) \B(\tau) \big(-u(\tau)\big) \, d\tau = x_1 \right\} \\
+		& = \left\{ x_0 \in \mathds R^n \ : \ \exists u \textrm{ such that } \int_{t_0}^{t_1} \Phi(t_0,\tau) \B(\tau) v(\tau) \, d\tau = x_1 \right\}
+	\end{aligned}
+	\end{equation}
+		
+	Such integral (slightly different from the reachable set) has been obtained pre-multiplying the response by the inverse $\Phi(t_1,t_0)^{-1} = \Phi(t_0,t_1)$ what we obtain is
+	\begin{align*}
+		x_1 = 0 & =  \cancel{\Phi(t_0,t_1) \Phi(t_1,t_0)} x_0 + \int_{t_0}^{t_1} \Phi(t_0,t_1) \Phi(t_1,\tau) \B (\tau) u(\tau) \, d\tau = x_0 + \int_{t_0}^{t_1} \Phi(t_0,\tau) \B(\tau) u(\tau)\, d\tau \\
+		-x_0 & = \int_{t_0}^{t_1} \Phi(t_0,\tau) \B(\tau) u(\tau)\, d\tau
+	\end{align*}
+	
+	\paragraph{Linear algebra recall} In order to ease the following definition of \textit{Gramians} a recall on concept of linear algebra is required. Given a matrix $W\in \mathds R^{m\times n}$ we define as \textit{range} or, preferably, \textbf{image} of $W$ the set
+	\[ \textrm{Im} W = \left\{ y \in \mathds R^m\, : \  y = W x \textrm{ with } x\in \mathds R^n \right\} \subseteq \mathds R^m \]
+	The dimension of the image of $W$ coincides with its \textbf{rank}, meaning the number of independent columns (and also rows) composing the matrix. The \textbf{kernel} (also referred as \textit{null space}) of the matrix is defined by the set
+	\[ \ker W = \left\{ x \in \mathds R^n \ : \ W x = 0 \right\} \subseteq \mathds R^n\]
+	The dimension $\dim\{\ker W\}$ is sometimes referred as \textit{nullity}.
+	
+	An important theorem that we have to always keep in mind is the \textbf{fundamental theorem of linear algebra} stating that for any matrix $W \in \mathds R^{m\times n}$ we have that
+	\[ \dim\{ \textrm{Im} W \} + \dim\{\ker W \} = n \]
+	Given a linear space $\mathcal V \subseteq \mathds R^n$ we can determine its \textbf{orthogonal complement} $\mathcal V^\perp$ the set defines as
+	\[ \mathcal V^\perp = \left\{ x \in \mathds R^n \textrm{ such that } x^T z = 0 \ \forall z \in \mathcal V \right\} \]
+	
+	\paragraph{Singular value decomposition} The \de{singular value decomposition} \textbf{SVD} is a particular transformation of any matrix $W \in \mathds R^{m\times n}$ that's defined as
+	\begin{equation}
+		W = U S V^T
+	\end{equation}
+	where $U,V$ are special orthogonal matrices (so such that $U^TU = UU^T = \I$ and so the vectors composing such matrices determines an orthonormal base of the space they are representing) and $S$ is a matrix containing diagonally the singular values $\sigma_i = \sqrt{\lambda_i\{W^TW\}}$ of the matrix $W$:
+	\[ P = \begin{bmatrix} \sigma_1 \\ & \ddots \\ & & \sigma_p \\ &&& 0 \\ &&&& \ddots \\ &&&&& 0 \end{bmatrix} \]
+	\textbf{MANCANO DA SCRIVERE DELLE CONSIDERAZIONI}
+	
+	\paragraph{Gramians} Given two times $t_1 > t_0 \geq 0$, the \de{Gramian} \textbf{reachability} and \textbf{controllability} of a continuous-time linear time-varying system are described by the symmetric matrices
+	\begin{equation} \label{eq:lin:gramians}
+	\begin{aligned}
+		W_\reach[t_0,t_1] & = \int_{t_0}^{t_1} \Phi(t_1,\tau) \B(\tau) \B^T(\tau) \Phi^T(t_1,\tau) \, d\tau \qquad \in \mathds R^{n\times n} \\
+		W_\control[t_0,t_1] & = \int_{t_0}^{t_1} \Phi(t_0,\tau) \B(\tau) \B^T(\tau) \Phi^T(t_0,\tau) \, d\tau \qquad \in \mathds R^{n\times n} 
+	\end{aligned}
+	\end{equation}
+	We in fact relate such matrices respectively with the reachable and controllable set as
+	\begin{equation} \label{eq:lin:gramiam}
+		\reach[t_0,t_1] = \textrm{Im} W_\reach[t_0,t_1] \hspace{2cm}
+		\control[t_0,t_1] = \textrm{Im} W_\control[t_0,t_1]
+	\end{equation}
+	Moreover denoting with $x_1 = W_\reach[t_0,t_1] \eta_1$ the resulting reachable state (similarly for controllability $x_0 = W_\control[t_0,t_1] \eta_0$) we have that the optimal input $u(t)$ that gets to such value of the states is the one determined by
+	\begin{equation} \label{eq:lin:gramoptimalsolution}
+		u^*(t) = \B^T(t) \Phi^T(t_1,t)\eta_1 \hspace{1.2cm} \forall t \in [t_0,t_1]
+	\end{equation}
+	Similarly for the controllable set the optimal output is defined as $u^*(t) = - \B^T(t) \Phi^T(t_0,t) \eta_0$.
+		
+	\paragraph{Proof} To prove the Gramian theorem (associated to equation \ref{eq:lin:gramiam}) we can firstly check that $\textrm{Im} W_\reach \subseteq \reach$ (the proof is made for the reachability of the system, but similar calculations can be performed for the observability) and then observing that $\reach \subseteq \textrm{Im} W_\reach$: this two conditions happening simultaneously indeed implies that $\reach = \textrm{Im} W_\reach$.	
+		
+	\begin{enumerate}[\itshape i)]
+		\item Taking $x_1 \in \textrm{Im} W_\reach$ a state belonging to the image of $W_\reach$, using the optimal control solution presented in equation \ref{eq:lin:gramoptimalsolution} in the variation of constant formula (equation \ref{eq:lin:varconstsants} at page \pageref{eq:lin:varconstsants} where, for the reachability, $x_0$ is assumed to be zero):
+		\begin{align*}
+			x(t_1) & = \int_{t_0}^{t_1} \Phi(t_1,\tau) \B(\tau) \B^T(\tau) \Phi^T(t_1,\tau) \eta_1 \, d\tau = \int_{t_0}^{t_1} \Phi(t_1,\tau) \B(\tau) \B^T(\tau) \Phi^T(t_1,\tau) \, d\tau \  \eta_1 \\
+			& = W_\reach[t_0,t_1] \eta_1 = x_1
+		\end{align*}
+	
+		\item Considering now that for any state $x_1 \in \reach[t_0,t_1]$ there exists at least one control input $u$ such that $x_1 = \int_{t_0}^{t_1} \Phi(t_1,\tau) \B(\tau) u(\tau) \, d\tau$ (still from the variation of constants formula), then we can show that
+		\[ x_1 \in \textrm{Im} W_\reach = \big( \ker W_\reach^T \big)^\perp = \big(
+		 \ker W_\reach \big)^\perp \]
+		For all vectors $\eta_{1k} \in \ker W_\reach$ we can prove that $x_1^T \eta_{1k} = 0$; expanding the the definition of $x(t)$ from the variation of constants we have
+		\[ x^T \eta_{1k} = \int_{t_0}^{t_1} \Phi(t_1,\tau) \B(\tau) \B^T(\tau) \Phi^T(t_1,\tau) \eta_{1k} \, d\tau \]
+		Since $\eta_{1k}$ belongs to the kernel we have that $( W_\reach \eta_{1k} )^T = \eta_{1k}^T W_\reach$, meaning
+		\begin{align*}
+			\eta_{1k}^T W_\reach[t_0,t_1] \eta_{1k} & = \int_{t_0}^{t_1} \eta_{1k} \Phi(t_1,\tau)\Phi(t_1,\tau) \B(\tau) \B^T(\tau) \Phi^T(t_1,\tau) \eta_{1k} \, d\tau  \\
+			\eta_{1k}^T 0 & = \int_{t_0}^{t_1} \big\| \B^T(\tau) \Phi^T(t_1,\tau) \eta_{1k} \big\|^2 \, d\tau = 0			
+		\end{align*}
+		Knowing that the element inside the integral is non-negative, in order to have a zero integral it must have $\B^T(\tau) \Phi^T(t_1,\tau) \eta_{1k} = 0$.
+	\end{enumerate}
+	
+	\paragraph{Theorem} Given two times $t_1 > t_0 \geq 0$:
+	\begin{itemize}
+		\item for each state $x_1 \in \reach[t_0,t_1]$ in the reachable set, the control input $u^*$ described in equation \ref{eq:lin:gramoptimalsolution} transforms the state from $x_0 = 0$ to $x_1 = W_\reach \eta_1$ with the minimum energy
+		\[ \int_{t_0}^{t_1} |u(\tau)|^2\, d\tau \]
+		Moreover it has that $\min_u \int_{t_0}^{t_1} |u^*(\tau)|^2\, d\tau = \eta_1^T W_\reach \eta_1$.
+		\item similarly for every initial state $x_0 \in \control[t_0,t_1]$ the control $u^*(t) = -\B^T(t)\Phi^T(t_0,t)\eta_0$ transforms the initial state $x_0 \neq 0$ to the final state $x_1 = 0$ with the minimum energy and the minimum value is $\eta_0^T W_\control \eta_0$.
+	\end{itemize}
+	The main idea behind this theorem is that the matrices $W_\reach,W_\control$ can be used to estimate the energy required for \textit{moving the states}.
+		
+	\paragraph{Proof} We can prove that $u^*$ minimizes the energy required for moving the states from $x_0$ to $x_1 \in \reach[t_0,t_1]$ (similar proof can be written for the controllability); considering $\tilde u(t)$ one other input that allows to \textit{achieve the goal}, so such that $\int_{t_0}^{t_1} \Phi \B \tilde u\, d\tau = x_1$, we can compute the difference between such solution and the optimal one as
+	\[ 0 = \int_{t_0}^{t_1} \Phi(t_1,\tau) \B(\tau) \underbrace{\big( u^*(\tau) - \tilde u(\tau) \big)}_{= v(z)} \, d\tau \]
+	Writing with $v(z)$ the difference $u^* - \tilde u$ between the optimal input and another valid one. Studying the minimization of the energy of the alternative input $\tilde u$, we have that
+	\begin{align*}
+		\int_{t_0}^{t_1} |\tilde u(\tau)|^2\, d \tau & = \int_{t_0}^{t_1} \tilde u^T(\tau) \tilde u(\tau)\, d\tau = \int_{t_0}^{t_1}\big(u^*(\tau) - v(\tau)\big)^T\big( u^*(\tau) - v(\tau) \big) \, d\tau \\
+		& = \int_{t_0}^{t_1} u^{*^T} u^*\, d\tau + \int_{t_0}^{t_1} v^T v\, d\tau + \int_{t_0}^{t_1} 2 u^{*^T} v\, d\tau
+	\end{align*}
+	Knowing that the ideal input $u^*$ is in the form $\B^T \Phi^T \eta_1$ (equation \ref{eq:lin:gramoptimalsolution}) we can expand the definition of the energy of the alternative input $\tilde u$ as
+	\begin{align*}
+		\int_{t_0}^{t_1} |\tilde u|\, d\tau & = \eta_1^T \int_{t_0}^{t_1} \Phi \B \B^T \Phi\, d\tau\ \eta_1 + \int_{t_0}^{t_1} |v|^2\, d\tau - 2 \eta_1^T \cancelto{0}{\int_{t_0}^{t_1} \Phi\B v \, d\tau} \\
+		& = \eta_1^T W_\reach \eta_1 + \int_{t_0}^{t_1} |v|^2\, d\tau
+	\end{align*}
+	The mixed terms has been driven to zero considering the initial condition on the proof; considering that $|v|$ is a non-negative quantity, it means that integrating over time results in an increment on the energy spent and the optimal solution $u^*$ minimizes the energy to the minimum value $\eta_1^T W_\reach \eta_1$.
+	
+	\subsubsection{Continuous-time linear time-invariant case}
+		Considering the case of continuous-time LTI systems the definitions of the Gramian reachability (equation \ref{eq:lin:gramians}) can be simplified: considering in fact that $\Phi(t_1,\tau) = e^{\A(t_1-\tau)}$ we have that
+		\begin{equation}
+			W_\reach[t_0,t_1] = \int_{t_0}^{t_1} e^{\A(t_1-\tau)} \B \B^T e^{\A^T(t_1-\tau)}\, d\tau \quad \xrightarrow{t_1-\tau = t} \quad \int_0^{t_1-t_0} e^{\A t} \B \B^T e^{\A^T t}\, dt
+		\end{equation}
+		Similarly for the controllability Gramian we obtain
+		\[ W_\control[t_0,t_1] = \int_{t_0}^{t_1} e^{\A(t_0-\tau)} \B \B^T e^{\A^T(t_0-\tau)}\, d\tau \quad \xrightarrow{t_0-\tau = - t} \quad \int_0^{t_1-t_0} e^{-\A t} \B \B^T e^{-\A^T t}\, dt \]	
+		To solve the dynamic of such system we can use the so called \de{controllability matrix} $R\in \mathds R^{n\times (kn)}$ defined as the \textit{concatenation} of matrices in the form
+		\begin{equation} \label{eq:lin:controllabilitymatrix}
+			R = \mat{ \B &\A\B &\A^2\B &\dots & \A^{n-1}\B }
+		\end{equation}
+		As consequence a theorem states that for any two times $t_1 > t_0 \geq 0$ for a continuous-time linear time-invariant system we have that
+		\[ \reach [t_0,t_1] = \textrm{Im} W_\reach[t_0,t_1] = \textrm{Im} R = \textrm{Im} W_\control[t_0,t_1] = \control[t_0,t_1] \]
+		meaning that,in this case, the controllability and reachability subspaces are the same, they coincides. As consequent property we can consider the \textit{time reversibility}, meaning that a state is controllable if and only if its reachable, and also the \textit{time scaling}, meaning that reachability/controllability does not depend on the time difference $t_1-t_0$ (in fact there always exists a input $u(t)$ that allows to reach the desired state in a \textit{arbitrarily small time}).
+		
+		\paragraph{Proof} To prove that controllability and reachability set are coincident, we can prove that $\reach \subseteq \textrm{Im} R$ as a first step and then prove that $\textrm{Im} R \subseteq \textrm{Im} W_\reach$ (considering that is already proven that $\reach = \textrm{Im} W_\reach$); similarly it can be proven that $\textrm{Im} R = \textrm{Im} W_\control = \control$.
+		\begin{enumerate}[\itshape i)]
+			\item considering a state $x_1 \in \reach[t_0,t_1]$ means that exists an input $u(t)$ such that
+			\[ x_1 = \int_{t_0}^{t_1} e^{\A(t_1-\tau)} \B u(\tau)\, d\tau \]
+			Using the Cayley-Hamilton theorem (equation \ref{eq:lin:cayley}, page \pageref{eq:lin:cayley}) we can rewrite this expression as
+			\[ x_1 = \int_{t_0}^{t_1} \sum_{i=0}^{n-1} \alpha_i(t_1-\tau)\A^i \B u(\tau)\, d\tau = \sum_{i=0}^{n-1} \A^i \B \int_{t_0}^{t_1} \alpha_i\big(t_1-\tau\big) u (\tau)\, d\tau  \]
+			This expression can be rewritten as a linear combination of the form
+			\[ x_1 = \underbrace{\mat{ \B  & \A\B & \dots & \A^{n-1}\B }}_R \underbrace{\vet{\int_{t_0}^{t_1} \alpha_0(t_1-\tau) u(\tau)\, d\tau \\ \int_{t_0}^{t_1} \alpha_1(t_1-\tau) u(\tau)\, d\tau \\ \vdots \\ \int_{t_0}^{t_1} \alpha_{n-1}(t_1-\tau) u(\tau)\, d\tau  }}_\nu  \]
+			Having $\nu$ a vector we indeed have that $x_1$ is in the image set of $R$ because it can be regarded as $R\nu$.
+			
+			\item it has been previously proven that $\B^T\Phi^T(t_1,\tau) \eta_{1k} = 0$ for any vector $\eta_{1k} \in \ker W_\reach[t_0,t_1]$ and $\forall \tau \in [t_0,t_1]$ in the time-variant case, considering a LTI system we have that
+			\[ (a) \qquad \B^T e^{\A^T(t_1-\tau)} \eta_{1k} = 0 \]
+			Deriving with respect to time this expression transposed evaluates to $\frac{d}{dt} (a)^T = -\eta_{1k}^T \A e^{\A(t_1-\tau)} \B$ and more generally we can express
+			\[ \frac{d^i}{dt^i} (a)^T = (-1)^i \eta_{1k}^T \A^i e^{\A(t_1-\tau)} \B = 0 \]
+			Evaluating this derivatives for $\tau = t_1$ results in $\eta_{1k}^T \A^i \B = 0$ $\forall i$; for any state $x_1 = R\nu \in \textrm{Im} W_\reach[t_0,t_1]$ we so have that
+			\begin{align*}
+				x_1 ^T \eta_{1k} & = \eta_{1k}^T x_1 = \eta_{1k}^T R\nu = \eta_{1k}^T \mat{ \B  & \A\B & \dots & \A^{n-1}\B } \nu \\
+				& = \mat{ \cancelto{0}{\eta_{1k}^T \B}  & \cancelto{0}{\eta_{1k}^T \A \B} & \dots & \cancelto{0}{\eta_{1k}^T \A^{n-1} \B} } \nu
+			\end{align*}
+			This means that $x_1 \perp \eta_{1k}$ for any vector $\eta_{1k} \in \ker W_\reach$, meaning that $x_1$ belongs to the orthogonal subspace $(\ker W_\reach)^\perp$. Knowing that in general $\textrm{Im} W = (\ker W^T)^\perp$, but in this case $W_\reach$ is symmetric we have that $\textrm{Im} W_\reach = (\ker W_\reach)^\perp$ and so we have that $\textrm{Im} R \subset \textrm{Im} W_\reach$.
+		\end{enumerate}
+		We can so state that in general the reachable/controllable subspaces, for LTI systems, are properties of the system itself and are determined only by the matrices $\A$ and $\B$.
+		
+	\subsubsection{Discrete-time systems}
+		\paragraph{Discrete-time LTV} With the linear continuous-time system analysed (both time-variant and invariant), the same concepts regarding the controllability (reachability) of system can be described also for the discrete-time case. Given the state-space representation $x^+ = \A(t) x + \B(t) u$, from the variation of constant formula we have 
+		\[ x(t_1) = \Phi(t_1,t_0) x_0 + \sum_{\tau=t_0}^{t_1-1} \Phi(t,\tau+1) \B(\tau) u(\tau) \]
+		Given so 2 times $t_1 > t_0 \geq 0$, we can define the $[t_0,t_1]$-reachable subspace and the $[t_0,t_1]$-controllable one the sets described as
+		\begin{align*}
+			\reach[t_0,t_1] & = \left\{ x_1 \textrm{ such that } \exists u(t) \textrm{ with } t = t_0,t_0+1,\dots, t_1-1 \ : \ x(t_1) = \sum_{\tau=t_0}^{t_1-1} \Phi(t,\tau+1) \B(\tau) u(\tau) \right\} \\
+			\control[t_0,t_1] & = \left\{ x_0 \textrm{ such that } \exists u(t) \textrm{ with } t = t_0,\dots, t_1-1 \ : \ 0 = \Phi(t_1,t_0) x_0 + \sum_{\tau=t_0}^{t_1-1} \Phi(t,\tau+1) \B(\tau) u(\tau) \right\}
+		\end{align*}
+		Moreover if the matrix $\A$ is non-singular $\forall t \in [t_0,t_1]$, then the state transition matrix $\Phi$ can be inverted and we can re-define the controllable set as
+		\[ \control[t_0,t_1] = \left\{ x_0 \textrm{ such that } \exists v(t) = -u(t) \ : \ x_0 = \sum_{\tau = t_0}^{t_1-1} \Phi(t_0,\tau+1) \B(\tau) v(\tau) \right\}  \]
+		The \textbf{discrete-time Gramians} of the system are defined as
+		\[ W_\reach = \sum_{\tau = t_0}^{t_1 - 1} \Phi(t_1,\tau+1) \B(\tau) \B^T(\tau) \Phi^T(t_1,\tau+1) \qquad W_\control = \sum_{\tau = t_0}^{t_1 - 1} \Phi(t_0,\tau+1) \B(\tau) \B^T(\tau) \Phi^T(t_0,\tau+1) \]
+		Observe that the controllable Gramian $W_\control$ is valid only if the matrix $\A$ is non-singular in the domain $[t_0,t_1]$ (as for the second definition of the set itself).
+		
+		It still holds that $\textrm{Im} W_\reach[t_0,t_1] = \reach[t_0,t_1]$ and $\textrm{Im} W_\control[t_0,t_1] = \control[t_0,t_1]$ for any times $t_1 > t_0 \geq 0$ and, moreover, if $x_1 = W_\reach \eta_1 \in \textrm{Im} W_\reach$ is a state in the reachable set, then the control $u^*(t) = \B^T(t) \Phi^T(t_1,t+1) \eta_1$ moves $x_0 = 0$ to $x_1\neq 0$ with the minimum energy; similarly for the control set if we have $x_0 = W_\control \eta_0$, them the optimal control is $u^*(t) = - B^T(t)\Phi^T(t_0,t+1)\eta_0$.
+		
+		\paragraph{Discrete-time LTI} Considering a system with state-space representation $x^+ = \A x + \B u$, then if $\A$ is invertible and knowing that $\Phi(t_1,\tau) = \A^{t_1-\tau}$ performing some change of variables we can rewrite the Gramians of discrete-time LTI systems as
+		\[ W_\reach = \sum_{s=0}^{t_1-t_0-1} \A^s \B \B^T \big(\A^T\big)^s \hspace{2cm} W_\control = \sum_{s=0}^{t_1-t_0-1} \A^{-s-1} \B \B^T \big(\A^T\big)^{-s-1} \]
+		Also in this case we can say that for any $t_1 > t_0 \geq 0$ 
+		\[ \reach [t_0,t_1] = \textrm{Im} W_\reach[t_0,t_1] = \textrm{Im} R = \textrm{Im} W_\control[t_0,t_1] = \control[t_0,t_1] \]
+		if we assume that $\A$ is invertible (for the controllability property) and $t_1 \geq t_0 +n $ (this is due to the fact that \textit{we cannot scale the input in time as much as we want}).
+	
+	\subsection{State feedback and single input eigenvalue assignment}
+		Given a linear time-invariant system that's so characterized by a state-space response $x^+/\dot x = \A x + \B u$, if we can measure all the states then we can assign as input $u$ a linear combination of them, hence $u = - K x$ (where $K$ is a matrix): this means that the states variations corresponds to a form
+		\[ \dot x = \big(\A- \B K\big) x \]
+		
+		\paragraph{Single input eigenvalue assignment theorem} Considering a controllable (meaning that $\reach = R^n$) single input LTI system characterized by the pair of matrices $\A,\B$, then for each set $\lambda_1,\dots,\lambda_n$ of desired eigenvalues there always exists a matrix $K \in \mathds R^{k\times n}$ such that
+		\begin{equation}
+			\A_{cl} = \A - \B K \qquad \textrm{has eigenvalues } \lambda_1,\dots, \lambda_n
+		\end{equation}
+		where $\A_{cl}$ is usually referred as the \de{\textit{closed loop matrix}}. The goal is now to find a \textit{procedure} to determine such matrix $K$ that allows us to determined the desired eigenvalues.
+		
+		\vspace{3mm}
+		Recalling the standard controllable form of a system (seen in page \pageref{sec:canonicalforms}) that's characterized by the matrices
+		\[ \A_{ctr} = \mat{\begin{array} {c | c c c} & \\
+			0 & & \I \\ & \\  \hline
+			-\alpha_0 & -\alpha_1 & \dots & -\alpha_{n-1}				
+		\end{array}} \qquad \B_{ctr} = \mat{0 \\ \vdots \\ 0 \\ 1} \]
+		where the coefficients $\alpha_i$ are the coefficient of the characteristic polynomial of the original matrix $\A$ in the form
+		\[ p_\A(s) = s^n + \alpha_{n-1} s^{n-1} + \dots + \alpha_1 s + \alpha_0 \]
+		Having in this case a single input system, it means that the desired matrix $K$ is a row vector in the form $K = \mat{k_0 & \dots & k_{n-1}}$. In order to compute such matrix, we can start off by building the characteristic polynomial associated to the desired eigenvalues of the closed loop matrix in the form
+		\[ p_{\A_{cl}}(s) = (s-\lambda_1) \dots  (s - \lambda_2) = s^n + \beta_{n-1} s^{n-1} + \dots + \beta_1 s + \beta_0 \]
+		By equating the controllable form of the closed loop matrix with the one obtained by $\A_{ctr} - \B_{ctr}K$ we have that
+		\[ \mat{\begin{array} {c | c c c} & \\
+				0 & & \I \\ & \\  \hline
+				-\beta_0 & -\beta_1 & \dots & -\beta_{n-1}				
+		\end{array}} = \mat{\begin{array} {c | c c c} & \\
+			0 & & \I \\ & \\  \hline
+			-\alpha_0 - k_0 & -\alpha_1 - k_1 & \dots & -\alpha_{n-1} - k_{n-1}				
+		\end{array}}  \]
+		meaning that the coefficients $k_i$ of the matrix $K$ can be evaluates as $k_i = \beta_i - \alpha_i$.
+		
+		In the more general case where $\A,\B$ are not in controllable form but are \textit{generic} matrices, we can show that if $R$ is non-singular, then the product $R^{-1}\A R$ evaluates to the matrix $\A_{ob}$ in observable form and $R^{-1} \B = \B_{ob}$ (where $R$ is the controllability matrix seen at page \pageref{eq:lin:controllabilitymatrix}) described as
+		\[ \A_{ob} = \mat{\begin{array} {c c c | c} 
+			& 0 & & -\alpha_0 \\ \hline
+			&&& -\alpha_1 \\ & \I & & \vdots \\ &&& -\alpha_{n-1}				
+		\end{array}} \qquad \B_{ob} = \mat{1 \\ 0 \\ \vdots \\ 0} \]
+		This relations can be proven considering that
+		\begin{align*}
+			R \A_{ob} & = \mat{ \B &\A\B &\dots & \A^{n-1}\B } \mat{\begin{array} {c c c | c} 
+				& 0 & & -\alpha_0 \\ \hline
+				&&& -\alpha_1 \\ & \I & & \vdots \\ &&& -\alpha_{n-1}				
+			\end{array}} \\
+			& = \mat{ \begin{array}{c c c  | c}
+				&&& \\
+				\A \B & \dots &  \A^{n-1}\B & x \\ &&&
+			\end{array} }
+		\end{align*}
+		where $x$ is a vector determines as the linear combination $x = -\alpha_0 \B - \alpha_1 \A \B - \dots - \alpha_{n-1} \A^{n-1}\B$ (where note that all the products $\A^k\B$ are column vectors). Collecting $\B$ we have that
+		$x = \big(-\alpha_0 \I - \alpha_1 \A  - \dots - \alpha_{n-1} \A^{n-1} \big) \B$ and recalling the Cayley-Hamilton theorem (equation \ref{eq:lin:cayley}, page \pageref{eq:lin:cayley}) we can consider that the term in the parenthesis exactly as $\A^n$, hence
+		\[ R \A_{ob} = \mat{ \A \B & \dots &  \A^{n-1}\B & \A^n \B } = \A \mat{ \B &\A\B &\dots & \A^{n-1}\B } = \A R \]
+		The proof of $R^{-1}\B=\B_{ob}$ is straightforward and can be obtained considering that $R \B_{ob}$ is indeed $\B$. We can so prove that for each observable form there exists a matrix $M$ such that $M^{-1} \A_{ob} M = \A_{ctr}$ and $M^{-1}\B_{ob} = \B_{ctr}$ that allows to determine the canonical form. In particular $M$ is the symmetric matrix defines as
+		\[ M = \mat{ \alpha_1 & \alpha_2 & \dots & \alpha_{n-1} & 1 \\
+		\alpha_2 & \reflectbox{$\ddots$} & & \reflectbox{$\ddots$} \\
+		\vdots & & \reflectbox{$\ddots$} \\
+		\alpha_{n-1} & \reflectbox{$\ddots$}\\
+		1 } \]
+	
+		We can in fact show that
+		\[ M \A_{ctr} = \mat{\begin{array} {c c c | c} 
+				& \alpha^T & & 1\\ \hline
+				&&& 0 \\
+				& M_{21} & & \vdots \\
+				&&& 0
+		\end{array}} \mat{\begin{array} {c | c c c} 0 & \\
+			\vdots & & \I \\ 0 & \\  \hline
+			-\alpha_0 & & -\alpha^T			
+		\end{array}} = \mat{\begin{array} {c | c c c}
+			-\alpha_0  & 0 & \dots & 0 \\ \hline
+			0 & \\ 
+			\vdots & & M_{21} \\
+			0 & 
+		\end{array}} \]
+		where $M_{21}$ is a symmetric submatrix of $M$ and $\alpha$  is the column vector $(\alpha_1,\dots,\alpha_{n-1})$. Observing that the resulting matrix is symmetric we have that
+		\[ M \A_{ctr} = \big(M \A_{ctr}\big)^T = \A_{ctr}^T M^T = \A_{ob} M \]
+		
+		\vspace{3mm}
+		With all this proofs we have the ability now to explicit the general procedure that allows to determine the matrix $K$ that determines the closed loop matrix $\A_{cl} = \A -\B K$ whose eigenvalues are the desired $\lambda_1,\dots, \lambda_n$. Choosing in particular $T= RM$ what we have is that
+		\[ T^{-1} \A T = \A_{ctr} \qquad \textrm{and} \qquad T^{-1} \B = \B_{ctr} \]
+		Determined the controllable forms of both $\A$ and $\B$ we can compute the matrix $K_{ctr}$ by computing the characteristic polynomials $p_{\A_{ctr}}(s)$ and $p_{\A_{cl}}(s)$ and by matching the coefficients we determine the entries of $K_{ctr}$ as $k_i = \beta_i - \alpha_i$. In particular $K$ associated to the initial matrices $\A,\B$ evaluates to
+		\[ K = K_{ctr} T^{-1} \]
+		
+		\paragraph{Ackerman} Another formula used to compute such matrix $K$ in order to assign the eigenvalues to $\A - \B K$ is by applying the \textbf{Ackerman equation}
+		\[ K = \mat{0 & \dots & 0 & 1} R^{-1} p_{\A_{cl}} (\A) \]
+		
+		
 		
