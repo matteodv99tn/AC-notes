@@ -1,0 +1,414 @@
+\chapter{Kalman decomposition, stabilizability and detectability}
+\section{Kalman decomposition}
+	The \de{Kalman decomposition} can be seen as combination of both controllable and observable decompositions: considering in fact a generic LTI system $\dx/\xp = \A\x+\B\u$, $\y = \C \x$ what we can have are
+	\begin{itemize}
+		\item $co$ controllable and observable states;
+		\item $\overline c o$ uncontrollable but observable states;
+		\item $c\overline o$ controllable but unobservable states;
+		\item $\overline{co}$ uncontrollable and unobservable states.
+	\end{itemize}
+
+	Knowing that the unobservable states $\overline o$ are computed as $\kernel\O$ and the controllable states as $\image\R$, their intersection will evaluate in the unobservable and controllable $c\overline o$ part of the system. With this idea in mind we can build a \textbf{similarity transformation} $\T \in \mathds R^{n\times n}$ defined as
+	\begin{equation}
+		\T= \matrix{ \V_{co} &  \V_{c\overline o} & \V_{\overline co} & \V_{\overline{co}} }
+	\end{equation}
+	where
+	\begin{itemize}
+		\item the vectors of $\V_{c\overline o}$ are a basis of $\image{\R} \cap \kernel \O$;
+		\item the vectors of $\V_{c o}$ are the completion of $\image{\R}$;
+		\item the vectors of $\V_{\overline{c o}}$ are the completion of $\kernel{\O}$;
+		\item the vectors of $\V_{\overline c o}$ are the completion of $\mathds R^n$;
+	\end{itemize}
+	With the similarity transformation so defined, the resulting description of the algebraically equivalent system is split accordingly to definitions of controllable and unobservable states as
+	\begin{equation} \label{eq:kal:decomp}
+	\begin{split}
+		\dot{\overline \x}/\overline \x^+ & = \matrix{ \A_{co} & 0 & \A_{13} & 0 \\
+		\A_{21} & \A_{c\overline o} & \A_{23} & \A_{24} \\ 0 & 0 & \A_{\overline co} & 0 \\
+		0 & 0 & \A_{43} & \A_{\overline{co}}  } \vector{\x_{co} \\ \x_{c\overline o} \\ \x_{\overline co} \\ \x_{\overline{co}} } + \matrix{\B_{co} \\ \B_{c\overline o} \\ 0 \\ 0} \u \\
+		\y & = \matrix{\C_{co} & 0 & \C_{\overline c o} & 0} \overline \x
+	\end{split}
+	\end{equation}
+	\begin{theorem} \label{th:kal:decomp}
+		Each LTI realization can be transformed in it's \de{Kalman decomposition} (\ref{eq:kal:decomp}) where
+		\begin{enumerate}[\itshape i)]
+			\item the pair $\left( \matrix{\A_{co} & 0 \\ \A_{21} & \A_{c\overline o} }, \matrix{\B_{co}\\ \B_{c\overline o} } \right)$ is controllable;
+			\item the pair $\left( \matrix{\C_{co} & \C_{\overline co}} , \matrix{\A_{co} & \A_{13} \\ 0 & \A_{\overline c o} } \right)$ is observable;
+			\item the triple $(\C_{co}, \A_{co}, \B_{co})$ is controllable and observable;
+			\item the transfer function of the system is
+			\begin{equation} \label{eq:kal:transferfun}
+				\G(s) = \C\big(s\I-\A\big)^{-1} \B = \C_{co}\big(s\I -\A_{co}\big)^{-1} \B_{co}
+			\end{equation}
+		\end{enumerate}
+	\end{theorem}
+	
+	\begin{proof}
+		The proof of \textit{i)}, \textit{ii)} and \textit{iii)} is quite straightforward as, by construction, $\T$ is built considering the \textit{rules} shown for both controllable and observable decomposition. The most interesting result of this theorem is \textit{iv)}, expressing that the transfer function of a system is associated only to the controllable and observable component of the system.
+		
+		Considering now that algebraically equivalents systems are zero-state invariant, this implies
+		\[ \G(s) = \C\big(s\I-\A\big)^{-1} \B = \overline \C \big(s\I- \overline \A\big)^{-1}\overline \B  \]
+		Considering now the \textit{structure} (\ref{eq:kal:decomp}) of the provided Kalman decomposition, we can expand the computation as
+		\begin{align*}
+			\G(s) & = \overline \C \left(s\I- \matrix{\A_1 & * \\ 0 & \A_2} \right)^{-1}\matrix{\B_1 \\ 0} = \overline \C \matrix{(s\I-\A_1)^{-1} & * \\ 0 & (s\I-\A_2)^{-1}} \matrix{\B_1 \\ 0} \\
+			& = \overline \C \matrix{(s\I-\A_1)^{-1} \B_1 \\ 0} = \matrix{\C_{co} & 0 & * & *} \matrix{\left( s\I - \matrix{\A_{co} & 0 \\ * & \A_{c\overline o}} \right)^{-1}\B_1 \\ 0 \\ 0} \\
+			& = \matrix{\C_{co} & 0 & * & *} \matrix{ (s\I-\A_{co})^{-1} & 0 & 0 & 0 \\ * & (s\I-\A_{c\overline o})^{-1} & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 } \matrix{\B_{co} \\ \B_{c\overline o} \\ 0 \\ 0}
+		\end{align*} 
+		Computing the matrix product gives indeed (\ref{eq:kal:transferfun}), proving that the forces response of a system depends lonely on the controllable and observable states.
+	\end{proof}
+
+\section{Stabilizability}
+	In chapter \ref{ch:controllability} it was discussed the concept of reachability/controllability as the set of all \textit{achievable} states of the plant and controllable systems as the ones where \textit{all configurations are allowed}. However in reality not all LTI systems are controllable, meaning that some states can't be \textit{accessed} with the provided inputs, leading potentially to a bad behaviour of the system.
+	
+	Recalling the controllable decomposition seen at page \pageref{eq:gram:controllabledecomposition} we have that each LTI system can be written in a form
+	\[ \vector{\dx_c/\xp_c \\ \dx_{\overline c}/\xp_{\overline c}} = \matrix{ \A_c & \A_{12} \\ 0 & \A_{\overline c} } \vector{\x_c \\ \x_{\overline c}} + \matrix{\B_c \\ 0} \u \tag{$\star$}\] 	
+	As we can see from this formulation, we can't act with inputs on the uncontrollable states (as expected), however those states can have a direct influence on the controllable states through the matrix $\A_{12}$: this means that if $\x_{\overline c}$ starts diverging, the dynamics of the systems can't be controlled (it would require infinite actuator effort).
+	
+	We say that a pair $(\A,\B)$ is \de{stabilizable} if it's \textbf{controllable decomposition} is such that the matrix $\A_{\overline c}$ is either \textbf{empty} (hence the system is controllable) or \textbf{Hurwitz} (or Schur for discrete-time systems).
+	
+	The main idea behind stabilizability is that even if the system is uncontrollable ($\A_{\overline c}$ is non-zero), the uncontrollable states present a converging behaviour \textit{by themselves}: with this assumption, even if we can't access those states, they will eventually not impact the controllable states (as they converge to zero) allowing the possibility to generate an input controlling them.
+	
+	\paragraph{Eigenvector test for stabilizability} The pair $(\A,\B)$ is stabilizable if and only if each \textit{bad} eigenpair $(\lambda, \x)$ of the matrix $\A^T$ is not in the kernel of $\B^T$ ($\B^T\x = 0$).
+	
+	In this case we consider \textit{bad} eigenvalues the one that are making the LTI system not exponentially stable, so for continuous-time system where $\Re\lambda \geq 0$ and for the discrete-time counterpart when $|\lambda|\geq 1$.
+	
+	\begin{proof}
+	\begin{enumerate}[\itshape a)]
+		\item firstly we show that if $(\A,\B)$ is stabilizable then no bad eigenpairs of $\A^T$ are in the kernel of $\B$. By contradiction let consider a bad eigenpair $(\lambda,\x)$ for which it holds $\A^T\x = \lambda \x$ and $\B^T\x= 0$; given the similarity transformation $\T$ leading to the controllable decomposition $\overline \A = \T^{-1}\A\T$, then we have that $\A = \T \overline \A \T^{-1}$ where $\overline \A$ is in controllable canonical form ($\star$). Computing
+		\[ \A^T = \T^{-T} \overline \A^T \T^T \qquad \Rightarrow \qquad \T^{-T}\overline \A \T^T\x = \lambda \T^{-T} \T^T \x \]
+		and also having $\overline \B = \T^{-1}\B$ leading to
+		\[ \B^T = \overline \B \T^T \]
+		gives
+		\[ \begin{cases}
+			\T^{-T}\overline \A^T \T^T\x = \lambda \T^{-T} \T^T \x \\ \overline \B \T^T \x = 0
+		\end{cases} \]
+		Observing now that the product $\T^T\x$ splits the controllable and uncontrollable states giving the form $(\x_c, \x_{\overline c})$, then we can regard the previous system as
+		\[ \begin{cases}
+			\matrix{\A_c^T & 0 \\ \A_{12}^T & \A_{\overline c}^T} \vector{\x_c \\ \x_{\overline c}} = \lambda \vector{\x_c \\ \x_{\overline c}} \\
+			\matrix{\B_c^T & 0 } \vector{\x_c \\ \x_{\overline c}} = 0
+		\end{cases} \]
+		The second equation tells us that $\x_c$ must be zero (in order to have the identity), so the non-zero part must lie into $\x_{\overline c}$. Implicitly this means that the chosen $\lambda$ is an eigenvalue of the uncontrollable part $\A_{\overline c}$ of the system, because it must satisfy
+		\[ \A_{\overline c}\x_{\overline c} = \lambda \x_{\overline c} \]
+		However if $\lambda$ is a bad eigenvalue means that the uncontrollable part cannot be stabilized, contradicting the original assumption that was stating that the system was indeed stabilizable (this means that the eigenvalue doesn't pertain to $\A_{\overline c}$ but rather on $\A_c$).
+			
+		\item We can show now that if $(\A,\B)$ is not stabilizable, then there exists a bad eigenpair $(\lambda,\x)$ of $\A^T$ for which $\B^T\x = 0$. Let us suppose that exists  an eigenvector $\x_{\overline c}$ with a bad eigenvalue $\lambda \in \mathds C_{bad}$, so satisfying $\A_{\overline c}^T \x_{\overline c} = \lambda \x_{\overline c}$; building the vector $\overline \x$ as $(0, \x_{\overline c})$ we can observe that
+		\[ \overline \A^T \overline \x = \matrix{\A_c^T & 0 \\ \A_{12}^T & \A_{\overline c}^T} \vector{0 \\ \x_{\overline c}} = \vector{0 \\ \A_{\overline c}^T\x_{\overline c}} = \lambda \vector{0 \\ \x_{\overline c}} = \lambda \overline \x  \]
+		and
+		\[ \overline \B^T\overline \x = \matrix{\B_c^T & 0} \vector{0 \\ \x_{\overline c}} = 0 \]
+		Defining $\x$ as $\T^{-T}\overline \x$, then we can regard the products $\A^T\x$ and $\B^T\x$ as
+		\[ \A^T \x = \T^{-T}\overline \A^T \cancel{\T^T\T^{-T}} \vector{0 \\ \x_{\overline c}} = \T^{-T}\overline \A^T \overline \x = \T^{-T}\lambda \overline \x = \lambda \T^{-T}\overline \x = \lambda \x \]
+		\[ \B^T\x = \overline \B^T\T^T\T^{-T}\vector{0 \\ \x_{\overline c}} = \matrix{\B_c^T & 0} \vector{0 \\ \x_{\overline c}} = 0 \]
+		With that we showed that if $(\A,\B)$ is not stabilizable then we can find a bad eigenpair $(\lambda,\x)$ of $\A^T$ for which the eigenvector $\x$ lies in the kernel of $\B^T$.
+	\end{enumerate}
+	\end{proof}
+	
+	\paragraph{PBH test for stabilizability} A pair $(\A,\B)$ is stabilizable if and only if the matrix $\matrix{\A-\lambda \I & \B}$ is full rank for any bad eigenvalue $\lambda \in \mathds C_{bad}$.
+
+	\paragraph{Lyapunov test for stabilizability} A pair $(\A,\B)$ is stabilizable if and only if exists a symmetric positive-definite matrix $\mat W$ such that
+	\begin{equation} \label{eq:kal:temp1}
+		(CT): \quad \A\mat W + \mat W \A^T - \B\B^T < 0 \hspace{2cm} (DT):\quad \A\mat W\A^T - \mat W - \B\B^T < 0
+	\end{equation}
+	Note that the main difference from the Lyapunov test for controllability is that in that case we required a-priori that $\A$ was Hurwitz (Schur), while in this case this hypothesis isn't required.
+	
+	\begin{proof}
+		\textbf{TO BE REWRITTEN}
+	\end{proof}
+	
+	\paragraph{Stabilization with full-state feedback} Starting from the Lyapunov equality (\ref{eq:kal:temp1}) a way to \textbf{stabilize} a stabilizable system using a \textbf{full-state feedback} control is by choosing as feedback matrix $\K$ the one defined as $\frac 1 2 \B \mat W^{-1}$.
+	\begin{theorem}
+		A pair $(\A,\B)$ is stabilizable if and only if there exists a feedback matrix $\K$ such that the full-state feedback has a close-loop matrix $\A_{cl} = \A-\B\K$ that's Hurwitz (Schur).
+	\end{theorem}
+	Stabilizability is an intrinsic property of the LTI system, meaning that it doesn't depend on the realization chosen (if a system is stabilizable, also all its algebraically equivalent systems are so), and knowing that the uncontrollable states \textit{are going to zero by their own}, then we can stabilize (with a proper feedback) the controllable ones.
+	
+	As final remark, stabilizability is a weaker condition the controllability: a controllable system is always stabilizable while stabilizable system might not be controllable.
+	
+\section{Detectability}
+	\de{Detectability} can be regarded as the dual case of stabilizability applied to the observability of a system. In fact we say that a pair $(\C,\A)$ is \de{detectable} if it's observable decomposition (\ref{eq:obs:temp4}) has a matrix $\A_{\overline o}$ that's either empty (meaning that the system is observable) or Hurwitz (Schur).
+	
+	What this definition tells us that if the system is not observable (so $\A_{\overline o}\neq 0$), the unobservable dynamics presents a exponential converging behaviour that leads to unobservable states that are approximatively zero: this means that, even if we can't measure those states, they eventually reach the zero value by themselves.
+	
+	\paragraph{Tests for detectability} As for stabilizability, 3 tests can be developed in order to check the detectability of the system:
+	\begin{itemize}
+		\item \textit{eigenvector test:} a pair $(\C,\A)$ is detectable if and only if any bad eigenvector for the matrix $\A$ is not in the kernel of $\C$;
+		\item \textit{PBH test:} a pair $(\C,\A)$ is detectable if and only if the matrix $\matrix{\A-\lambda \I \\ \C}$ is full-rank for all bad eigenvalues $\lambda \in \mathds C_{bad}$;
+		\item \textit{Lyapunov test:} a pair $(\C, \A)$ is detectable if and only if there exists a symmetric positive-definite matrix $\P$ such that
+		\[ (CT): \quad \A^T \mat W + \mat W \A - \C^T\C = 0 \hspace{2cm} (DT): \quad \A^T\mat W \A - \mat W -\C^T\C = 0 \]
+	\end{itemize}
+	
+\section{Asymptotic estimation: Luenberger observers}	
+	The main control technique presented throughout the book has been the \textbf{full-state feedback} for which well-established design methods have been studied and is allowing us to achieve the best possible results. The main drawback of such control technique is that it requires the knowledge of all states.
+	
+	In general what we can measure of the dynamical system are its outputs (not directly the states), however if the \textbf{pair} $(\C,\A)$ is \textbf{detectable} it is possible to \de{estimate} the states of the system to control. Calling $\x$ the \textit{true} states of the system and with $\hat \x$ their estimation, the simplest (and intuitive) estimator is simply a copy of the original system, so presenting a dynamic
+	\[ \dot{\hat\x} = \A\hat \x + \B \u \tag{$\star$} \]
+	Calling \textbf{state estimation error} $\vet e$ the difference $\hat \x - \x$, it's dynamic  can be regarded as
+	\[ \dot{\vet e} = \dot{\hat\x} - \dx = \A \hat\x + \B \u - \big(\A \x + \B \u\big) = \A \big(\hat \x - \x \big) = \A \vet e \tag{$\circ$} \]
+	Supposing that $\A$ is a stability matrix (so is Hurwitz/Schur), then we observe that the dynamics of the error converges to zero exponentially fast, and so for any arbitrary large input $\u$ we can have a good estimation $\hat \x$ of the true states $\x$ (after a certain time).
+	
+	\textbf{Luenberger observers} The main problem of ($\circ$) is that usually no system has a dynamic matrix $\A$ that's stable as is. The main goal now is to \textit{stabilize} the state estimation using two other quantities that are accessible to the control plant: the output $\y$ of the system and the estimated output $\hat \y$ of the estimator. This second quantity can be regarded simply as
+	\[ \hat \y = \C \hat \x + \D \u \tag{$\dagger$} \]
+	The dynamics of the \de{Luenberger observer} is as in ($\star$) but additionally we include a feedback determined by the difference $\hat y- \y$ that's multiplied by a \de{\textit{output injection matrix gain}} $\mat L \in \mathds R^{n\times m}$:
+	\begin{equation} \label{eq:kal:temp2}
+		\dot{\hat \x} = \A \hat \x + \B \u - \mat L \big(\hat \y - \y\big)
+	\end{equation}
+	In this case the dynamic of state estimation error evaluates to
+	\[ \dot{\vet e} = \dot{\hat \x} - \dx = \A \hat \x + \B \u - \mat L \big(\hat \y - \y\big) - \big(\A \x +\B \u) = \A\big(\hat \x - \x \big) - \mat L \big(\hat \y - \y\big) \]
+	Considering ($\dagger$) this expression further simplifies to
+	\begin{equation} \label{eq:kal:temp3}
+	\begin{split}
+		\dot{\vet e} & = \A(\hat \x - \x) - \mat L\Big( \C \hat \x + \D \u - \big( \C\x + \D\u \big) \Big) = \big(\A- \mat L \C\big) \big(\hat \x - \x\big)\\
+		& = \big(\A- \mat L \C\big)\vet e
+	\end{split}
+	\end{equation}
+	This also allows us to rewrite (\ref{eq:kal:temp2}) as
+	\begin{equation}
+		\dot{\hat \x} = \big(\A-\mat L\C\big)\hat \x + \big(\B-\mat L \D\big) \u + \mat L \y
+	\end{equation}
+	
+	From (\ref{eq:kal:temp3}) we can see that in order to have a exponentially converging behaviour of the state estimation error we need to design a output injection matrix $\mat L$ that stabilizes the closed-loop $\A - \mat L \C$: this operation is similar to what has been presented in section \ref{sec:fullstatefeed}, page \pageref{sec:fullstatefeed}, while introducing the full-state feedback and in particular the eigenvalue assignment procedure.\\
+	In that case we showed how to \textit{tune} $K$ in the close-loop $\A-\B\K$, however in this case what we have that the position of the unknown ($\mat L$ in this case) is swapped with respect to the known $\C$. In order to still use the same eigenvalue assignment procedure previously shown, we can consider the transpose
+	\[ \big(\A-\mat L\C\big)^T = \A^T - \C^T\mat L^T = \overline \A - \overline {\B\K}\]
+	Observing that the transposition operation preserves the eigenvalues of the system, then by designing the proper feedback matrix $\overline \K$ of the close-loop $\overline \A - \overline {\B\K}$ with the technique shown at page \pageref{sec:fullstatefeed}, we finally have that the output injection matrix can be computed as
+	\[ \mat L = \overline \K^T \]
+	
+	\begin{theorem} \label{th:kal:temp1}
+		There exists a matrix $\mat L$ such that the feedback $\A-\mat L\C$ is a stability matrix (Hurwitz/Schur) if and only if $(\C,\A)$ is a detectable pair.
+	\end{theorem}
+	This tells us, similarly to what has been said for stabilizability, the if we can find a matrix $\mat L$ that stabilizes the close loop $\A-\mat L\C$ then we are sure the the pair $(\C,\A)$ is detectable.
+
+	\begin{theorem}
+		Given any selection of eigenvalues $\lambda_1,\dots, \lambda_n$, there exists a matrix $\mat L$ such that $\A-\mat L\C$ has those eigenvalues if and only if the pair $(\C,\A)$ is \textbf{observable}.
+	\end{theorem}
+	Observe that this is a stronger requirement than the one presented in theorem \ref{th:kal:temp1}: in fact if we prove that, by choosing a proper $\mat L$, we can assign any desired set of eigenvalues, then we ensure that the system is observable (that's a stronger condition then detectability).
+	
+\subsection{Minimum energy estimation}
+	Dually to the linear quadratic regulator, page \pageref{sec:LQR}, we can use a functional definition to chose the proper feedback matrix $\mat L$ for the Luenberger states estimator. Given a LTI system with $\D = 0$, process disturbance $\vet d$ and sensor noises $\vet n$, the state-space representation is
+	\[\begin{cases}
+		\dx & = \A\x + \B\u + \overline \B\vet d \\ \y& = \C \x + \vet n
+	\end{cases}\]
+	The goal od the \de{minimum energy estimator} is so to find an estimate $\hat \x = \x^*$ of the states, so for which the system
+	\[\begin{cases}
+		\dot{\hat \x} & = \A \hat \x + \B \u + \overline \B \hat{\vet d} \\ \y & = \C \hat \x + \hat{\vet n}
+	\end{cases}\]
+	minimize the cost
+	\[ \mathcal J = \min_{\hat\x, \hat{\vet d}, \hat{\vet n}} \int_{-\infty}^{0} \hat{\vet n}^T(\tau)\Q \hat{\vet n}(\tau) + \hat{ \vet d}^T(\tau) \R \hat{\vet d}(\tau) \, d\tau \]
+	where $\R$ measures \textit{how good we consider our model} and $\Q$ \textit{how much we trust the sensors}. The solution of this minimal energy problem is obtained considering the \de{dual Riccati equation} defined as
+	\begin{equation}
+		\mathcal J^* = \int_{-\infty}^t \big(\C \hat{\x}(\tau) - \y(\tau) \big)^T\Q \big( \C \hat \x(\tau) - \y(\tau) \big) - \hat{\vet d}^T (\tau) \R \hat{\vet d} (\tau) \, d\tau 
+	\end{equation}
+	From this we can also develop the feedback invariants similar to (\ref{eq:lyap:LQRinvariants}), page \pageref{eq:lyap:LQRinvariants}, that are
+	\begin{equation} \label{eq:kal:LQRinv}
+		\A \S + \S\A^T + \hat \B \R^{-1} \hat \B^T - \S\C^T\Q\C \S = 0
+	\end{equation}
+	\begin{theorem}
+		If there exists a symmetric positive-definite matrix $\S$ solution of (\ref{eq:kal:LQRinv}) such that $\A - \S\C^T\Q\C$ is Hurwitz,  then the minimum energy estimation problem is solved by a Luenberger observer with feedback matrix
+		\begin{equation}
+			\mat L = \S \C^T \Q
+		\end{equation}
+	\end{theorem}
+	\begin{theorem}
+		Assume that the pair $(\A,\hat \B)$ is stabilizable and that $(\C,\A)$ is a detectable pair, then we are sure that exists $\S = \S^T > 0$ that determines a \textit{stable} solution of (\ref{eq:kal:LQRinv}).
+	\end{theorem}
+	Note that both algebraic Riccati equation (\ref{eq:lyap:LQRinvariants}) and it's dual (\ref{eq:kal:LQRinv}) are containing quadratic terms, implying that generally the equation has \textbf{two solution}: one of them is \textbf{stabilizing} the system while the other one is \textbf{de-stabilizing}, so we have to carefully choose the correct solution.
+	
+	\paragraph{Linear quadratic Gaussian LQG interpretation of the minimum energy estimation} Considering now a system whose disturbance $\vet d$ and noise $\vet n$ come from uncorrelated stochastic processes normally distributed with a 0 mean, then the covariances are $\mathds E \big\{ \vet d(\tau)\vet d^T(\tau) \big\} = \delta(t-\tau) \R^{-1}$ and $\mathds E \big\{ \vet n(\tau)\vet n^T(\tau) \big\} = \delta(t-\tau) \Q^{-1}$, then the LQG (minimum energy estimator) must minimize the stochastic cost
+	\begin{equation}
+		\mathcal J_{LQG} = \mathds E\big\{ \big|\x(t) - \hat \x(t)\big|^2 \}
+	\end{equation}
+	
+\section{Dynamic output feedback via state estimation}
+	The full-state feedback design described in page \pageref{sec:fullstatefeed} (sec. \ref{sec:fullstatefeed}) was based on the assumption that all states $\x$ were accessible from the controller in order to determine the optimal control; however as was described later, this barely happens as some states could be hidden to the outside of the system: to overcome this problem state observers has been introduce in order to asymptotically estimate the states of the plant. The main idea now is to combine this powerful tools together in order to exploit the full-state feedback design on a stabilizable system if this system is also detectable (that's the requirement for the design of the observer).
+	
+	\begin{theorem}
+		Given a \textbf{stabilizable} and \textbf{detectable plant} $\dx/\xp = \A\x +\B\u$, $\y = \C\x + \D\u$ and any selection of feedback matrices $(\K,\mat L)$, then the \de{close loop system} with a \textbf{controller}
+		\[ \begin{cases}
+			\dot{\hat \x}/\hat \x^+ & = \big(\A-\mat L\C\big)\hat \x + \big(\B - \mat L\D\big) \u + \mat L \y \\ \u & = - \K \hat \x
+		\end{cases} \]
+		is a linear system with \textbf{eigenvalues} corresponding to the union of the eigenvalues of $\A-\mat L\C$ and $\A-\B\K$.
+	\end{theorem}
+	The main takeaway of this theorem is that we can independently design both the close loop for stabilizing a system (design of $\K$) and the observer (design of $\mat L$) and still ensure that the combination of this two \textit{sub-components} gives the desired behaviour.
+	\begin{proof}
+		In order to represent the close loop system, we can use the  coordinate/states representation $(\vet e, \x) = (\hat \x - \x , \x)$; the dynamics of the system is so described by
+		\begin{align*}
+			\dot{\vet e}/\vet e^+ & = \dot{\hat \x} - \dx = (\A-\mat L\C)\hat \x + (\B-\mat L \D)\u + \mat L(\C\x + \D\u) - \A\x - \B \u \\
+			& = (\A-\mat L\C) \hat \- \A\x + \mat L\C\x = (\A-\mat L\C) \hat x - (\A-\mat L \C) \x = (\A-\mat L\C) \vet e \\
+			\dx/\xp & = \A\x + \B(\underbrace{-\K\hat x}_{=\u}) = \A\x - \B\K(\underbrace{\vet e + \x}_{=\hat \x}) = (\A-\B\K)\x - \B\K \vet e
+		\end{align*}
+		Exploiting the matrix representation we have
+		\[ \vector{ \dot{\vet e}/\vet e^+ \\ \dx/\xp} = \matrix{\A- \mat L\C & 0 \\ -\B\K & \A-\B\K } \vector{\vet e \\ \x} \]
+		Being the dynamic matrix lower-triangular, the eigenvalues are the one associated to the terms in the principal diagonal, thus are the union of the eigenvalues of $\A - \mat L\C$ and $\A- \B\K$.		
+	\end{proof}
+	As a rule of thumb, the estimator should be \textit{faster} then the dynamics feedback in order to have a better behaviour of the system.
+	
+	In general the dynamics of the controller is described by the state-space representation
+	\begin{equation}
+	\left\{ \begin{aligned}
+		\dot{\hat \x}/\hat \x^+ & = \big(\A-\mat L\C\big)\hat \x + \big(\B - \mat L\D\big) \u + \mat L \y && \textrm{: dynamics} \\
+		& = \big(\A-\mat L\C\big)\hat \x + \big(\B - \mat L\D\big)(-\K\hat \x) + \mat L \y \\ 
+		& = \big(\A-\mat L\C - \B\K + \mat L\D\K\big)\hat \x + \mat L \y \\ 
+		\u & = - \K \hat \x && \textrm{: output}
+	\end{aligned} \right.
+	\end{equation}
+	leading the the following strictly-proper controller transfer function:
+	\begin{equation}
+		\vet{\mathcal K}(s) = - \K \Big( s\I - \big(\A - \mat L\C - \B\K + \mat L\D\K\big) \Big)^{-1} \mat L
+	\end{equation}
+
+	Note that in general the dynamics of the controller can be unstable, but the important thing is that stabilizes the close loop. We can also observe that the \textit{tuning} of the matrix $\mat L$ can be based on a performance output $\z$ that can differ from the output $\y$ considered while designing the full-state feedback.
+	
+\section{BIBO stability}
+	\de{BIBO stability} is an \textbf{\textit{external stability}} concept; in particular BIBO stands for \textit{bounded-input bounded-output} and describes the fact that if a system is subjected to any bounded input, then also the corresponding zero-state response is bounded. Defining the infinity norm of a solution as
+	\begin{equation}
+		\|\z(\cdot)\|_\infty = \sup_{\tau \geq 0} |\z(\tau)|
+	\end{equation}
+	so as the maximum  value assumed by the vector $\z(t)$, we say that a LTV system $\dx = \A(t)\x + \B(t)\u$, $\y = \C(t)\x + \D(t)\u$ is \textbf{BIBO stable} if exists a constant $g > 0$ such that for any bounded input $\u(t)$ (with $t\geq 0$), the zero-state output response satisfies
+	\begin{equation} \label{eq:kal:BIBO}
+		\|\y(\cdot)\|_\infty \leq g \|\u(\cdot)\|_\infty
+	\end{equation}
+	\begin{theorem} \label{th:kal:temp2}
+		For a continuous-time LTV system the following statements are equivalent:
+		\begin{enumerate}[\itshape i)]
+			\item (CT-LTV) is BIBO stable;
+			\item \begin{enumerate}[\itshape (a)]
+				\item each entry of $\D(\cdot)$ is uniformly bounded, so
+				\[\exists \delta > 0 \quad \textrm{such that } \quad |\D(t)| < \delta \quad \forall t \geq 0 \]
+				\item each entry $g_{ij}(\cdot, \cdot)$ of the matrix $\C(t)\stm(t,\tau)\B(\tau)$ generates a converging integral:
+				\[ \sup_{t\geq 0} \int_0^t \big|g_{ij}(t,\tau)\big| \, d\tau = \lim_{t\rightarrow \infty} \int_0^t |g_{ij}(t,\tau)|\, d\tau < \infty \quad \forall i, j \]
+				This implies
+				\[ \exists G > 0 \quad \textrm{such that} \quad \int_0^\infty |g_{ij}(t,\tau)|\, d\tau < G \quad \forall t \geq 0, \forall i,j \]
+			\end{enumerate}
+		\end{enumerate}
+	\end{theorem}
+	\begin{proof}
+	\begin{enumerate}[\itshape a)]
+		\item firstly we can show that \textit{ii)} implies \textit{i)}; applying the norm on the variation of constants formula (\ref{eq:sol:varconstantcontinuous}) what we have is
+		\begin{align*}
+			|\y(t)| & \leq \left| \int_0^t \C(\tau)\stm(t,\tau)\B(\tau)\u(\tau)\, d\tau \right| + \big|\D(t)\u(t)\big| \\
+			& \leq \int_0^T \big|\C(\tau)\stm(t,\tau)\B(\tau)\big|\u_\infty\, d\tau + \big|D(t)\big|u_\infty \\
+			& \leq pkG u_\infty + \delta u_\infty = \big(pkG + \delta\big) u_\infty  = gu_\infty
+		\end{align*}
+		where $p,k$ are respectively the number of input and output of the system; this definition matches (\ref{eq:kal:BIBO});
+		
+		\item to show that \textit{i)} implies \textit{ii)} we prove by contradiction that if \textit{ii)} is not satisfied, then also \textit{i)} is not satisfied. Reversing the definition of BIBO stability, for each candidate $g^*$ exists an input $\u^*$ for which $\|\y(\cdot)\|_\infty > g^* \|\u^*(\cdot)\|_\infty$. If we consider that \textit{ii)(a)} fails,  then for any $g^*$ exists a time $t^*$ such that $|d_{ij}(t^*)| > g^*$ for some $i,j$; selecting so the control
+		\[ \u_j^* = \begin{cases}
+			0 \quad & t < t^* \\ 1 & t \geq  t^*
+		\end{cases} \]
+		then the corresponding output $y(t)$ evaluated at $t^*$ disregard the BIBO stability condition (\ref{eq:kal:BIBO}):
+		\[ \y(t^*) = 0 + \D(t^*)\u_j^*(t^*) = d_{ij}(t^*) > g^* \]
+		\textbf{MISSES THE PROF WHEN \textit{ii)(a)} FAILS}
+	\end{enumerate}
+	\end{proof}
+	
+	\paragraph{LTI case} Considering now the simpler case of continuous-time LTI systems, the product $\C(\tau)\stm(t,\tau)\B(\tau)$ reduces to $\C e^{\A (t-\tau)} \B$ that can be regarded as $\overline \G(t-\tau)$. The condition of BIBO stability in this case collapses in the analysis of the entries $\overline g_{ij}(t-\tau)$ of $\overline \G$, whose norm is regarded as $\int_0^t |\overline g_{ij}(t-\tau)|\,d\tau$; performing a change of variable $\rho = t-\tau$ what we obtain is
+	\[ \int_t^0 |\overline g_{ij}(\rho)| (-1)\, d\rho = \int_0^t |\overline g_{ij}(\rho)|\, d\rho \]
+	\begin{theorem}
+		For a continuous-time LTI system the following are equivalent:
+		\begin{enumerate}[\itshape i)]
+			\item (CT-LTI) is BIBO-stable;
+			\item each entry $\overline g_{ij}(\cdot)$ of $\overline \G(\rho) = \C e^{\A\rho}\B$ satisfies
+			\[ \lim_{t\rightarrow \infty} \int_0^t |\overline g_{ij}(\rho)|\, d\rho  < \infty \qquad \Leftrightarrow \qquad \exists G > 0 \ : \ \int_0^t|\overline g_{ij}(\rho)|\,d\rho \leq G \]
+			\item each entry of the transfer function matrix $\G(s) = \C(s\I-\A)^{-1}\B + \D$ has exponentially converging poles.
+		\end{enumerate}
+	\end{theorem}
+	\begin{proof}
+		The relation between \textit{i)} and \textit{ii)} is straightforward due to theorem \ref{th:kal:temp2}. We can now relate \textit{iii)} with \textit{i)}: computing the Laplace transform of the component $\overline g_{ij}(\rho)$ of the transfer function $\G(s) = \C(s\I-\A)^{-1}\B$ that evaluates to the proper rational polynomial
+		\begin{align*}
+			\L\big\{ \overline g_{ij}(\rho) \big\}(s) & = \frac{\alpha_0 s^q + \dots \alpha_{q-1} s + \alpha_q}{(s-\lambda_1)^{m_1} (s-\lambda_2)^{m_2} \dots(s-\lambda_k)^{m_k}} \\ 
+			& = \frac{a_{11}}{s-\lambda_1} + \frac{a_{12}}{(s-\lambda_1)^2} + \dots + \frac{a_{1m_1}}{(s-\lambda_1)^{m_1}} + \frac{a_{21}}{s-\lambda_2} + \dots
+		\end{align*}
+		With the partial fraction expansion performed, we can anti-transform the transfer function to obtain the impulse response function of time that's of the form
+		\[ \overline g_{ij}(\rho) = e^{\lambda_1 \rho} p_{m_1}(\rho) + e^{\lambda_2 \rho} p_{m_2}(\rho) + \dots \]
+		where $p_m(\rho)$ are all polynomials in $\rho$ of order $m-1$. The asymptotic behaviour of such function is determined by the exponentials that in order to be convergent for any bounded input must have $\Re{\lambda_i} < 0 $ for any eigenvalue $\lambda_i$.
+	\end{proof}
+
+	As a general statement while computing the impulse response of the system pole cancellations might arise while computing the transfer function: what we can so say is that if $\A$ is Hurwitz, then for sure the system is BIBO stable (as all poles surely have negative real part), while the converse might not always be true (\textit{unstable} poles might have been cancelled in the computation of the transfer function).
+
+\section{Minimal realizations and Markov parameters}
+	Recalling what has already said at page \pageref{sec:dyn:realizations}, an LTI system describe in state-space as
+	\[ \tag{LTI} \begin{cases}
+		\dx/\xp & = \A\x + \B\u \\ \y & = \C\x + \D \u
+	\end{cases} \]
+	is a realization of a transfer function $\hat G(s)$ if it holds $\hat \G(s) = \C(s\I-\A)^{-1}\B + \D$.
+	\begin{theorem}
+		A realization of $\hat \G(s)$ is \de{minimal} (or \textbf{\textit{irreducible}}) if there is no other realization with lower order, so with a fewer number of states.
+	\end{theorem}
+	\begin{theorem} \label{th:kal:temp3}
+		Every realization is \de{minimal} if and only if it's both \textbf{controllable} and \textbf{observable}.
+	\end{theorem}
+	\begin{proof}
+		The proof of what has been just states comes from theorem \ref{th:kal:decomp}: assuming that the system is not controllable and/or not observable, then the observable and controllable component $\A_{co}$ of the dynamics is \textit{smaller} then the whole  matrix $\A$; having that the transfer function of the system is associated to the observable and controllable component $\hat \G(s) = \C_{co}(s\I-\A_{co})^{-1}\B_{co} + \D$, then we have that some states are not being tracked by the transfer function.
+	\end{proof}
+	
+	This prove that a minimal realization is both controllable and observable, however the converse is much harder to show and it involves the definition of the so called \de{Markov parameters}.\\
+	Considering that the term $(s\I-\A)^{-1}$ is the Laplace transform of the matrix exponential $e^{\A t}$, what we can see is that it can be rewritten (considering also the Taylor series expansion of the exponential) as
+	\[ (s\I-\A)^{-1} = \L\big\{ e^{\A t} \} = \L \left\{ \sum_{i=0}^{\infty} \frac{\A^i t^i}{i!} \right\} = \sum_{i=0} \A^i \L \left\{ \frac{t^i}{i!} \right\} = \sum_{i=0}^\infty \frac{\A^i}{s^{i+1}} \]
+	thus the transfer function
+	\begin{equation}
+		\hat \G(s) = \C\big( s\I-\A\big)^{-1} \B + \D = \sum_{i=0}^\infty \frac{\C\A^i\B}{s^{i+1}} + \D 
+	\end{equation}
+	Having decomposed the transfer function into a series of matrices, we refer to the sequence $\D$, $\C\B$, $\C\A\B$, $\C\A^2\B$, $\C\A^3\B, \dots$ as \de{Markov parameters} as they are able to fully describe the transfer function $\G(s)$. Such values cannot be computed exploiting the Cayley-Hamilton theorem as realization of different order results in different dimension of $\A$ (making impossible to compare them using those theorem). Markov parameters can instead be computed using the \textbf{impulse response} $\G(t) = \L^{-1}\{\hat \G(s)\} = \C e^{\A t}\B + \D \delta(t)$  of the system. In particular the first Markov parameter $\D$ can be simply computed as
+	\[ \D = \lim_{s\rightarrow \infty} \hat G(s) \qquad \Rightarrow \qquad \hat \G_{sp}(s) = \C\big(s\I-\A\big)^{-1}\B  \]
+	Having $\G_{sp}(t) = \C e^{\A t}\B$ as the impulse response of the strictly proper transfer function, evaluating it at $t = 0$ results to
+	\[ \hat \G_{sp}(0) = \C\B  \]
+	Deriving in time $\G_{sp}(t)$ and evaluating it for the same point evaluates to
+	\[ \left. \frac{d \G(t)}{dt} \right|_{t=0} = \left. \frac{d}{dt} \big(\C e^{\A t} \B\big) \right|_{t=0} = \C\A e^{\A t} \B \Big|_{t=0} = \C\A\B  \]
+	and following
+	\[ \left. \frac{d^2 \G(t)}{dt^2} \right|_{t=0} = \left. \frac{d}{dt} \big(\C \A e^{\A t} \B\big) \right|_{t=0} = \C\A^2 e^{\A t} \B \Big|_{t=0} = \C\A^2\B  \]
+	
+	\begin{theorem} \label{th:kal:temp4}
+		Two different realizations are zero-state equivalent if and  only if they have the same Markov parameters.
+	\end{theorem}
+	
+	\begin{proof}
+		With this premise we can now show that if a system is both controllable and observable it leads to a minimal realization as stated in theorem \ref{th:kal:temp3}. Let us assume that $(\A,\B,\C,\D)$ with $n$ states that's a controllable and observable realization of $\hat G(s)$ that's not minimal:  this implies that exists the quadruple $(\overline \A, \overline\B, \overline \C, \overline \D)$ that's a minimal realization with dimension $\overline n < n$.
+		
+		Computing the product between the observability and controllability matrix evaluates to
+		\[ \O\R = \matrix{\C \\ \C\A \\ \vdots \\ \C\A^{n-1}} \matrix{\B & \A\B & \dots & \A^{n-1}\B} = \matrix{\C \B & \C\A\B & \dots & \C \A^{n-1}\B  \\ 
+		\C\A\B & \C\A^2\B \\ \vdots &&\ddots  \\ \C\A^{n-1}\B & & & \C \A^{2n-2}\B } \]
+		that has rank $r$; computing instead $\overline{\O\R}$ evaluates to a $\overline n$ rank matrix
+		\[\overline \O \overline \R = \matrix{\overline{\C \B} & \overline{\C\A\B} & \dots & \overline{\C \A}^{\overline n-1} \overline \B  \\ 
+			\overline{\C\A\B} & \overline{\C\A}^2\overline \B \\ \vdots &&\ddots  \\ \overline{\C\A}^{\overline n-1} \overline \B & & & \overline{\C \A}^{2\overline n-2} \overline \B }\]
+		Exploiting theorem \ref{th:kal:temp4}, having that the two system are realizations of the same transfer function they must share the same Markov parameters, implying so that $\O\R = \overline{\O\R}$, however we can clearly see that
+		\[ \rank{\overline{\O\R}} \leq \rank{\overline \C} \leq \overline n < n = \rank{\O\R} \]
+		contradicting so the the initial statement.
+	\end{proof}
+	\begin{theorem} \label{th:kal:temp5}
+		All minimal realizations are algebraically equivalent.
+	\end{theorem}
+	To prove such statement we firstly need to recall the definitions of \de{Moore-Penrose pseudo inverses} matrices. Given a \textit{fat} full column rank matrix $\mat M$ characterized so by linearly independent columns and a higher number of rows, then the matrix $\mat M^T\mat M$ is non-singular and $\mat M^l = (\mat M^T\mat M)^{-1}\mat M^T$ is called \textbf{left-inverse} of $\mat M$ as it holds that $\mat M^l\mat M = (\mat M^T \mat M)^{-1} \mat M^T\mat M = \I$.\\
+	Given instead a \textit{fat} full row rank matrix $\mat N$, then the square matrix $\mat N \mat N^T$ is invertible and $\mat N^r = \mat N^T(\mat N\mat N^T)^{-1}$ is called \textbf{right inverse} of $\mat N$ as  $\mat{NN}^r = \mat{NN}^T (\mat{NN}^T)^{-1} = \I$.
+	
+	\begin{proof}
+		Given two minimal realizations $(\A,\B,\C,\D)$ and $(\overline \A, \overline \B, \overline \C, \overline \D)$ that are so controllable and observable and also are sharing the same Markov parameters (so $\D=\overline \D$), meaning that $\O\R= \overline{\O\R}$. We can show now that the transformation matrix 
+		\begin{equation}
+			\T = \overline \R \R^r = \overline \R \R^T\big(\R\R^T\big)^{-1}
+		\end{equation}
+		is the one relating the two algebraically equivalent matrices. For this reason we show that
+		\begin{enumerate}[\itshape a)]
+			\item $\T$ is invertible: considering in fact $\I \T= \O^l\O\T = \O^l \overline \O \overline \R \R^r = \O^l \O\R \R^t = \I\I = \I$, implying so that $\T$ is invertible and in particular
+			\[ \T^{-1} = \O^l \overline \O \]
+			
+			\item we show that the transformation $\C = \overline \C\T$, $\B = \T^{-1}\overline \B$ and $\A = \T^{-1}\overline \A \T$ are holding. Recalling that $\O\R = \overline{\O\R}$, then we can rewrite $\O = \O\R\R^r = \overline {\O\R} \R^r = \overline \O \T$. Computing so the product
+			\[ \matrix{\C\\\C\A \\\vdots \\ \C\A^{n-1}} = \matrix{\overline \C \\ \overline{\C\A} \\ \vdots \\ \overline{\C\A}^{n-1}} \T = \matrix{\overline \C\T \\ \overline{\C\A}\T \\ \vdots \\ \overline{\C\A}^{n-1} \T} \]
+			thus considering just the first row we showed that $\C = \overline \C\T$. 
+			
+			If instead we consider $\overline \O^l \O = \overline \O^l \overline \O \T = \T$, then we can notice that $\T\R= \overline \O^l \O\R= \overline O^l\overline {\O\R} = \overline \R$, thus
+			\[ \overline \R = \matrix{\overline \B & \overline{\A\B} & \dots & \overline \A^{n-1} \overline \B} = \matrix{\T\B & \T\A\B & \dots &  \T\A^{n-1}\B} \]
+			Considering so the first column we have that $\overline \B = \T\B$, thus $\B = \T^{-1}\overline \B$.
+			
+			Finally we can notice that while computing the product $\O\R$ we have that the matrix $\A$ always \textit{sticks in the middle} of matrices $\C$ and $\B$, thus if we compute $\O\A\R$ still evaluates in a matrix of Markov parameters that must be shared by $\overline{\O\A\R}$ as the system are realization of the same transfer function. Considering this equality and pre-multiplying it bu $\overline \O^l$ and post-multiplying by $\R^r$ results in
+			\[ \overline \O^l \overline \O \A \cancel{\R\R^r} = \cancel{\overline \O^l \overline \O} \overline{\A\R} \R^r \qquad \Rightarrow \qquad \T\A = \overline \A \T \]
+			confirming so that $\A = \T^{-1}\overline \A \T$.
+		\end{enumerate}
+	\end{proof}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

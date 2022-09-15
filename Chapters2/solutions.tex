@@ -1,0 +1,323 @@
+\chapter{Solution of linear systems} \label{ch:solutions}
+\section{Linear time-varying systems}
+\subsection*{Continuous-time LTV systems}
+	Given an \textbf{autonomous continuous-time LTV} system characterized by the state-space representation
+	\begin{equation} \tag{ACT-LTV}
+	\begin{cases}
+		\dx & = \A(t) \x \\ \x(t_0) & = \x_0
+	\end{cases}
+	\end{equation}
+	the solution to such problem is a differentiable signal $\x(t)$. This function can be computed by firstly defining the \de{Peano-Baker series}, a matrix $\mat \Phi(t,t_0)\in \mathds R^{n\times n}$ defined as
+	\begin{equation} \label{eq:sol:statetransitionmatrix}
+	\begin{split}
+		\mat \Phi(t,t_0) = \I + & \int_{t_0}^t \A(s_1)\, ds_1 + \int_{t_0}^t \A(s_1) \int_{t_0}^{s_1} \A(s_2)\, ds_2\, ds_1 + \\ 
+		& \hspace{0.6cm} + \int_{t_0}^t \A(s_1) \int_{t_0}^{s_1} \A(s_2) \int_{t_0}^{s_2} \A(s_3)\, ds_3 \, ds_2\, ds_1 + \dots
+	\end{split}
+	\end{equation}
+	The matrix $\stm$ is mostly referred as the \de{state transition matrix} and is characterized by the following properties:
+	\begin{enumerate}[\itshape i)]
+		\item $\phi(t,t) = \I$ for any $t\in \mathds R$. This results is a direct consequence of the definition of the state transition matrix: knowing that $\int_a^a f(x) \, dx$ always evaluates to zero, then all terms (except the first identity matrix) are evaluating to zero;
+		\item $\frac{d}{dt} \stm(t,t_0) = \A(t) \stm(t,t_0)$. This comes from the integral property stating that $\frac d{dt} \int_a^t f(\tau)\, d\tau = f(\tau)$: applying this property to (\ref{eq:sol:statetransitionmatrix}) determines
+		\begin{align*}
+			\frac{d}{dt} \stm(t,t_0) & = 0 + \A(t) + \A(t) \int_{t_0}^t \A(s_2)\, ds_2 + \A(t) \int_{t_0}^t \A(s_2) \int_{t_0}^{s_2} \A(s_3)\, ds_3\, ds_2 + \dots \\ & = \A(t) \stm(t,t_0)
+		\end{align*}
+	\end{enumerate}
+	This property is relevant because it allows-us to explicitly compute the \textbf{zero-input response} solution of (ACT-LTV) as
+	\begin{equation} \label{eq:sol:temp1}
+		\x(t) = \stm(t,t_0) \x_0 \quad \forall t
+	\end{equation}
+	This solution is proven to be the unique solving the problem $\dx = \A(t) \x$ (however no proof for the uniqueness is reported here and must be taken for granted). To show that (\ref{eq:sol:temp1}) is indeed a solution of (ACT-LTV) we can consider property \textit{i)} to see that $\stm(t_0,t_0)\x_0 = \I \x_0 = \x_0$ (satisfying so the initial condition for the states); exploiting property \textit{ii)} we also observe that also the dynamics of the system is satisfied, in fact:
+	\[ \dx(t) = \frac d{dt}\big(\stm(t,t_0) \x_0\big) = \A(t) \stm (t,t_0)\x_0 = \A(t)\x(t) \] 
+	
+	If we want now to expand the definition of the solution also for a generic LTV system (characterized so by a non-zero input $\u$) it's mandatory to define other 2 properties of the state transition matrix:
+	\begin{itemize}
+		\item[\textit{iii)}] each $i$-th column of $\stm(t,t_0)$ is the unique solution of the problem 
+		\[ \dx = \A(t)\x \]
+		where $\x(t_0) = \vet e_i$, meaning that the initial condition is the $i$-th component of the canonical basis of $\mathds R^n$. This property is useful for practical computation because it allows us to decompose the study of the solution $x(t)$ by independently solving the states; after this process we can use linearity to obtain more solutions to the LTV systems;
+		
+		\item[\textit{iv)}] it holds the \textbf{semi-group} property stating that
+		\[ \stm(t,s) \stm(s,\tau) = \stm(t,\tau) \hspace{2cm} \forall t,s,\tau\in \mathds R \]
+		We can in fact consider that, given the initial state $x_0$ at the time instant $t_0$, the states $\x_1$ in a second time $t_1$ can be regarded as $\x(t_1) = \stm(t_1,t_0)\x_0$. Considering now another time $t_2$ we moreover have
+		\[ \x(t_2) = \stm(t_2,t_1) \x(t_1) = \stm(t_2,t_1) \stm(t_1,t_0) \x_0 = \stm(t_2,t_0) \x_0 \]
+		Note that the statement of the semi-group  property do not set any requirement in the \textit{relative position} of the times, meaning that is not necessary to have $t>s>\tau$;
+		
+		\item[\textit{v)}] direct consequence of the semi-group property is that $\stm(t,s)$ is always invertible (is never singular) with inverse equal to $\stm(s,t)$. Combining property \textit{iv)} with \textit{i)} shows that
+		\[ \stm(t,s) \stm(s,t) = \stm(t,t) = \I \quad \forall t,s \in \mathds R \hspace{1.2cm} \Leftrightarrow \hspace{1.2cm} \stm^{-1}(t,s) = \stm(s,t) \]
+	\end{itemize}
+
+	\begin{theorem}
+		Considering a general continuous-time LTV system characterized by the state-space representation
+		\begin{equation} \tag{CT-LTV} \label{CTLTV}
+			\begin{cases}
+				\dx & = \A(t) \x + \B(t) \u \\ \y & = \C(t) \x + \D(t) \u \\ \x(t_0) & = \x_0 
+			\end{cases} 
+		\end{equation}
+		the general solution, proven to be unique, for this problem is determined by the \de{variation of constant formula} defined as
+		\begin{equation} \label{eq:sol:varconstantcontinuous}
+		\begin{split}
+			\x(t) & = \overbrace{\stm(t,t_0) \x_0}^\textrm{zero-input res.} + \overbrace{\int_{t_0}^t \stm(t,\tau) \B(\tau) \u(\tau)\, d\tau}^\textrm{zero-state response} \\
+			\y(t) & = \underbrace{\C(t)\stm(t,t_0) \x_0}_\textrm{homogeneous res.} + \underbrace{\int_{t_0}^t \C(\tau) \stm(t,\tau) \B(\tau) \u(\tau) \, d\tau + \D(t) \u(t)}_\textrm{forced response}
+		\end{split}
+		\end{equation}
+	\end{theorem}
+	\begin{proof}
+		To prove this theorem we have to exploit the differential property stating that $\frac d{dt} \int_{t_0}^t f(t,\tau)\, d\tau = f(t,t) + \int_{t_0}^t \frac d{dt} f(t,\tau)\, d\tau$: considering the state solution $\x(t)$ of (\ref{eq:sol:varconstantcontinuous}) we can show that it's differentiation in time satisfies the dynamic of (CT-LTV):
+		\begin{align*}
+			\dx(t) & = \frac d{dt} \left( \stm(t,t_0)\x_0 + \int_{t_0}^t \stm(t,\tau)\B(\tau)u(\tau)\, d\tau \right) \\ 
+			& = \A(t) \stm(t,t_0)\x_0 + \stm(t,t)\B(t)\u(t) + \int_{t_0}^t \frac{d\stm(t,\tau)}{dt} \B(\tau)\u(\tau) \, d\tau \\
+			& = \A(t) \stm(t,t_0)\x_0 + \I \B(t)\u(t) + \int_{t_0}^t \A(t) \stm(t,\tau) \B(\tau)\u(\tau) \, d\tau \\
+			& = \A(t) \underbrace{\left(  \stm(t,t_0)\x_0 + \int_{t_0}^t \stm(t,\tau)\B(\tau)u(\tau)\, d\tau \right)}_{=\x(t)} + \B(t)\u(t)
+		\end{align*}
+	\end{proof}
+
+\subsection*{Discrete-time LTV systems}
+	Given an \textbf{autonomous discrete-time LTV} system characterized by the state-space representation
+	\begin{equation} \tag{ADT-LTV}
+		\begin{cases}
+			\xp & = \A(t) \x \\ \x(t_0) & = \x_0
+		\end{cases}
+	\end{equation}
+	the homogenous response of this system, similarly for the continuous-time counterpart, is determined by the equation
+	\begin{equation}
+		\x(t) = \stm(t,t_0)\x_0 \hspace{2cm} \forall t\geq t_0
+	\end{equation}
+	The main difference with respect to (\ref{eq:sol:temp1}) is that in this case the definition is correct only for $t \geq t_0$. This is due to the new definition of the \de{state transition matrix} defined as
+	\begin{equation} \label{eq:sol:temp2}
+		\stm(t,t_0) = \begin{cases}
+			\I & \textrm{if } t = t_0 \\
+			\A(t-1)\A(t-2) \dots \A(t_0+1) \A(t_0) \qquad & \textrm{if } t > t_0
+		\end{cases}
+	\end{equation}
+	Intuitively we can think that the states at $t_1=t_0+1$ can be computed as $\x(t_0+1) = \A(t_0) \x_0$; moreover $\x(t_0+2) = \A(t_0+1) \x(t_1) = \A(t_0+2)\A(t_0+1) \x_0$: iterating this process allows us to directly obtain the definition of the state transition matrix in (\ref{eq:sol:temp2}).
+	
+	If we want now to extend the definition of $\stm$ for times $t < t_0$ we have to consider that (given $t+1=t_0$) it must hold $\x(t_0) = x(t+1) = \A(t)x(t)$, hence
+	\[ \x(t) = \A^{-1}(t_0-1) \x_0 \]
+	This operation however is feasible if and only if the matrix $\A(t_0)$ is non-singular (allowing its inversion), however this condition isn't satisfied \textit{a-priori}.
+	
+	\paragraph{Addition of the input} Having defined the state transition matrix for discrete-time system and the homogeneous solution for the autonomous case, we can consider the general case of a \textbf{discrete-time LTV} system whose solution is characterized by the following \de{variation of constants} formula:
+	\begin{equation} \label{eq:sol:varconstantdiscrete}
+	\begin{split}
+		\x(t) & = \stm(t,t_0) \x_0 + \sum_{\tau = 0}^{t-1} \stm(t,\tau+1) \B(\tau) \u(\tau) \\
+		\y(t) & = \C(t)\stm(t,t_0) \x_0 + \sum_{\tau = 0}^{t-1} \C(\tau) \stm(t,\tau+1) \B(\tau) \u(\tau) + \D(t) \u(t) 
+	\end{split}
+	\end{equation}
+	
+\section{Linear time-invariant systems}
+\subsection*{Discrete-time LTI systems}
+	Considering a (DT-LTI) system (page \pageref{DTLTI}), the time invariance determines that all matrices $\A,\B,\C,\D$ present constant coefficients (not depending on time): this allows to simplify the definition of the Peano-Baker series (\ref{eq:sol:temp2}) into the form
+	\begin{equation} \label{eq:sol:adtsol}
+		\stm(t,t_0) = \A^{t-t_0} \hspace{2cm} \forall t\geq t_0
+	\end{equation}
+	where conventionally is chosen $\A^0 = \I$. This allows to simplify also the \de{variation of constants formula} having the solutions of (DT-LTI) as
+	\begin{equation}
+		\begin{split}
+			\x(t) & = \A^{t-t_0} \x_0 + \sum_{\tau = 0}^{t-1} \A^{t-\tau - 1} \B(\tau) \u(\tau) \\
+			\y(t) & = \C \A^{t-t_0} \x_0 + \sum_{\tau = 0}^{t-1} \C(\tau) \A^{t-\tau - 1} \B(\tau) \u(\tau) + \D \u 
+		\end{split}
+	\end{equation}
+	We usually refer to the operation $\A^t$ (with $t\in \mathds Z$) as the \de{matrix power} whose computation will be explained properly in page \pageref{sec:sol:matrixpower}.
+
+\subsection*{Continuous-time LTI systems}
+	Considering now a (CT-LTI) system, the definition of the Peano-Baker series (\ref{eq:sol:statetransitionmatrix}) can also be simplified considering that all matrices have constant coefficient; in particular we can observe that
+	\begin{align*}
+		\stm(t,t_0) & = \I + \A(t-t_0) + \A^2 \frac{(t - t_0)^2}{2} + \A^3 \frac{(t-t_0)^3}{2\cdot 3} + \dots \\ 
+		& = \sum_{k=0}^\infty \A^k \frac{(t-t_0)^k}{k!}
+	\end{align*}
+	One can so find a strict similarity with the Taylor series expansion of an exponential (that's  indeed $e^x = \sum_{k=0}^\infty \frac 1{k!}x^k$): for this reason for continuous-time LTI system the state transition matrix is represented by the \de{exponential matrix} as
+	\begin{equation} \label{eq:sol:ctltiautonomous}
+		\stm(t,t_0) = e^{\A(t-t_0)}
+	\end{equation}
+	This simplifies the definition of the unique solution of (CT-LTI) to the form
+	\begin{equation}
+	\begin{split}
+		\x(t) & = e^{\A(t-t_0)} \x_0 + \int_{t_0}^t e^{\A(t-\tau)} \B \u(\tau) \, d\tau \\ 
+		\y(t) & = \C e^{\A(t-t_0)} \x_0 + \int_{t_0}^t \C e^{\A(t-\tau)} \B \u(\tau) \, d\tau + \D \u(t)
+	\end{split}
+	\end{equation}
+
+	\paragraph{Properties of the matrix exponential} Relevant properties of the matrix exponential are:
+	\begin{enumerate}[\itshape i)]
+		\item each $i$-th column of the matrix $e^{\A t}$ is the unique solution of the problem $\dx(t) = \A \x(t)$ where the initial condition is set to the $i$-th component of the canonical base $\x(0) = \vet e_i$ (recalling property \textit{iii)} of the Peano-Baker series at page \pageref{eq:sol:statetransitionmatrix});
+		
+		\item because it still holds the semi-group property $\stm(t,\tau)\stm(\tau,s) = \stm(t,s)$ for all $t,s,\tau$, then it means that
+		\[ e^{\A t} e^{\A s} = e^{\A(t+s)} \]
+		
+		\item the matrix exponential is always invertible, in fact still for the semi-group property $e^{\A t} e^{-\A t} = e^{\A 0} = \I$; moreover we have that the inverse of the exponential matrix is
+		\[ \left( e^{\A t} \right)^{-1} = e^{-\A t} \]
+		
+		\item for any matrix $\A \in \mathds R^{n\times n}$ it hold the following \textit{commutative} property:
+		\[ \A e^{\A t} = e^{\A t} \A \hspace{2cm} \forall t \]
+		
+		\item given $\A \in \mathds R^{n\times n}$ there exists $n$ function $\alpha_i(t)$ such that
+		\[ e^{\A t} = \sum_{k=0}^{n-1} \alpha_k(t) \A^k \]
+		
+	\end{enumerate}
+
+	\begin{theorem}
+		For each matrix $\A \in \mathds R^{n\times n}$ with characteristic polynomial
+		\[ p_\A(s) = \det\big(s\I - \A\big) = s^n + a_1 s^{n-1} + \dots + a_{n-1} s + a_n \]
+		then $\A$ is a matrix that's a solution of such polynomial, meaning that
+		\[ p_\A(\A) = \A^n + a_1 \A^{n-1} + \dots + a_{n-1} \A + a_n \I = 0_{n\times n} \]
+		This is referred as the \de{Cayley-Hamilton theorem}.		
+	\end{theorem}
+	A direct consequence from this theorem (that it will be used also for later proofs) is that by reverting the last equality we can state the power $\A^n$ as a linear combination of \textit{lower-order powers}:
+	\[ \A^n = -\big(a_1 \A^{n-1} + \dots + a_{n-1} \A + a_n \I \big) \]
+	Multiplying both sides by $\A$ allows also to compute the power $\A^{n+1}$ as a linear combination of all powers of $\A$ up to the order $n-1$, in fact
+	\begin{align*}
+		\A^{n+1} & = -\A^n a_1 - a_2 \A^{n-1} - \dots - a_{n-1}\A^2 - a_n \A \\
+		& = a_1 \big(a_1 \A^{n-1} + \dots + a_{n-1} \A + a_n \I \big) - a_2 \A^{n-1} - \dots - a_{n-1}\A^2 - a_n \A \\
+		& = \big(a_1^2- a_2\big) \A^{n-1} + \big(a_1 a_2 - a_3\big) \A^{n-2} + \dots + \big(a_1 a_{n-1} - a_n\big) \A + a_1 a_n \I - \dots - a_{n-1} \A^2
+	\end{align*}
+	This principle can be extended to any power matrix of $\A$ and each one of them can be regarded as a particular linear combination of the first $n$ matrix powers of $\A$:
+	\begin{equation}
+		\A^h = \sum_{k=0}^{n-1} c_{h,k} \A^k \hspace{2cm} \forall h \geq n
+	\end{equation}
+	
+	
+\subsection{Recall on the Jordan normal form}
+	Equation (\ref{eq:dynsys:algebraicequivalence}), page \pageref{eq:dynsys:algebraicequivalence}, showed how system can be rewritten in algebraically equivalent form by means of similarity transformation regarded as a non-singular matrix $\T$. Ideally a \textit{good} transformation, one that can determine a simpler state-space representation, is the one that put the  dynamic matrix in a diagonal form
+	\begin{equation} \label{eq:sol:temp3}
+		\overline \A= \T \A \T^{-1} = \matrix{\lambda_1 & & 0 \\ & \ddots \\ 0 & & \lambda_n}
+	\end{equation}
+	This in fact allows to have dynamic equations where the variation of the states are related only to themselves, so in the form $\dot x_i/x_i^+ = \lambda_i x_i$ for any $i$. Moreover the elements $\lambda_i$ in the diagonal matrix $\overline \A$ are the \textbf{eigenvalues} of the $\A$ (this values are always preserved through any similarity transformation). 
+	
+	Computing the required matrix $\T$ that satisfies (\ref{eq:sol:temp3}) requires solving the eigenvector-eigenvalues problem: while doing so what might happen is that the algebraic multiplicity of some eigenvalues are bigger then the associated geometric multiplicity. As direct consequence of this, no matrix $\T$ exists that diagonalizes $\A$ into $\overline \A$.
+	
+	Acknowledged that (\ref{eq:sol:temp3}) might not hold in general, a solution to our problem is provided by \textbf{Jordan} stating:
+	\begin{theorem} \label{th:cayley}
+		For each matrix $\A \in \mathds C^{n\times n}$ with eigenvalues $\lambda_1, \dots, \lambda_m \in \mathds C$ there always exists a non-singular (hence invertible) matrix $\T \in \mathds C^{n\times n}$ such that
+		\begin{equation} \label{eq:sol:jordanform}
+			\jordan = \T \A \T^{-1} = \matrix{\mat J_1 & & 0 \\ & \ddots \\ 0 & & \mat J_l} \in \mathds C^{n\times n}
+		\end{equation}
+		where the matrices $\mat J_i$ are in the form
+		\begin{equation}
+			\mat J_i = \matrix{ \lambda_i & 1 & & 0 \\ & \ddots & \ddots \\ & & \ddots & 1 \\ 0 & & & \lambda_i } \in \mathcal C^{n_i\times n_i}
+		\end{equation}
+		with $n_i$ the algebraic multiplicity of the $i$-th eigenvalue
+	\end{theorem}
+	Matrix $\jordan$ in (\ref{eq:sol:jordanform}) is known as the \de{Jordan normal form} of the matrix $\A$ and is proven to be unique (upon rearrangements of the sub-matrices $\mat J_i$). Note that in general sub-matrices $\mat J_i,\mat J_j$ (with $i\neq j$) might be constructed with the same eigenvalue $\lambda_k$ but what might change are their dimension $n_i\neq n_j$ (while still the sum of all $n_i,n_j,\dots$ associated to a specific eigenvalue must add up to its algebraic multiplicity).\\
+	The number of \textit{blocks} $\mat J_i$ in the Jordan normal form are $l \leq n$ and are associated to each linearly independent eigenvector of $\A$ (is proven in fact that at least one eigenvector exists for each matrix $\A$ and that can exits at maximum $n$ linearly independent ones).
+	
+	From this, a square matrix is called \de{semi-simple}, or \textbf{diagonalizable}, if its  Jordan normal form (\ref{eq:sol:jordanform}) is diagonal as in (\ref{eq:sol:temp3}). In particular given $\A \in \mathds C^{n\times n}$, the following 3 statements are equivalent:
+	\begin{enumerate}[\itshape i)]
+		\item $\A$ is semi-simple;
+		\item $\A$ has $n$ linearly independent eigenvectors;
+		\item $p(\A) \neq 0$ for all non-zero polynomials $p(s)$ having degree less then $n$.
+	\end{enumerate}
+	
+\subsection{Matrix power} \label{sec:sol:matrixpower}
+	
+	With the definition of the Jordan normal form the computation of the matrix power of $\A$ is quite straightforward. Reverting (\ref{eq:sol:jordanform}) gives that $\A = \T^{-1} \jordan \T$; expanding so the matrix power what we see is that
+	\[ \A^t = \underbrace{\A \A \dots \A}_\textrm{$t$ times} = \underbrace{ \T^{-1} \jordan \T \T^{-1} \jordan \T \dots \T^{-1} \jordan \T }_\textrm{$t$ times} \]
+	By definition of matrix inverse we have that all the products $\T \T^{-1}$ \textit{in the middle} are evaluating to the identity matrix (hence they can be \textit{forgotten} in the matrix multiplication), so what remains is the equation that we can exploit for the computation of the \de{matrix power}:
+	\begin{equation} \label{eq:sol:matrixpower}
+		\A^t = \T^{-1} \jordan^t \T
+	\end{equation}
+	In particular it's known that the matrix power of the Jordan normal form evaluates to
+	\begin{equation} 
+		\jordan ^t = \matrix{\mat J_1^t & & 0 \\ & \ddots \\ 0 & & \mat J_l^t} 
+	\end{equation}
+	where
+	\begin{equation} \label{eq:sol:temp4} \mat J_i^t = \matrix{ 
+		\lambda_i^t & t\lambda_i^{t-1} & \frac{t!}{(t-2)!2!} \lambda_i^{t-2} & \dots & \frac{t!}{(t-n_i+1)!(n_i-1)!} \lambda_i^{t-n_i+1}   \\
+		& \ddots & \ddots & \ddots & \vdots \\
+		&& \ddots & \ddots & \frac{t!}{(t-2)!2!} \lambda_i^{t-2} \\
+		&&&  \ddots & t \lambda_i^{t-1} \\ 
+		0  &&&& \lambda_i^t
+	} \end{equation}
+
+	This is the general definition of the matrix $\mat J_i^t$, however we observe that the exponentials $k \lambda_i^{t-\tau}$ are \textit{activated} only when the coefficient of the exponent is greater or equal to zero, in the sense that
+	\[ \mat J_i^t = \matrix{\lambda_i^t & & 0 \\ & \ddots  \\ 0& & \lambda_i^t} = \matrix{1 & & 0 \\ & \ddots \\ 0 & & 1} \quad \textrm{for } t= 0 \]
+	\[ \mat J_i^t = \matrix{\lambda_i^t & t \lambda_i^{t-1} & & 0 \\ 
+	& \ddots & \ddots  \\ & & \ddots & t \lambda_i^{t-1} \\ 
+	0 & & & \lambda_i^t} = \matrix{\lambda_i & 1 & & 0 \\ 
+	& \ddots & \ddots  \\ & & \ddots & 1 \\ 
+	0 & & & \lambda_i} \quad \textrm{for } t=1 \qquad \dots\]
+	
+	\paragraph{Region of convergence} Let us consider now the discrete-time autonomous system whose solution is the sequence
+	\[ \x(t) = \A^t \x_0 \]
+	In order to have a \de{convergent solution} we want to ensure that $\lim_{t\rightarrow\infty} \A^t = 0$, or that at least that such limit do not diverge; from a practical point of view what we would like is that all entries in $\A^t$, with $t\rightarrow\infty$, are zero (or non-diverging). Considering that the matrix power $\A^t$ can be regarded as the products $\T^{-1} \jordan \T$, then such limit is intrinsically transmitted to the Jordan normal form matrix $\jordan$. In particular to have the \textbf{convergence} we want
+	\[ \lim_{t\rightarrow\infty} \jordan^t = 0 \qquad \Leftrightarrow \qquad \lim_{t\rightarrow\infty} \mat J_i^t = 0 \ \forall i \]
+	
+	Considering the formal definition of $\mat J_i^t$ in (\ref{eq:sol:temp4}) we can observe that each entry in the matrix is characterized by a power of the eigenvalue $\lambda_i$ (with an exponent dependent from time) multiplied by a polynomial in $t$. Knowing that the exponential function asymptotically grows (or decreases) faster then the polynomial term we observe that whenever the magnitude of the eigenvalue is less then zero, then the sub-matrix $\mat J_i^t$ converges to zero:
+	\begin{equation}
+		\lim_{t\rightarrow\infty} \mat J_i^t = 0 \qquad \Leftrightarrow \qquad |\lambda_i| < 1
+	\end{equation}
+	In contrary, considering $|\lambda_i| > 1$ determines a diverging power $\lambda_i^t$ for $t\rightarrow \infty$.\\
+	One last condition that we have to check is whenever $|\lambda_i| = 1$: in this case the power remains constant (indeed $1^t \xrightarrow{t\rightarrow \infty} 1$) and so the behaviour of the solution is ruled by the polynomial terms. In this case if we impose that $n_i = 1$ then there are no polynomial terms out of the diagonal and $\mat J_i^t$ approaches the identity matrix, while in all other cases the entries are diverging.
+	
+	We can summarize the \de{convergence} of the system (requiring so that $\A$ \textit{do not explode to infinity}) considering the following implications:
+	\begin{equation}
+		\lim_{t\rightarrow\infty} \A^t \neq \infty \qquad \Leftrightarrow \qquad \lim_{t\rightarrow\infty} \mat J_i^t \neq \infty \ \forall i \qquad \Leftrightarrow \qquad |\lambda_i| \leq 1 \textrm{ and if } |\lambda_i|=1 \ \Rightarrow \ n_i = 1
+	\end{equation}
+	
+	\paragraph{Fibonacci sequence} Recalling the very first example in this book, the Fibonacci sequence, we determined it's state-space representation that was in the form
+	\[ \begin{cases}
+		\xp & = \matrix{1 & 1 \\ 1 & 0} \x \\ \y & = \matrix{1&0}\x \\ \x(0) & = (0,1)
+	\end{cases} \hspace{2cm} \text{with } \x \in \mathds R^2\]
+	In this case the characteristic polynomial of $\A$ evaluates to $p_\A(s) = s^2-s-1$ determining two distinct eigenvalues $s_{1,2} = \frac{1\pm \sqrt 5}{2}$. Having two distinct eigenvalues (and being $\A$ a $2\times 2$ matrix) the only Jordan normal form allowable is the semi-simple one that's
+	\[ \jordan = \matrix{\frac{1+\sqrt 5}{2} & 0 \\ 0 & \frac{1-\sqrt 5}{2}} \]
+	In order to compute the matrix power $\A^t$ (used to determine the solution of the discrete-time system) we need to determine the transformation matrix $\T$ satisfying (\ref{eq:sol:jordanform}): this can be achieved by solving the linear problem $\T \A= \jordan \T$, hence
+	\[ \matrix{t_1 & t_2 \\ t_3 & t_4} \matrix{1 & 1 \\ 1 & 0 } = \matrix{\frac{1+\sqrt 5}{2} & 0 \\ 0 & \frac{1-\sqrt 5}{2}} \matrix{t_1 & t_2 \\ t_3 & t_4} \]
+	Among all the possible solutions to this problem we can chose the matrix
+	\[ \T = \matrix{1+\sqrt 5 & 2 \\ 1-\sqrt 5 & 2} \]
+	whose inverse is
+	\[ \T^{-1} = \frac{1}{4\sqrt 5} \matrix{2 & - 2 \\ -(1-\sqrt 5) & 1+\sqrt 5} \]
+	Exploiting now (\ref{eq:sol:matrixpower}) we have that the matrix power of $\A^t$ is 
+	\[ \A^t = \frac 1 {4\sqrt 5} \matrix{2 & -2 \\ -2\lambda_2 & 2\lambda_1} \matrix{\lambda_1^t & 0 \\ 0 & \lambda_2^t} \matrix{2\lambda_1 & 2 \\ 2\lambda_2 & 2} = \frac 1{\sqrt 5} \matrix{ \lambda_1^{t+1} -\lambda_2^{t+1} & \lambda_1^t - \lambda_2^t \\ \lambda_1 \lambda_2^{t+1} - \lambda_1^{t+1} \lambda_2 & \lambda_1\lambda_2^t - \lambda_1^t \lambda_2  } \]
+	Finally computing the solution of the output $y(t)$ of the system as $\C \A^t \x_0$ gives the same result presented at the beginning of this book:
+	\begin{align*}
+		y(t) & = \matrix{1 & 0} \frac 1{\sqrt 5} \matrix{ \lambda_1^{t+1} -\lambda_2^{t+1} & \lambda_1^t - \lambda_2^t \\ \lambda_1 \lambda_2^{t+1} - \lambda_1^{t+1} \lambda_2 & \lambda_1\lambda_2^t - \lambda_1^t \lambda_2  } \vector{0 \\ 1} = \frac 1 {\sqrt 5}\big(\lambda_1^t - \lambda_2^t\big) \\ & = \frac 1 {\sqrt 5} \left[ \left(\frac{1+\sqrt 5}{2}\right)^t - \left(\frac{1-\sqrt 5}{2}\right)^t \right]
+	\end{align*}
+	
+\subsection{Matrix exponential}
+	Similarly for what has been done for the matrix power, we will show that's possible to link the matrix exponential of $\A$ with the exponential of it's Jordan normal form $\jordan$. In particular we define the \de{exponential of the Jordan normal form} as
+	\begin{equation}
+		e^{\jordan t} = \matrix{e^{\mat J_1t} & & 0 \\ & \ddots \\ 0 & & e^{\mat J_l t}}
+	\end{equation}
+ 	where
+ 	\begin{equation}
+ 		e^{\mat J_i t} = e^{\lambda_i t} \matrix{1 & t & \dots & \frac{t^{n_i-1}}{(n_i-1)!} \\ & \ddots & \ddots & \vdots \\ & & \ddots & t \\ 0 & & & 1 }
+ 	\end{equation}
+	
+	In order now to compute the \de{matrix exponential} of $\A$ we have to use the Cayley-Hamilton theorem \ref{th:cayley} (page \pageref{th:cayley}) that allows us to consider the exponential as a linear combination of the first $n$ powers of $\A$. Considering indeed $\A = \T^{-1} \jordan \T$ we have that
+	\begin{equation} \begin{split}
+		e^{\A t} & = \sum_{k=0}^{n-1} \alpha_k(t) \A^k = \sum_{k=0}^{n-1} \alpha_k(t) \T^{-1} \jordan^k \T = \T^{-1} \left( \sum_{k=0}^{n-1} \jordan^k\right) \T \\ 
+		& = \T^{-1} e^{\jordan t} \T
+	\end{split} \end{equation}
+	
+	\paragraph{Region of convergence} Also in this case is important to define the \de{region of convergence} as the set of eigenvalues $\lambda_i$ for which the exponential $e^{\A t}$ converges to zero (or at least it doesn't diverge). Transferring the property of converge to the exponential $e^{\jordan t}$, we observe that whenever $\Re{\lambda_i} < 0$ the sub-block $e^{\mat J_it}$ converges to zero, while if $\Re{\lambda_i}$ we have the divergence to infinity. Moreover in the case of $\Re{\lambda_i} = 0$ we have that the exponential remains constant and so in order not to have a polynomial divergence we must ensure that $n_i = 1$.
+	
+	As for the matrix power we can summarize the \textbf{convergence of the matrix exponential} as
+	\begin{equation}
+		\lim_{t\rightarrow\infty} e^{\A t} \neq \infty \qquad \Leftrightarrow \qquad \lim_{t\rightarrow\infty} e^{\mat J_i t} \ \forall i \qquad \Leftrightarrow \qquad \Re{\lambda_i} \leq 0 \textrm{ and if } \Re{\lambda_i} = 0 \ \Rightarrow \ n_i = 1
+	\end{equation} 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,0 +1,309 @@
+\chapter{Stability in Lyapunov sense}
+	\paragraph{Norms for vector} This chapter will concentrate to the definition of \textit{\de{Lyapunov stability}} for linear system, however prior to do so a recall on the concept of \textit{norm} for both vectors and matrices should be done.
+	
+	Given a vector $\x \in \mathds R^n$ we define it's \de{norm} $\x \mapsto |\x|$ an operation satisfying the following properties:
+	\begin{align*}
+		i) & \qquad |\x| \geq 0 \ \forall \x \in \mathds R^n \quad &\textrm{and } \ &  |\x| = 0 \ \Leftrightarrow \ \x = 0 \\
+		ii) & \qquad |\x + \y| \leq |\x| +|\y| && \forall \x,\y \in \mathds R^n \\
+		iii) & \qquad |a \x| = |a| \, |\x| && \forall \x\in \mathds R^n,a\in \mathds R
+ 	\end{align*}
+	Satisfying this conditions a various amount of norms have been defined, such
+	\begin{itemize}
+		\item the \textbf{\textit{one norm}} $|\cdot|_1$ defined as
+		\begin{equation}
+			|\x|_1 = \sum_{i=1}^n |x_i|
+		\end{equation}
+		\item the common \textbf{\textit{two norm}} $|\cdot|_2$, also referred as \textit{euclidean norm}, defined as
+		\begin{equation} \label{eq:ly:temp1}
+			|\x|_2 = \sqrt{\sum_{i=1}^n |x_i|^2}
+		\end{equation}
+		\item the \textit{\textbf{infinity norm}} $|\cdot|_\infty$ defined as
+		\begin{equation}
+			|\x|_\infty = \max_{i=1,\dots,n} |x_i|
+		\end{equation}
+		\item the generalized concept of \textit{\textbf{p norm}} $|\cdot|_p$ defined as
+		\begin{equation}
+			|\x|_p = \sqrt[p]{\sum_{i=1}^n |x_i|^p} \hspace{2cm} \textrm{with } p \in \mathds R^+
+		\end{equation}	
+	\end{itemize}
+	All this \textbf{norms} are \de{equivalent}: given in fact any two norms $p_1, p_2 \in  [1,\infty)$, then where always exists two constants $c_1,c_2 \in \mathds R$ such that
+	\[ c_1 |\x|_{p_1} \leq |\x|_{p_2} \leq c_2 |\x|_{p_1} \hspace{2cm} \forall \x \in \mathds R^n \]
+	
+	\paragraph{Norms for matrices} The concept of norm as a \textit{measure of the dimension} can also be extended also for matrices $\A \in \mathds R^{m\times n}$. Considering similar properties to the one of vector norms, example of \de{norms} of \textbf{matrices} $\|\A\|$ are:
+	\begin{itemize}
+		\item the \textit{\textbf{one norm}} $\|\cdot\|_1$ defined as
+		\begin{equation}
+			\|\A\|_1 = \max_{j=1,\dots,n} \sum_{i=1}^{m} |a_{ij}|
+		\end{equation}
+		This can be regarded as the maximum norm of the row vectors composing the matrix $\A$;
+		\item the \textit{\textbf{infinity norm}} $\|\cdot\|_\infty$ defined as
+		\begin{equation}
+			\|\A\|_\infty = \max_{i=1,\dots,m} \sum_{j=1}^{n} |a_{ij}|
+		\end{equation}
+		This can be regarded as the maximum norm of the column vectors composing the matrix $\A$;
+		
+		\item the \textit{\textbf{two norm}} $\|\cdot\|_2$ defined as
+		\begin{equation}
+			\|\A\|_2 = \sigma_{\max}\{ \A\} = \sqrt{\lambda_{\max} \{\A^T \A \}}
+		\end{equation}
+		We denote in general with $\sigma\{\A\}$ the \textit{singular values} of the matrix $\A$ and such terms are computed (as shown) as the square root of the eigenvalues of the square matrix $\A^T \A \in \mathds R^{n\times n}$; in particular the two norm corresponds to the maximum singular value of $\A$. Considering that a vector can be regarded as a $m\times 1$ matrix, then this definition coincides with the euclidean norm (\ref{eq:ly:temp1});
+		
+		\item the \textbf{\textit{Frobenius norm}} $\|\cdot\|_F$ defined as
+		\begin{equation}
+			\|\A\|_F = \sqrt{\sum_{i=1}^m \sum_{j=1}^n a_{ij}^2} = \sqrt{\sum_{i=1}^n \sigma_i^2\{\A\}}
+		\end{equation}
+		Also in this case regarding a vector as a $m\times 1$  matrix the output of the Frobenius norm coincides with the euclidean norm (\ref{eq:ly:temp1}), however in the general case we have that $\|\A\|_2 \leq \|\A\|_F$.
+	\end{itemize}
+	Also in this case norms are \textbf{equivalent}, meaning that for any two norms $p_1,p_2 \in \{1,2,F,\infty\}$ there exists two constants $c_1,c_2\in \mathds R$ such that
+	\[ c_1 \|\A\|_{p_1} \leq \|\A\|_{p_2} \leq c_2 \|\A\|_{p_1} \qquad \forall \A \in \mathds V \]
+	Moreover norms are also \textbf{sub-multiplicative}, meaning so
+	\[ \|\A\B\|_p \leq  \|\A\|_p \|\B\|_p \qquad \forall \A,\B \in \mathds V, \  \forall p \in \{1,2,F,\infty\} \]
+	
+	\paragraph{Induced norm and subordination} Given a matrix $\A \in \mathds R^{m\times n}$ and a vector $\x \in \mathds R^n$, then their products $\A\x$ results in a $\mathds R^n$ vector on which we can compute the norm. Considering the yet stated sub-multiplicative property what we can observe is that
+	\[ |\A \x |_p \leq \|\A\|_p |\x|_p \qquad \Rightarrow \qquad \|\A\|_p \geq \frac{|\A \x|_p}{|\x|_p} \qquad \forall p \in \{ 1,2,F,\infty \} \]
+	An interesting properties for the norms $p\in\{1,2,\infty\}$ is that they are \textbf{subordinate}: this allows to compute the norm of the matrix $\A$ as
+	\[ \|\A\|_p = \sup_{\x\neq 0} \frac{|\A\x|_p}{|\x|_p} \]
+
+\section{Lyapunov stability for linear systems}
+	Given a \textbf{linear system} (LTV), both continuous or discrete-time, we say that such system is
+	\begin{itemize}
+		\item \de{Lyapunov}, or \textbf{marginally}, \de{stable} if for each initial state $\x_0$ there exists a constant $M\in \mathds R$ (depending from $\x_0$ in general) such that the zero-input response satisfies
+		\[ |\x(t)| \leq M \qquad \forall t \geq t_0 \geq 0 \]
+		\item is \textbf{Lyapunov} \de{asymptotically stable} if it is Lyapunov marginally stable and all solutions satisfies
+		\[ \lim_{t\rightarrow\infty} |\x(t)| = 0 \qquad \forall \x_0 \]
+		\item is \textbf{Lyapunov} \de{exponentially stable} if it is asymptotically stable and:
+		\begin{enumerate}[\itshape (a)]
+			\item in case of continuous-time system exists $c,\lambda >0$ such that
+			\[ |\x(t)| \leq c e^{-\lambda(t-t_0)} |\x_0| \qquad \forall x_0,t_0 \]
+			\item in case of discrete-time system exists $c>0, \mu \in [0,1)$ such that
+			\[ |\x(t)| \leq c \mu^{t-t_0}|\x_0| \qquad \forall \x_0,t_0 \]
+		\end{enumerate}
+		\item is \de{unstable} if it is not Lyapunov stable.		
+	\end{itemize}
+	We observe so a certain hierarchy in the conditions for the stability, being always more stringent. For linear system we can say that exponential stability directly implies asymptotic stability, and marginal stability. The contrary, of course, might not hold (a system can be asymptotic but not with exponential law).
+	
+	Note that for what concerns \textbf{Lyapunov stability} what matters is just the homogeneous (zero-input) response of the system. Recalling (\ref{eq:sol:temp1}), the study of the Lyapunov stability is essentially related to the study of the state transition matrix because for linear systems
+	\[ |\x(t)| = |\stm(t,t_0) \x_0| \leq \|\stm(t_0,t)\| |\x_0| \qquad \forall \x_0 \]
+	The classification of \textbf{stability} is performed by analysing the properties of the state transition matrix $\stm$, a \textbf{intrinsic characteristic of the system}, and do not depend in any way from the initial condition $|\x_0|$ (that can be regarded as a scaling factor that can always be bounded by a \textit{big enough} constant $c$).
+	
+\section{LTI systems and conditions for exponential stability}
+	\paragraph{Continuous time} Equation (\ref{eq:sol:ctltiautonomous}) proved that the state transition matrix $\stm(t,t_0)$ of a continuous-time LTI system collapsed to the exponential $e^{\A t}$. Recalling the idea and proof for the region of convergence of the homogeneous response of (ACT-LTI) we can say that
+	\begin{equation}\begin{split}
+		\textrm{asymptotic stability} \qquad & \Leftrightarrow \qquad \Re{\lambda_i\{\A\}} < 0 \ \forall i \\
+		\textrm{exponential stability} \qquad & \Leftrightarrow \qquad \Re{\lambda_i\{\A\}} < 0 \ \forall i \\
+		\textrm{Lyapunov stability} \qquad & \Leftrightarrow \qquad \Re{\lambda_i\{\A\}} \leq 0 \ \forall i \textrm{ and if } \Re{\lambda_i} = 0 \Rightarrow n_i = 1
+	\end{split}\end{equation}
+	We observe so that for linear time-invariant system the concept of asymptotic and exponential stability are coincident (meaning that one cannot happen without the other one happening too).
+	
+	\paragraph{Discrete time} Similarly to the continuous time case, equation (\ref{eq:sol:adtsol}) proved that the state transition matrix $\stm(t,t_0)$ for discrete-time LTI systems coincides with the power $\A^{t-t_0}$ and so recalling the associated region of convergence we have
+	\begin{equation}\begin{split}
+			\textrm{asymptotic stability} \qquad & \Leftrightarrow \qquad |\lambda_i\{\A\}| < 1 \ \forall i \\
+			\textrm{exponential stability} \qquad & \Leftrightarrow \qquad |\lambda_i\{\A\}| < 1 \ \forall i \\
+			\textrm{Lyapunov stability} \qquad & \Leftrightarrow \qquad |\lambda_i\{\A\}| \leq  1 \ \forall i \textrm{ and if } |\lambda_i| = 1 \Rightarrow n_i = 1
+	\end{split}\end{equation}
+	
+	\paragraph{Positive and negative-definite matrices} In order to make more general assertion concerning the exponential stability of LTI system, a recall of some definition from linear algebra is required. Given a square matrix $\Q \in \mathds R^{n\times n}$ that's \textbf{symmetric}, meaning that $\Q^T = \Q$, then it's said
+	\begin{itemize}
+		\item \de{positive-definite}, written as $\Q >0$, if it holds $\x^T \Q \x > 0$ for all vectors $\x \in \mathds R^n \neq 0$;
+		\item \de{negative-definite} $\Q <0$ if $\x^T \Q \x < 0$ $\forall \x\neq 0$;
+		\item positive semi-definite $\Q \geq 0$ if $\x^T \Q \x \geq 0$ $\forall \x$;
+		\item negative semi-definite $\Q \neq 0$ if $\x^T \Q \x \leq 0$ $\forall \x$.
+	\end{itemize}
+	As a convention for any symmetric matrices $\Q_1,\Q_2$ with the notation $\Q_1 > Q_2$ we are implicitly assuming $\Q_1 - \Q_2 > 0$ or $\Q_2 - \Q_1 < 0$.
+	\begin{note}
+		The definition requires that the matrix $\Q$ must be symmetric, however if we consider the more general case of a non-symmetric matrix $\Q$ we observe that such element can be decomposed in a symmetric part $\Q_{symm} = \frac{\Q + \Q^T}{2}$ and a skew-symmetric $\Q_{skew} = \frac{\Q-\Q^T}2$ (indeed we have $\Q_{symm} + \Q_{skew} = \Q$). Recalling the property for matrix multiplication and transposition stating that $(\A\B\C)^T = \C^T \B^T \A^T$, we can rewrite the the condition for positive (negative)-definitiveness as
+		\[ \x^T \Q \x = \frac 1 2 \Big(\x^T \Q \x +\big(\x^T \Q \x\big)^T\Big) = \frac 1 2 \Big(\x^T \Q \x + \x^T \Q^T \x\Big) = \x^T \frac{\Q + \Q^T}{2} \x = \x^T \Q_{symm} \x \]
+	\end{note}
+	An important result from linear algebra is that for any symmetric matrix $\Q = \Q^T \in \mathds R^{n\times n}$ the following statements are all equivalents:
+	\begin{enumerate}[\itshape i)]
+		\item $\Q$ is positive definite;
+		\item all eigenvalues of $\Q$ are positive and real evaluates;
+		\item the determinant of all the principle minors (the \textit{upper-left sub-matrices}) are all positive definite. This is also referred as the \textbf{\textit{Sylvester criterion}};
+		\item there exist a non-singular matrix $\mat H \in \mathds R^{n\times n}$ such that $\Q = \mat H^T \mat H$ due to the Cholesky upper-triangular factorization. This also implies that exists the \textit{root} $\mat K = \sqrt{\Q}$, so a matrix such that $\mat K^T \mat K = \Q$.
+	\end{enumerate}
+	As a consequence we determine that for all \textbf{quadratic functions} in the form $\x^T \Q \x$ holds the so called \textit{\de{sandwich inequality}}
+	\begin{equation} \tag{S}
+		\lambda_{\min}\{\Q\} |\x|_2^2 \leq \x^T \Q \x \leq \lambda_{\max}\{\Q\} |\x|_2^2 \qquad \forall \x \in \mathds R^n
+	\end{equation}
+	
+	\begin{theorem} \label{th:lyap:continuoustime}
+		Given an autonomous continuous-time LTI system with dynamics so in the form $\dx = \A \x$, the following statements are equivalent:
+		\begin{enumerate}[\itshape i)]
+			\item the system is asymptotically stable;
+			\item the system is exponentially stable;
+			\item the matrix $\A$ is \de{\textit{Hurwitz}}, meaning that all eigenvalues have a negative real part: $\Re{\lambda_i} < 0 $ $\forall i$;
+			\item for each symmetric positive-definite matrix $\Q = \Q^T > 0 \in \mathds R^{n\times n}$ there exists a matrix $\P \in \mathds R^{n\times n}$ that's symmetric and positive definite that satisfy the following \de{Lyapunov equality}:
+			\begin{equation} \label{eq:ly:lyapequality}
+				\A^T \P + \P \A = - \Q
+			\end{equation}
+			Moreover the solution of the matrix $\P$ is unique;
+			\item there exists a symmetric positive-definite matrix $\P>0 \in \mathds R^{n\times n}$ satisfying the \de{Lyapunov inequality}:
+			\begin{equation} \label{eq:ly:lyapinequality}
+				\A^T \P + \P\A < 0
+			\end{equation}
+		\end{enumerate}
+	\end{theorem}
+	From a computational point of view, statement \textit{v)} is preferred to asses exponential stability through the use of the so called \de{\textit{Linear Matrix Inequalities} LMIs}. The Lyapunov equality \textit{iv)} is a stronger definition then the inequality, but the solution is more complex to compute (thus the choice of LMIs to solve such problems).
+	
+	\begin{proof}
+		The equivalence of statements \textit{i)}, \textit{ii)} and \textit{iii)} is \textit{obvious} and the link between them has been already discussed in the previous pages. Intuition can easily relate \textit{iv)} with \textit{v)}, however the backward implication (\textit{v)} $\Rightarrow$ \textit{iv)}) is mathematically impossible and requires to pass through statements \textit{i)} and \textit{ii)}. The goal now is to prove the relation of \textit{iv)} and \textit{v)} with the other statements:
+	\begin{enumerate}[\itshape a)]
+		\item exponential stability \textit{ii)} implies the Lyapunov equality \textit{iv)}: we can show that the unique solution to (\ref{eq:ly:lyapequality}) is determined by the matrix $\P$ defined as
+		\[ \tag{$\star$} \P = \int_0^\infty e^{\A^Tt} \Q e^{\A t}\, dt \]
+		To show the \textit{finiteness} of the solution we have to compute the norm on such matrix
+		\[ \|\P\| = \left\| \int_0^\infty e^{\A^Tt} \Q e^{\A t} \, dt \right\| \leq \int_0^\infty \left\| e^{\A^Tt} \Q e^{\A t}\right\| \, dt \]
+		and for the sub-multiplicative property
+		\[ \|\P\| \leq \int_0^\infty \left\| e^{\A^Tt} \right\|  \|\Q\| \left\| e^{\A t}\right\| \, dt = \|\Q\| \int_0^\infty \big\| e^{\A t}\|^2\, dt \]
+		Denoting with $\mu\{\A\} = \max_i \Re{\lambda_i}$ the \textbf{spectral abscissa} of the matrix $\A$ (where $\lambda_i$ are the eigenvalues of such matrix), we can exploit a property stating that $\forall \lambda > \mu\{\A\}$ there exists a constant $k\in \mathds R$ such that $\|e^{\A t}\| \leq k e^{\lambda t}$ for any positive time $t$. Applying this rule to the previous equation determines
+		\[ \|\P\| \leq \|\Q\| \int_0^\infty k e^{2\lambda t}\, dt \]
+		Having hypothesized the exponential stability of the system, then it means that all eigenvalues $\lambda_i$ of $\A$ have a negative real part, implying that the integral yet reported converges to a finite number, hence the norm of $\P$ is bounded.
+		
+		We can show now that ($\star$) is a solution of (\ref{eq:ly:lyapequality}) by substituting the proposed $\P$ in the Lyapunov equality:
+		\begin{align*}
+			\A^T \P + \P \A & = \int_0^\infty \A^T e^{\A^Tt} \Q e^{\A t}\, dt + \int_0^\infty e^{\A^Tt} \Q e^{\A t} \A \, dt \\
+			& = \int_0^\infty \left( \A^T e^{\A^Tt} \Q e^{\A t} + e^{\A^Tt} \Q e^{\A t} \A \right)\, dt
+		\end{align*}
+		Considering that $e^{\A^T t}$ can be regarded as $\big(e^{\A t}\big)^T$, the whole term in the parenthesis can be regarded as the derivative $\frac d{dt} \big(e^{\A^T t} \Q e^{\A t}\big)$: this implies that the evaluation of the previous integral reduces to
+		\[ \A^T \P + \P \A = \left. \left[ e^{\A^Tt} \Q e^{\A t}  \right]\right|_{t=0}^\infty = 0 - \I \Q \I  = - \Q \]
+		
+		Proven so that ($\star$) is a solution of (\ref{eq:ly:lyapequality}), all we need to show is that $\P$ is positive-definite. By computing the product
+		\[ \vet z^T \P \vet z = \int_0^\infty \vet z^T e^{\A^Tt} \Q e^{\A t} \vet z \, dt \hspace{2cm} \forall \vet z \in \mathds R^{n} \setminus \{0\} \]
+		we can observe that the vector $\vet w(t)$ defined as $e^{\A t} \vet z$ is always non-zero and allows to express the previous equation as
+		\[ \vet z^T \P \vet z = \int_0^\infty \vet w^T \Q \vet w(t) \, dt \geq \lambda_{\min}\{\Q\} \int_0^1 |\vet w(t)|^2\, dt > 0 \]
+		where the inequality has been determined considering the sandwich (S); in this way we proved that $\P$ is positive definite.
+		
+		As a last argument we can show that ($\star$) is the unique solution of (\ref{eq:ly:lyapequality}): by contradiction let's assume there exists two distinct matrices $\P_1,\P_2$ solving the Lyapunov equality, meaning that
+		\[ \begin{cases}
+			\A^T \P_1 + \P_1 \A = - \Q \\
+			\A^T \P_2 + \P_2 \A = - \Q
+		\end{cases} \]
+		Subtracting the second equation from the first evaluates to $\A^T(\P_1-\P_2) + (\P_1-\P_2) \A = 0$; pre-multiplying this by the factor $e^{\A^Tt} \neq 0$ and post-multiplying by $e^{\A t}$ both terms gives
+		\begin{align*}
+			0 & = e^{\A^Tt} \A^T \big(\P_1-\P_2\big) e^{\A t} + e^{\A^Tt} \big(\P_1-\P_2\big) \A e^{\A t} = \A^T e^{\A^Tt} \big(\P_1-\P_2\big) e^{\A t} + e^{\A^Tt} \big(\P_1-\P_2\big) \A e^{\A t} \\
+			& = \frac {d}{dt}\Big(e^{\A^Tt} \big(\P_1-\P_2\big) e^{\A t}\Big)
+		\end{align*}
+		
+		\item We can now show that the solution to the Lyapunov inequality (\ref{eq:ly:lyapinequality}) lead to an exponentially stable system \textit{ii)}. To do so we have to define the concept of \de{Lyapunov function} as a function $V: \mathds R^n \rightarrow \mathds R$ characterized by specific properties that we will discuss in the chapter of hybrid systems. However in the specific case of LTI system we can regard as \textbf{Lyapunov function} the quadratic equation
+		\begin{equation} \label{eq:ly:lyapfunction}
+			V(\x)= \x^T \P \x \ \in \mathds R \hspace{2cm} \forall x\in \mathds R^n, \P > 0
+		\end{equation}
+		Observing that the result is indeed a scalar, we can apply the sandwich inequality (S) and obtain
+		\[ \lambda_{\min} \{\P\} |\x|^2 \leq \x^T\P \x \leq \lambda_{\max}\{\P\} |\x|^2 \]
+		that can be rewritten as
+		\[ c_1 |\x|^2 \leq V(\x) \leq c_2 |\x|^2 \]
+		If we now ocnsider the directional derivative of the Lyapunov function what we obtain is
+		\[ \frac{dV(\x)}{dt} = \frac{\partial V}{\partial \x} \frac{d\x}{dt} = \frac{\partial V}{\partial \x} \dx = \nabla V(\x) \, \A \x = \langle \nabla V(\x), \A \x \rangle \]
+		where $\nabla V(\x)$ is the gradient of the Lyapunov function considered as a row vector that evaluates to $2\P \x$ and is representing the \textbf{directional derivative} of $V(\x)$. Substituting in the previous equation this gives
+		\begin{align*}
+			\nabla V(\x) \, \A \x & = 2\P \x \A \x = \x^T \P \A \x + \x^T \P \A \x = \x^T \P \A \x + \x^T \A^T \P^T \x \\ 
+			& = \x^T\big(\P \A + \A^T \P\big)\x = - \x^T \mat \Sigma \x
+		\end{align*}
+		As hypothesis in \textit{v)} we have that the matrix $\A^T\P + \P \A$ is negative-definite, meaning that the matrix $\mat \Sigma$ defined as $-\big(\P \A + \A^T \P\big)$ must be positive-definite. From the sandwich inequality (S) we have $\lambda_{\min}\{\mat \Sigma\}|\x|^2 \leq \x^T \mat \Sigma \x$ but also reverting $-\lambda_{\min}\{\mat\Sigma\} \geq - \x^T \mat \Sigma \x$ we can show that
+		\[ \tag{$\circ$} \nabla V(\x) \, \A \x \leq - \lambda_{\min}\{\mat \Sigma\} |\x|^2 \leq - \lambda_{\min}\{\mat \Sigma\} \frac 1{c_2} V(\x) = - c_3 V(\x)  \]
+		Intuitively we have that the Lyapunov function in (\ref{eq:ly:lyapfunction}) is positive definite and with proof until now we shown that it's derivative is always negative for any state $\x$: this means that, as the time increases, the states are always going closer to zero (in fact in order to have a reduction of $V(\x)$ the vector $\x$ must get \textit{smaller}); in particular ($\circ$) is commonly referred as the \de{flow inequality}. Formally to ensure exponential stability we have to use the \textbf{comparison theorem} stating that {\itshape given a scalar function $v(t)$ that'd differentiable and such that $\dot v(t) \leq -\mu v(t)$ for all $t\geq t_0$, where $\mu \in \mathds R$ is a constant, then it hold $v(t) \leq e^{-\mu(t-t_0)} v(t_0)$ for all $t\geq t_0$.} In ($\circ$) we indeed have the form
+		\[ \dot V(t) = \nabla V(\x)\, \A \x \leq -c_3 V(\x(t)) \]
+		and so for the comparison theorem the solution satisfies
+		\[ V\big(\x(t)\big) = v(t) \leq e^{-c_3(t-t_0)} v(t_0) = e^{-c_3(t-t_0)} V\big(\x(t_0)\big) \]
+		The exponential decay is more evident if we explicitly relate $|\x|$ with $|\x(t_0)|$ as
+		\[ |\x(t)|^2 \leq \frac{c_2}{c_1} e^{-c_3(t-t_0)} |\x(t_0)|^2 \qquad \Rightarrow \qquad |\x(t)| \leq \sqrt{\frac{c_2}{c_1}} e^{-\frac{c_3}{2} (t-t_0) } |\x(t_0)| \]
+		
+	\end{enumerate}
+	\end{proof}
+
+	Theorem \ref{th:lyap:continuoustime} can also be extended to discrete-time systems as
+	
+	\begin{theorem} \label{th:lyap:discretetime}
+		Given an autonomous discrete-time LTI system with dynamics so in the form $\xp = \A \x$, the following statements are equivalent:
+		\begin{enumerate}[\itshape i)]
+			\item the system is asymptotically stable;
+			\item the system is exponentially stable;
+			\item the matrix $\A$ is \de{\textit{Schur}}, meaning that all eigenvalues are characterized by a magnitude smaller than one: $|\lambda_i| < 1 $ $\forall i$;
+			\item for each symmetric positive-definite matrix $\Q = \Q^T > 0 \in \mathds R^{n\times n}$ there exists a symmetric positive-definite matrix $\P \in \mathds R^{n\times n}$ that satisfy the following \de{Lyapunov equality}:
+			\begin{equation}
+				\A^T \P \A - \P = - \Q
+			\end{equation}
+			Moreover the solution of the matrix $\P$ is unique;
+			\item there exists a symmetric positive-definite matrix $\P>0 \in \mathds R^{n\times n}$ satisfying the \de{Lyapunov inequality}:
+			\begin{equation}
+				\A^T \P \A - \P < 0
+			\end{equation}
+		\end{enumerate}
+	\end{theorem}
+
+\section{Linear quadratic regulator} \label{sec:LQR}
+	Assuming now to have a continuous-time LTI plant where all it's states can be measured (note that this in general is a very strong hypothesis), then the best control system we can design is the \de{linear quadratic regulator LQR} and is based on the minimization of the functional
+	\begin{equation} \label{eq:ly:temp2}
+		\mathcal J = \int_0^\infty \y^T(\tau)\Q \y(\tau) + \u^\tau\mat R \u(\tau)\, d\tau
+	\end{equation}
+	Intuitively we can regard $\Q$ as a matrix that's used to describe \textit{how much we trust the sensed value of the output} and $\mat R$ \textit{how much we trust the actuators in input}. As a general rule of thumb $\Q,\mat R$ can be chosen as diagonal with their elements \textit{measuring the confidence} of the related input/output, however in the more general case we have to ensure that both $\Q$ and $\mat R$ are symmetric positive-definite matrices; this, of course, are the main design parameters that have to be tuned and determined in order to obtained the desired result.
+	
+	In particular the linear quadratic regulator is based on the solution of the problem known as \textbf{\textit{Bayes rule}} defined as
+	\begin{equation} \label{eq:ly:bayes}
+		\mathcal J^* = \min_{u(t), t\geq 0} \mathcal J = \min_{u(t), t\geq 0} \int_0^\infty \y^T(\tau)\Q \y(\tau) + \u^\tau\mat R \u(\tau)\, d\tau
+	\end{equation}
+	The solution of such optimal control problem is characterized by an input $\u^*$ that can be regarded as a linear combination of the states $\x$ performed through a matrix $\K \in \mathds R^{m\times n}$:
+	\begin{equation} \label{eq:ly:LQRsol}
+		\u^*(t) = -\K \x(t)
+	\end{equation}
+	The main goal in the design of the linear quadratic regular is to tune $\K$ as function of the chosen $\Q$ and $\mat R$ and the result heavily depends on the matrices $\A,\B,\C,\D$ characterizing the system itself.
+	
+	\paragraph{Feedback invariant} In order to prove that (\ref{eq:ly:LQRsol}) is indeed the optimal solution of (\ref{eq:ly:bayes}) we have to introduce a \de{feedback invariant} $\mathcal H$, a property of the system depending only on the initial states that's defined as
+	\begin{equation} \label{eq:ly:invariant}
+		\mathcal H\big(\x(\cdot), \u(\cdot)\big) = -\int_0^\infty\Big( \A \x(t) + \B \u(t) \Big)^T \P \x(t) +  \x^T(t)\P \Big(\A \x(t) + \B \u(t)\Big)\, dt
+	\end{equation}
+	Of course this integral converges to a value as long as $\lim_{t\rightarrow\infty} \x(t) = 0$.
+	
+	\begin{proof}
+		We can prove that (\ref{eq:ly:invariant}) is indeed an invariant considering that $\A \x + \B \u$ is just $\dx$, so
+		\begin{align*}
+			\mathcal H\big(\x(\cdot), \u(\cdot)\big) & = -\int_0^\infty \dx^T \P \x + \x^T \P \dx \, dt = - \int_0^\infty \frac{d}{dt}\big(\x^T\P \x\big) \, dt = -\Big[\x(t)^T \P \x(t)\Big]_0^\infty \\
+			& = - \cancel{\x^T(\infty) \P \x(\infty)} + \x^T(0) \P \x(0) = \x_0^T \P \x_0
+		\end{align*}
+		so as long as $\lim_{t\rightarrow\infty} \x(t) = 0$ holds the functional $\mathcal H$ depend only on the initial state $\x_0$ (and on the positive-definite matrix $\P$). 
+	\end{proof}
+	
+	\begin{proof}
+		We can now prove that (\ref{eq:ly:LQRsol}) is indeed the solution of the optimal control problem (\ref{eq:ly:bayes}). Let us consider for simplicity a system whose output depends only on the states of the system (so $\D$ is identically null), then we can rewrite the functional (\ref{eq:ly:temp2}) as
+		\[ \tag{$\star$} \mathcal J = \mathcal H\big(\x, \u \big) + \int_0^\infty \Lambda\big(\x, \u \big)\, dt \]
+		where the function $\Lambda$ is characterized by having
+		\[ \min_{\u} \Lambda(\x,\u) = 0 \qquad \forall \x \]
+		To show that $(\star)$ is indeed equivalent to (\ref{eq:ly:temp2}) we can add and subtract from the formal definition of $\mathcal J$ the functional $\mathcal H$, so
+		\[ \mathcal J = \int_0^\infty \y^T \Q \y + \u^T \mat R \u \, d\tau + \mathcal H(\x,\u) - \mathcal H(\x, \u)  \]
+		Expanding $\mathcal H$ as reported in (\ref{eq:ly:invariant}) and knowing that the output $\y$ depend only on the states as $\C \x$ (and so it means $\y^T = (\C\x)^T = \x^T \C^T$), then we can rewrite
+		\begin{align*}
+			\mathcal J & = \int_0^\infty \x^T \C^T \Q \C \x + \u^T \mat R \u + \big(\A \x + \B \u \big)^T \P \x + \x^T \P \big(\A \x + \B \u\big) \, d\tau + \mathcal H(\x,\u) \\
+			& = \int_0^\infty \underbrace{\x^T \big(\C^T \Q \C + \A^T \P + \P \A\big) \x + 2\x^T\P \B \u + \u^T \mat R\u}_{\Lambda(\x,\u)}\, dt + \mathcal H(\x, \u) \tag{$\dagger$}
+		\end{align*}
+		The main goal now is to define a positive-definite matrix $\mat M$ that allows to rewrite $\Lambda$ as $(\u + \K \x)^T \mat M(\u + \K \x)$: if such matrix exists then it's straightforward to see that the input $\u$ that minimize $\Lambda$ is indeed $\u = - \K \x$ (because eventually $\u + \K \x = 0$ meaning that $\Lambda$ reaches it's minimum value that's zero).\\
+		For this scope let us consider $\mat R$ in order to solve the quadratic form: computing in fact $(\u + \K \x)^T \mat R(\u + \K \x)$ evaluates to $\u \mat R \u + \x^T \K^T \mat R \K \x + 2 \x^T \K^T\mat R \u$. By matching the resulting solution with the result proposed in ($\dagger$) we see that $\P \B$ must equate $\K^T \mat R$, meaning so that $\mat K^T = \P \B \mat R^{-1}$: this determines the optimal solution of $\K$ as
+		\begin{equation}
+			\K = \big(\P \B \mat R^{-1}\big)^T = \big(\mat R^{-1}\big)^T \B^T \P^T = \mat R^{-1} \B^T \P
+		\end{equation}
+		Substituting the definition of $\K$ in ($\dagger$) allow to rewrite the functional as
+		\[ \mathcal J = \mathcal H(\x, \u) + \int_0^\infty \x^T \big(\C^T \Q \C + \A^T \P + \P \A + \P \B \mat R^{-1} \B^T \P - \P \B \mat R^{-1} \B^T \P \big) \x + 2 \x^T \P \B \u + \u^T \mat R \u\, dt \]
+		where the terms $\x^T\P \B \mat R^{-1} \B^T \P\x$ inside the integral correctly matches the term $\x^T \K^T \mat  R\K \x$ obtained by expanding $\Lambda$ as quadratic form. Showed that ($\star$) holds, in order to have the asymptotic convergence of the system we have to impose a condition on the quadratic term $\x^T \dots\x$: this can be achieved by solving the \de{algebraic Riccati equation} defined as
+		\begin{equation} \label{eq:lyap:LQRinvariants}
+			\A^T \P + \P\A + \C^T\Q \C - \P \B \mat R^{-1} \B^T \P = 0
+		\end{equation} 
+		Solving this linear equality for a positive-definite matrix $\P$, if we can ensure that $\lim_{t\rightarrow\infty} \x(t) = 0$ then we are sure that $\u^* = -\K \x$ is the solution of the linear quadratic regulator. Moreover the optimal value $\mathcal J^*$ of the problem is characterized by $\mathcal H(\x,\u) = \x_0^T \P \x_0$.
+	
+	\end{proof}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

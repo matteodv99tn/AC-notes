@@ -1,0 +1,249 @@
+\chapter{Linear Matrix Inequalities}
+	The main focus of this chapter is the discussion of \de{linear matrix inequality}, hence expressions of the form $A Z + Q < 0$ where $A,Z,Q$ are matrices, and how to solve such problems both analytically and numerically.
+	
+	Given the scalar inequality $a z + q<0$ in the unknown $z$ it's known that the solution is determined as $z < - \frac q a$ as long as $a$ is not null. However this principle cannot generically be applied for matrices.
+	
+	Recalling the definitions described at page \pageref{sec:positivedefinite} we say that a symmetric matrix $P = P^T \in \mathds R^{n\times n}$ is \de{positive definite}, and we write $P>0$, if the \textbf{quadratic form} $x^TPx$ is greater then zero for all non-zero $x$:
+	\[ P > 0\textrm{ is positive definite} \qquad \Leftrightarrow \qquad x^T P x > 0 \quad \forall x \neq 0 \]
+	Such definition can be extended also for the cases
+	\begin{align*}
+		P \geq 0\textrm{ is positive semi-definite} \qquad & \Leftrightarrow \qquad x^T P x \geq 0 \quad \forall x \neq 0 \\
+		P < 0 \textrm{ is negative definite} \qquad & \Leftrightarrow \qquad x^T P x < 0 \quad \forall x \neq 0 \\
+		P \leq 0 \textrm{ is negative semi-definite} \qquad & \Leftrightarrow \qquad x^T P x \leq 0 \quad \forall x \neq 0
+	\end{align*}
+	With such definition we can solve the \textit{simplest} matrix inequalities in the following way:
+	\[ A > B \qquad \Leftrightarrow \qquad A - B > 0 \]
+	
+	\paragraph{Properties} We can consider the following properties for \textit{sign} definite matrices:
+	\begin{enumerate}[ \itshape i)]
+		\item any congruent transformation $U \in \mathds R^{n\times n}$ (so such that $U^{-1} = U^T$) doesn't change the \textit{definitiveness} of the matrix, meaning that 
+		\[ \textrm{if } P > 0 \qquad \Rightarrow \qquad U^T P U > 0 \]
+		Such relation can be proven by simply computing the quadratic form $x^TU^TPUx$: knowing that the product $Ux$ evaluates into a vector $y$ (and also $y^T = x^TU^T$) the quadratic form is now $y^TPy$; because we assumed that $P$ was positive definite, then it means that $y^TPy > 0$ and that the congruent transformation $U$ didn't altered the definitiveness of the matrix $P$.
+		
+		\item it has that
+		\[ \textrm{if } P > 0 \quad \Leftrightarrow \quad \lambda_i \{P\} > 0 \ \forall i \hspace{1.4cm} \textrm{and} \hspace{1.4cm} \textrm{if } P < 0 \quad \Leftrightarrow \quad \lambda_i \{P\} < 0 \ \forall i \]
+		To prove this result we have to consider the particular congruent transformation $U$ that diagonalizes the matrix $P$, so $U^TPU = D$; such representation contains in the diagonal the $n$ eigenvalues of $P$. Computing the quadratic form we see that
+		\[ x^T U^T P U x = x^T D x = \sum_{i=1}^{n} \lambda_i x_i^2 > 0 \]
+		Knowing that the quadratic form is always positive (we assumed $P > 0$), then considering as $x$ independently each canonical component of $\mathds R^n$ we  see that $x_i^2 > 0$, hence to have $\lambda_i x_i^2 > 0$ we have to ensure that all eigenvalues of $P$ have positive real part.
+		
+		\item the symmetric matrix $P$ can be bounded by the inequalities
+		\[ \lambda_m\{P\} \I \leq P \leq \lambda_M\{P\} \I \]
+		where $\lambda_m,\lambda_M$ are respectively the smaller and bigger eigenvalues of $P$. We can prove this inequalities considering just $\lambda_m \I \leq P$: by reverting the inequality we observe that
+		\[ P - \lambda_m \I = U^TPU - \lambda_m U^T U = D - \lambda_m \I \geq 0 \]
+		Knowing that the diagonal matrix $D - \lambda_m \I$ is in the form
+		\[ \mat{\lambda_1 - \lambda_m \\ & \lambda_2 - \lambda_m \\ && \ddots \\ &&& \lambda_n - \lambda_m} \]
+		Knowing that $\lambda_m$ is the smallest eigenvalue, then all the terms on the diagonal (except one that evaluates to zero) are positive, hence the matrix $D- \lambda_m \I$ has all eigenvalues $\geq 0$ and so is semi-positive definite.		
+	\end{enumerate}
+	
+	In general \textbf{linear matrix inequalities} are expressed in the form
+	\begin{equation} \label{eq:lmi:standardineq}
+		A Z + Q < 0
+	\end{equation}
+	where $Z$ is the unknown of the inequality (and that therefore \textbf{must appear linearly}) and $Q$ must be a symmetric matrix; if $Q$ is a general matrix the same problem can be state as $AZ + Z^TA^T + 2 Q < 0$. It's proven that linear matrix inequalities presents a \de{convex solution set}: defining in fact with $\mathscr S$ the solution set, for any $p$ solutions of \ref{eq:lmi:standardineq} $Z_1,\dots Z_p \in \mathscr S$ we have that 
+	\[ \sum_{i=1}^p \lambda_i Z_i \textrm{ belongs to } \mathscr S \qquad \textrm{with } \lambda_i \in \mathds R^+_0 \textrm{ and such that } \sum_{i=0}^{p} \lambda_i = 1 \] 
+	
+\section{Lyapunov function and convergence of the solution}
+	We define a \de{Lyapunov function} the quadratic form
+	\begin{equation}
+		\lyap(x) = x^T P x \hspace{2cm} \textrm{with } P > 0
+	\end{equation}
+	a particular function that can be regarded as a sort of \textit{potential} of linear system; given that $P$ is a positive definite matrix, this quadratic form is always positive and is zero only for $x = 0$. Deriving the Lyapunov function with respect to time determines $\dot \lyap = \dot x^T P x + x^T P \dot x$; evaluating this derivative along the free solution of a continuous-time linear time-invariant system $\dot x = \A x$ also shows that
+	\begin{equation}
+	\begin{split}
+		\dot \lyap & = (\A x)^T P x + x^TP(\A x) = x^T \A^T P x + x^T P\A x \\
+		& = x^T\big(\A^T P + P \A \big)x
+	\end{split}
+	\end{equation}
+	In order to have a solution that's converging to zero we have to impose that the derivative $\dot V$ is strictly negative (in order to have a converging solution to zero): this unavoidably requires that the matrix $\A^T P + P\A$ is negative definite in order that the associated quadratic form is always less then zero.
+	
+	We can so characterize the \textbf{stability} of an LTI system by simply determine if there exists a matrix $P$ that satisfy the following constraints in the form of linear matrix inequalities:
+	\begin{equation} \label{eq:lmi:stability}
+	\begin{cases}
+		\A^T P + P \A < 0 \\
+		P > 0
+	\end{cases}
+	\end{equation}
+	
+	\paragraph{Convergence} The \textit{velocity of convergence} of the free response of the linear system is strictly associated to the bigger eigenvalue of the state matrix $\A$ (as was discussed, because it is associated to an exponential with longer decay). In order to estimate such velocity using the linear matrix inequality we can solve the following system for both the matrix $P$ and constant $\alpha$:
+	\begin{equation} \label{eq:lmi:convergencerate} \begin{cases}
+		P > 0 \\ \A^T P + P \A < -2\alpha P
+	\end{cases} \end{equation}
+	In this case the solution $\alpha$ is the estimate of the biggest eigenvalue: considering in fact the second inequality with some algebraic manipulation we have
+	\begin{align*}
+		\A^T P + \alpha P + \alpha P + P \A = \big(\A^T - \alpha \I\big)P + P\big(\A + \alpha \I\big) & < 0 \\ \big(\A + \alpha \I\big)^T P + P \big(\A + \alpha \I\big) & < \\
+		\overline \A^T P + P \overline \A & <
+	\end{align*}
+	Knowing that $P$ is positive definite, requiring that $\overline \A^T P + P \overline \A < 0$ means that such matrix is negative definite hence $\overline \A$ must have eigenvalues $\overline \lambda$ that are negative. Solving the eigenvalue problem:
+	\begin{align*}
+		\overline \A v = \big(\A + \alpha \I\big) v & = \overline \lambda v \\
+		\A v + \alpha v & = \overline \lambda v \\
+		\A v & = (\overline \lambda - \alpha) v
+	\end{align*}
+	Observing that the expression $\overline \lambda - \alpha$ indeed determines the eigenvalue of $\A$, then we can say that
+	\[ \Re{\lambda} = \Re{\overline \lambda} - \alpha < - \alpha \]
+	because $\Re{\overline \lambda} < 0$ due to the negative definiteness of $\overline \A$. \vspace{3mm}
+	
+	Note that the linear matrix inequality \ref{eq:lmi:convergencerate} is not strictly linear because it involves the product $\alpha P$ between the two unknowns, however a numerical solution can be obtained iteratively using bisection algorithm by guessing $\alpha$ and solving the systems for the unknown $P$.
+	
+	\paragraph{Comparison lemma and overshoot} As was already discussed, the comparison lemma stated that if a function $v$ was such that $\dot v(x) \leq \mu v(x)$ for all non-negative value of $x$, then such function can be bounded by the exponential
+	\[ v(x) \leq c e^{\mu t} v\big(x_0\big) \qquad c \in \mathds R \]
+	where $x_0$ is the initial value of $x$ evaluated at $t=0$. The idea now is to compute the value of the constant $c$ that \textit{better fits} the behaviour of a linear system. From the inequality \ref{eq:lmi:convergencerate} we had the problem $\dot \lyap < - 2\alpha \lyap$, resulting in a form $\lyap(t) \leq e^{-2\alpha t} \lyap(x_0)$. We can also bound this matrix considering 
+	\[ x^T \I x \lambda_m\{P\} \leq x^TPx \leq e^{-2\alpha t}x_0^T P x_0 \leq e^{-2\alpha t} x_0^T \I x_0 \lambda_M\{P\}  \]
+	Comparing the two extremes  of the inequality evaluates to the form $|x|^2 \lambda_m \leq e^{-2\alpha t} |x_0|^2 \lambda_M$ that, solved for the norm of $x$, determines
+	\begin{equation}
+		|x| \leq \sqrt{\frac{\lambda_M}{\lambda_m}} e^{-\alpha t} |x_0|
+	\end{equation}
+	\textbf{VEDERE SE ERA FINITO}
+	
+\section{Noises and performance output}
+	Considering a linear time-invariant system, neglecting the inputs in the state space representation but adding some \de{disturbances} $w$ we obtain a form
+	\begin{equation}
+	\begin{cases}
+		\dot x = \A x + E w \\ z = \C x + F w
+	\end{cases}
+	\end{equation}
+	where $z$ is the so called the \de{performance output}, a particular output that considers only the internal states and the effect of disturbances.
+	
+	Related to this concept is the \de{L2 gain} defined as the minimum value of $\gamma \in \mathds R$ such that 
+	\begin{equation}
+		\|z\|_2 \leq \gamma \| w \|_2 \hspace{2cm} \textrm{with } x(0) = 0
+	\end{equation}
+	where the norm $\|\cdot\|_2$ is defined as
+	\[ \|x\|_2 = \lim_{T\rightarrow\infty} \frac 1 T \sqrt{\int_0^T z^T(\tau) z(\tau)\, d\tau} \]
+	In general the smaller $\gamma$ is, the better the system will response: in fact lowering $\gamma$ decreases the effect of disturbances on the performance output.
+	
+	Evaluating the derivative of the Lyapunov function $\dot \lyap$ along such system $\dot x = \A x + E w$ (and recalling that for $\lyap$ we had $P>0$), we obtain a linear matrix inequality in the form
+	\begin{equation} \label{eq:lmi:temp1}
+	\begin{cases}
+		P > 0 \\
+		x^T\big(\A^T P + P \A\big) x + x^T P E w + w^T E^T P x < - \frac 1 \gamma z^t z + \gamma w^t w
+	\end{cases}
+	\end{equation}
+	If we can find $P,\omega$ that satisfies such inequalities than we can assert that
+	\[ \A \textrm{ is Hurwitz (stable system)} \hspace{2cm} \textrm{and} \hspace{2cm} \|z\|_2 \leq \gamma \|w\|_2 \]
+	To prove the internal stability of the system we have to consider the inequality neglecting the disturbance input determining $x^T(\A^TP+P\A)x < -\frac 1 \gamma z^t z$; observing that $z^T z = |z|^2$ is always positive, it means that $\A^TP + P\A < 0$ and so the system is stable (equation \ref{eq:lmi:stability}).\\
+	To show that $\|z\|_2 \leq \gamma \|w\|_2$ we have to see that the left hand side of the second inequality corresponds to the derivative of the Lyapunov function evaluated at $\dot x= \A x + Ew$: we so have
+	\[ \dot \lyap < - \frac 1 \gamma z^T z + \gamma w^T w \qquad \Rightarrow \qquad \frac 1 \gamma z^T z < - \dot \lyap + \gamma w^T w \]
+	Integrating in the domain $[0,T]$ what we have is
+	\[ \frac 1 \gamma \int_0^T z^T z \, d\tau < - \lyap(T) + \cancel{\lyap(0)} + \gamma \int_0^T w^t w\, d\tau \]
+	Knowing that $\lyap(x)$ is always positive, we can bound the left term as
+	\[ \frac 1 \gamma \int_0^T z^T z \, d\tau < \gamma \int_0^T w^t w\, d\tau  \]
+	Taking the limit for $T$ and after some algebraic manipulation we can see that
+	\[ \left( \lim_{T\rightarrow\infty} \frac 1 T \int_0^T z^t z \, d\tau \right)^{\frac 1 2} < \left( \lim_{T\rightarrow\infty}  \frac{\gamma^2}T \int_0^T w^t w \, d\tau \right)^{\frac 1 2} \qquad\Rightarrow \qquad \|z\|_2 \leq \gamma \|w\|_2 \]
+	
+	\paragraph{Determination of the linear matrix inequality} Observing equation \ref{eq:lmi:temp1} we see that the formulation of the second inequality is not a \textit{proper} linear matrix inequality, however if we consider the performance output (and it's transposed) it can be regarded as the following linear combinations:
+	\[ z = \C x + F w = \mat{\C \\ & K} \mat{x \\ w} \hspace{1.4cm} z^T = x^T\C^T + w^T F^T = \mat{x^T & w^T} \mat{\C^T \\ F^T} \]
+	By putting all member of the inequality in equation \ref{eq:lmi:temp1} on the left hand side, we can see that the matrix $x^T\big(\A^T P + P \A\big) x + x^T P E w + w^T E^T P x - \gamma w^Tw$ can be regarded as a sort of quadratic form and so
+	\begin{align*}
+		\mat{x^T w^T} \mat{\A^TP + P\A & P E \\ E^TP & - \gamma \I } \mat{x \\ w} +  \mat{x^T & w^T} \frac 1 \gamma \mat{\C^T \\ F^T} \mat{\C & F} \mat{x \\ w} &  < 0  \\
+		\mat{x^T & w^T} \left( \mat{\A^TP + P\A & PE \\ E^TP & -\gamma \I} - \mat{C^T \\ F^T} -\frac 1 \gamma \mat{C & F} \right) \mat{x \\ w}  & < 0
+	\end{align*}	
+	To transform this inequality into a system of matrix inequalities that can be solved we can use the \de{Shur complement}, a lemma stating that given an LMI
+	\[ \begin{cases}
+		R < 0 \\ Q - S R^{-1} S^T < 0
+	\end{cases} \]
+	is equivalent to the requirement
+	\begin{equation}
+		\mat{Q & S \\ S^T & R} < 0
+	\end{equation}
+
+	Applying this concept what we want is to determine the lower bound of $\gamma$ in order to improve the L2 gain by so analysing the following mathematical statement:
+	\begin{equation} \min \gamma \qquad \textrm{subject to }
+	\begin{cases}
+		P > 0 \\
+		\mat{\A^T P + P\A & PE & \C^T \\ E^T P & - \gamma \I & F^T \\ C & F & - \gamma \I } < 0
+	\end{cases}
+	\end{equation}
+
+\section{Design of controllers}
+\subsection{Full state feedback}
+	Considering a full state feedback where the input $u$ of the system is a linear combination of the state considering the formula $Kx$, what we have is that the state response of the LTI system is
+	\[ \dot x = \A x + \B u = \A x + \B K x = (\A + \B K) x = \A_{cl} x  \]
+	where $\A_{ck}$ is the \textbf{closed loop state matrix}. The underlying problem is to design a matrix $K$ that determines $\A_{cl}$ associated to a stable system. Recalling the result in equation \ref{eq:lmi:stability}, we can apply the linear matrix inequality on this closed loop matrix, so
+	\[ \Acl^T P + P \Acl = \big(\A + \B K\big) ^T P + P \big(\A + \B K\big) < 0\] 
+	However what we see is that this system is non-linear: this form requires the computation of the two unknowns $P$ and $K$ of the problem, and so the solution can't be obtained trivially. However defining a symmetric matrix $W=W^T$ such that $W = P^{-1}$, pre- and post-multiplying the inequality by $W$ what we obtain is
+	\[ W\big( \A + \B K \big) PW + WP\big(\A + \B K\big) W = W \A^T + W \B^T K^T + \A W + \B KW < 0 \]
+	Defining now the product $KW$ as $X$ we can finally obtain a matrix inequality that's indeed linear in the unknowns $W$ and $X$, in fact
+	\begin{equation}
+	\begin{cases}
+		W\A^T + X^T\B ^T + \A W + \B X < 0 \\ W > 0
+	\end{cases}
+	\end{equation}
+	Solving for $X,W$ allows to compute $P$ as $W^{-1}$ and $K$ as $XW^{-1} = XP$. Moreover if we want to \textit{quantify} or assert a \textbf{convergence rate} $\alpha$ for the exponential decay of the system we can consider the following \textit{modified} linear matrix inequality:
+	\begin{equation}
+		\begin{cases}
+			W\A^T + X^T\B ^T + \A W + \B X < -2\alpha W \\ W > 0
+		\end{cases}
+	\end{equation}
+	With this formulation the upper inequality is not linear (in general $\alpha$ and $W$ are unknowns in the problem) and also high value of $\alpha$ requires more control effort (the force applied by the actuators) that for practical application is bounded. To bound the value of $\alpha$ we can consider the following LMI:
+	\[ \begin{cases}
+		W\A^T + X^T\B ^T + \A W + \B X < -2\alpha W \\ W > \I
+	\end{cases} \]
+	Observing that the norm of the matrix $K$ is $\|K\| = \|X W^{-1}\| \leq \|X\| \|W^{-1}\|$, but also that $\|W^{-1}\| < 1$, then to bound the control matrix $K$ we can simply bound $X$ as cautelative solution:
+	\[ \|K\| \leq  \| X\| \leq \overline k \]
+	Having so that $X^T X \leq \overline k^2 \I$, reverting the inequality and with some algebraic manipulation we can get the form
+	\[ \overline k \I - \frac 1{\overline k} X^T X \geq 0 \]
+	and so applying the Schure's complement we can add a further condition on the matrix $\mat{\overline k \I & X^T \\ X & \overline k \I} \geq 0$. The general statement of the problem can now be reduced to the form
+	\begin{equation} \min \alpha / \overline k \qquad \textrm{subject to }
+		\begin{cases}
+			W > \I \\
+			W^T\A^T + X^T\B^T + \A W + \B X \leq -2\alpha W \\
+			\mat{\overline k \I & X^T \\ X & \overline k \I} \geq 0
+		\end{cases}
+	\end{equation}
+	
+	\paragraph{Addition of the input} Considering now a linear time-invariant system with states $x$, inputs $u$ and disturbances $w$ we have that it's state space representation is in the form	
+	\[ \begin{cases}
+		\dot x = \A x + \B u + E w \\ z = \C x + \D u + F w
+	\end{cases} \]
+	and considering a full-state feedback where we have $u = Kx$ such expression is reduced to
+	\[ \begin{cases}
+		\dot x = \big(\A + \B K\big) x + E w \\ z = \big(\C + \D K \big) x + F w
+	\end{cases} \]
+	Having defined the Lyapunov function $\lyap V(x) = x^T P x$ (with $P>0$ a positive definite matrix), then in order to have an L2 gain in the form $\|z\|_2 \leq \gamma \|w\|_2$ we have to ensure that
+	\[ \dot \lyap < - \frac 1 \gamma z^T z + \gamma w^T w \]
+	Observing that $\dot \lyap$ evaluates to $\dot x^T P x + x^T P \dot x$ such requirement translates (considering also that $\dot x = \big(\A + \B K\big) x + E w$ from the state space representation) to the following quadratic form:
+	\[ x^T\big(\A+ \B K\big)^T P x + w^TE^TPw + x^T P\big(\A + \B K\big) x + w^T PE w - \gamma w^T w + \frac 1 \gamma z^T z < 0 \]
+	that can be rewritten as
+	\[ \mat{x^T & w^T} \mat{(\A + \B K)^TP + P(\A + \B K) & PE \\ E^TP & - \gamma \I } \mat{x \\ w} + \frac 1 \gamma \mat{x^T & w^T} \mat{(\C + \D K)^T \\ F^T} \mat{C+\D K & F} \mat{x \\ w} < 0 \]
+	In order to have such quadratic form negative definite for all $x,w\neq 0$ means imposing
+	\[ \mat{(\A + \B K)^TP + P(\A + \B K) & PE \\ E^TP & - \gamma \I } + \frac 1 \gamma \mat{(\C + \D K)^T \\ F^T} \mat{C+\D K & F} < 0 \]
+	This inequality however is not linear because it contains multiplication between the two unknowns $K$ and $P$ of the problem; defining with $\overline W$ the matrix $\mat{W & 0 \\ 0 & \I}$ (where $W$, as previously seen, is such that $W = W^T = P^{-1}$), pre- and post-multiplying this linear matrix inequality by $\overline W$ determines
+	\begin{align*}
+		\mat{W(\A+ \B K)^T PW + WP(\A + \B K) & WPE \\ E^T P W & -\gamma \I } + \frac 1 \gamma \mat{WK^T\D^T + W\C^T \\ F^T} \mat{\C W + \D K W & F} & < 0 \\
+		\mat{W(\A+ \B K)^T + (\A + \B K) & E \\ E^T & -\gamma \I } + \frac 1 \gamma \mat{WK^T\D^T + W\C^T \\ F^T} \mat{\C W + \D K W & F} & <
+	\end{align*}
+	where the simplification has been performed considering that $PW = WP = \I$; this expression is still non-linear in the variables $W,K$ of the problem, however defining $X = KW$ determines the form
+	\[ \mat{ X^T \B^T + W^T\A^T + \A W + \B X & E \\ E^T & - \gamma \I } + \frac 1 \gamma \mat{x^T \D^T + W^T \C^T \\ F^T} \mat{\C W + \D X & F} < 0 \]
+	The solution of this linear matrix inequality can be obtained applying the Schure's complement, determining the final inequality:
+	\[ \mat{X^T \B^T + W^T\A^T + \A W + \B X & E & (\C W + \D X)^T \\ 
+		E^T & - \gamma \I & F^T \\
+	\C W + \D X & F & - \gamma \I} < 0 \]
+	
+	Ideal solution to the problem as here state determines a value of $\gamma \approx 0$ and a matrix $K$ that contains \textit{big entries}, reflecting in a high actuation effort to reduce at minimum the disturbances (if the control input is \textit{strong} then it can \textit{override} the effects of disturbances). We can however impose some constraints in order to minimize the actuators effort to reach the desired behaviour by imposing $W \geq \rho \I$, where $\rho$ is a scalar that can be both fixed or can be an optimization variable. Inverting this relation determines $W^{-1} \leq \frac 1 \rho \I$ that normed $\|W^{-1} \| \leq \frac 1 \rho$. Knowing that the control matrix $K$ is equal to $XW^{-1}$, then
+	\[ \|K\| = \|XW^{-1}\| \leq \|X\|\, \|W^{-1}\| \leq \frac 1 \rho \|X\| \leq \overline k \qquad \Rightarrow \qquad \|K\|\leq \overline k \]
+	We can so bound $K$ by limiting the norm $\|X\|$ with an appropriate value of $\overline k$. Having $\|X\|\leq \rho \overline k$ that's equivalent $X^TX \leq (\rho \overline k)^2 \I$ it means that 
+	\[ \rho \overline k \I - \frac 1 {\rho \overline k} X^T X \geq 0 \]
+	that for Schure's complement evaluates to the inequality
+	\[ \mat{\rho \overline k \I & X^T \\ X & \rho \overline k \I} \geq 0 \qquad \textrm{with } W \geq \rho \I , \rho > 0 \]
+	
+	The problem to be solved so in the designed of a full state feedback controller is mathematically expressed as
+	\[ \min_{W,X,\rho,\gamma} \gamma \hspace{1.2cm} \textrm{or} \hspace{1.2cm} \min_{W,X,\rho,\overline k} \overline k \]
+	subjected to the constraints
+	\[ \begin{cases}
+		\mat{X^T \B^T + W^T\A^T + \A W + \B X & E & (\C W + \D X)^T \\ 
+			E^T & - \gamma \I & F^T \\
+			\C W + \D X & F & - \gamma \I} < 0 \\
+		\mat{\rho \overline k \I & X^T \\ X & \rho \overline k \I} \geq 0 \\
+		W \geq \rho \I \\
+		\rho > 0
+	\end{cases} \]
+	
+	
+	
+	
+	
+	
+	
+	
+	

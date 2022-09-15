@@ -1,0 +1,253 @@
+\chapter{Dynamical systems}
+	This course treats the \de{automatic control} of \de{dynamical system} hence it's necessary to firstly understand what's a \textit{dynamical system} is indeed and how to describe them. In general we can regard dynamical systems as \textit{\textbf{black box}} that, given an \textbf{input} $\u(t)$, determines and \textbf{output} $\y(t)$. This signals are function of the time $t$ that can be either discrete ($t\in \mathds Z$), and so we refer them as \de{discrete-time systems}, or continuous ($t \in \mathds R$), namely \de{continuous-time} systems. Note that also \textbf{hybrid systems} exists (where the system can evolve both in continuous and discrete-time).
+	
+	\paragraph{The Fibonacci sequence} An example of discrete-time system is the \textbf{Fibonacci sequence}
+	\[ 0, 1, 1, 2,3, 5, 7, 12, 19\dots \]
+	The mathematical law defining such recurrence is a finite difference equation that given the \textbf{initial conditions} $y(0)$ and $y(1)$ allows to compute any other value following the rule
+	\[ y(t+1) = y(t-1)+y(t) \]
+	We can observe that the output $y$ at any time step $t$ is \textbf{linearly} dependent from the previous two output (thus we can say that the system is \textit{linear}, as we will define). For this system we can define the vector of the so called \de{states} $\x$ made by the component $x_1(t) = y(t)$ and $x_2(t) = y(t-1)$:
+	\[ \x(t) = \vector{x_1(t) \\ x_2(t)}  \]
+	Being the system discrete-time we can try to use the states at a given time $t$ (that are known to us) to compute the state at the next time step, hence at $t+1$; from what we have defined we have indeed
+	\[ \x(t+1) = \vector{x_1(t+1) \\ x_2(t+1)} = \vector{y(t+1) \\ y(t \cancel{-1+1})} \]
+	Recalling the formal definition of the Fibonacci sequence we further have
+	\[ \x(t+1) = \vector{y(t-1) + y(t) \\ y(t)} = \vector{x_2(t) + x_1(t) \\ x_1(t)} \]
+	We have now been able to determine the values of the states at time $t+1$ knowing only the states at $t$; exploiting a matrix notation we can more compactly see that the new states are a linear combination (through a matrix $\A$) of the current states:
+	\[ \x(t+1) = \matrix{1 & 1 \\ 1 & 0 } \vector{x_1(t) \\ x_2(t)} = \A \x(t) \]
+	We observe that given the \textbf{initial condition} for the state $\x_0 = (1, 0)$ allows to compute the sequence considering at each iteration the second state $y(t) = x_2(t)$.
+	
+	This recursive definition of the Fibonacci sequence makes hard to determine the generic $t$-th value (because it requires the knowledge of all the past states), however as we will discover we can link the eigenvalues of $\A$ (that are $\frac{1\pm \sqrt 5}{2}$) to a law determining explicitly the output as function of the time as follows:
+	\[ y(t) = \frac 1 {\sqrt 5} \left[ \left(\frac{1+\sqrt 5}{2}\right)^t - \left(\frac{1-\sqrt 5}{2}\right)^t \right] \]
+
+\section{Classification of dynamical systems}
+	Firstly we distinguished \textbf{continuous} from \textbf{discrete-time} system based on the the time domain of the variable $t$, but the Fibonacci sequence example introduced a new classification criteria: \textit{linearity}. We say in fact that a system is \de{linear} if it's \de{state-space representation} is in the form
+	\begin{equation}
+	\begin{cases}
+		\x(t+1) & = \A(t)\x(t) + \B(t) \u(t) \\
+		\y(t)& = \C(t) \x(t) + \D(t) \u(t) \\
+		\x(t_0) & = \x_0
+	\end{cases} 
+	\end{equation}
+	where $\A, \B, \C, \D$ are commonly referred as \textbf{dynamic matrix}, \textbf{input} m., \textbf{output} m. and \textbf{feed-through} (or instantaneous) m. respectively. As we can see input $\u \in \mathds R^m$, states $\x \in \mathds R^n$ and outputs $\y\in \mathds R^p$ are vectors and all this elements are \textit{interconnected} through linear combination. Usually to simplify the notation the dependency from the time $t$ of $\u,\x,\y$ is dropped and the discrete-time increment $\x(t+1)$ is described by the notation $\xp$ (representing so the value of the state at the next state), thus we have
+	\begin{equation} \tag{DT-LTI} \label{DTLTI}
+	\begin{cases}
+		\xp & = \A \x + \B \u \\ \y & = \C \x + \D \u \\ \x(t_0) & = \x_0 
+	\end{cases} \qquad t\in \mathds Z
+	\end{equation}
+	For continuous-time system (with $t\in \mathds R$) the concept of the time increment is not well defined and so a differential notation is used relating the variation of the states $\dx = \frac{d\x}{dt}$:
+	\begin{equation} \tag{CT-LTI} \label{CTLTI}
+		\begin{cases}
+			\dx & = \A \x + \B \u \\ \y & = \C \x + \D \u \\ \x(t_0) & = \x_0 
+		\end{cases} \qquad t \in \mathds R
+	\end{equation}
+	In opposition we have \de{non-linear systems} for which the relations for both the state variation and output are not linear and are described by generic functions $\vet f, \vet h$:
+	\begin{equation} \tag{NL-TI} \label{NLTI}
+		\begin{cases}
+			\dx/\xp & = \vet f(\x, \u) \\ \y & = \vet h (\x, \u) \\ \x(t_0) & = \x_0 
+		\end{cases} \qquad t\in \mathds R,\mathds Z
+	\end{equation}
+	We also observe the absolute importance of specifying in the state-space representation the \de{initial conditions} $\x_0$ of the states: their values are of absolute importance because are storing all the past history of the system; changing the initial condition might lead to completely different behaviour of the system (specially for the non-linear ones).
+	
+	\vspace{3mm}
+	Up to now in both (\ref{DTLTI}) and (\ref{CTLTI}), but also in (\ref{NLTI}) we removed the time dependence also on the matrices $\A,\B,\C,\D$ (and in the functions $\vet f, \vet h$), but this might not always be the case. Where such matrix are characterized by constant-coefficient (independent from time but also from inputs or states), then the system is said \de{time-invariant}, thus the acronym \de{LTI} for \textit{linear time-invariant system} is used. The more general case is characterized by the \de{time-varying} \textbf{linear} systems in the form
+	\begin{equation} \tag{LTV} \label{LTV}
+		\begin{cases}
+			\dx/\xp & = \A(t) \x + \B(t) \u \\ \y & = \C(t) \x + \D(t) \u \\ \x(t_0) & = \x_0 
+		\end{cases} \qquad t \in \mathds R,\mathds Z
+	\end{equation}
+	of \textbf{time-varying non-linear} systems
+	\begin{equation} \tag{NL-TV} \label{NLTV}
+		\begin{cases}
+			\dx/\xp & = \vet f(\x, \u, t) \\ \y & = \vet h (\x, \u, t) \\ \x(t_0) & = \x_0 
+		\end{cases} \qquad t\in \mathds R,\mathds Z
+	\end{equation}
+	
+	In general for time-invariant system the definition of the initial time $t_0$ is not relevant (what matters are just the entries of the vector $\x_0$) and for this reason intuitively we chose $t_0=0$;  the same is not true in general for time-varying system where the choice of $t_0$ affects the time-evolution of the system (due to the time variance of the dynamical laws).
+
+	
+\section{Transfer functions for LTI systems}
+	Linear time-invariant (\textbf{LTI}) systems can be summarized by the state-space representation
+	\begin{equation} \tag{LTI} \label{LTI}
+		\begin{cases}
+			\dx/\xp & = \A \x + \B \u \\ \y & = \C \x + \D \u \\ \x(0) & = \x_0 
+		\end{cases} \qquad t \in \mathds R,\mathds Z
+	\end{equation}
+	where the matrices $\A,\B,\C,\D$ are constant (in order to respect the time invariance of the system). Continuous-time LTI system can be easily analysed in the domain of the complex variable $s \in \mathds C$ exploiting the \textbf{Laplace transform} $\L$, the operator defined as
+	\begin{equation}
+		X(s) = \L\{x(t)\} = \int_0^\infty x(t) e^{-st}\, dt
+	\end{equation}
+	An important property of such operation is that allows to convert differential equations in $t$ into algebraic ones in the variables $s$: we in fact have that $\dot x(t) \mapsto sX(s) - x(0)$. Applying the Laplace transform to (\ref{CTLTI}) determines
+	\begin{equation} \label{eq:dynsys:temp1}
+	\begin{cases}
+		s \vet X(s) - \vet x(0) & = \A \vet X(s) + \B \vet U(s) \\ 
+		\vet Y(s) & = \C \vet X(s) + \D \vet U(s)
+	\end{cases}
+	\end{equation}
+	The first equation can be used to explicitly have the transform of the state $\vet X(s) = \L\{\x(t)\}$ as function of the input transform $\vet U(s) = \L\{u(t)\}$:
+	\begin{align*}
+		s\vet X(s) - \A \vet X(s) & = \B \vet U(s) + \x(0) \\
+		\big(s\I - \A \big) \vet X(s) & = \B \vet U(s) + \x(0) \\
+		\vet X(s) & = \big(s\I - \A \big)^{-1}\B \vet U(s)  + \big(s\I - \A \big)^{-1} \x(0) \\
+	\end{align*}
+	Putting this result in the second equation of (\ref{eq:dynsys:temp1}) allows to explicitly compute the transform of the output $\vet Y(s) = \L\{y(t)\}$ as function of the input transform and the initial state lonely:
+	\begin{equation} \label{eq:dynsys:temp2}
+		\vet Y(s) = \underbrace{\Big( \C \big(s\I - \A \big)^{-1}\B + \D \Big)}_{\hat \G(s)} \vet U(s)  + \underbrace{\C \big(s\I - \A \big)^{-1}}_{\hat{\vet \psi}(s)} \x(0)
+	\end{equation}
+	In this equation $\hat \G(s)$ represents the so called \de{transfer function} of the system, that being precise is a matrix and reduces to a function only for the \textbf{SISO} (single-input single-output) case. Observing that the output $\vet Y(s)$ in the Laplace domain can be simplified to the form $\hat \G(s) \vet U(s) + \hat{\vet \psi} \x(0)$ exploiting the properties of the \textbf{inverse Laplace transform} we have that the output in the time domain can be regarded as the convolution of the input with the \de{impulse response} $\G(t) = \L^{-1}\{\hat \G(s)\}$, so
+	\begin{equation}
+		\y(t) = \big(\G * \x\big)(t) + \vet \psi(t)\x(0)
+	\end{equation}
+	where the convolution is the operation defined as
+	\[ \big(\G*\x\big)(t) = \int_0^t \G(t)\x(t-\tau) \, d\tau \]
+	In (\ref{eq:dynsys:temp2}) we can also observe the presence of the function $\hat{\vet \psi}(s)$ whose transform $\vet \psi(t)$ represents the \de{free response} of the system, hence the output evolution determined uniquely by the initial state $\x_0$ of the system. Usually this term is neglected because, for simplicity, we assume an initial state $\vet x_0 = 0$ where so the product becomes null.
+	
+	We can define the concept of \textbf{transfer function} also for discrete-time LTI system, but in this case we need to use the \textbf{Z transform} $\Z$ mapping discrete-time sequences into a domain of the complex variable $z \in \mathds C$. Having $X(z) = \Z\{x(t)\}$ and knowing the similar property $x^+ \mapsto z X(z) - zx(0)$, applying the transform to (\ref{DTLTI}) determines
+	\[ \begin{cases}
+		z \vet X(z) - z \x(0) & = \A\vet X(z) + \B \vet U(z) \\ 
+		\vet Y(z) & = \C \vet X(z) + \D \vet U(z)
+	\end{cases} \]
+	Solving the system in order to obtain the transform of the output $\vet Y(z) = \Z\{y(t)\}$ as function of the spectrum $\vet U(z) = \Z\{u(t)\}$ still determines the same transfer function:
+	\begin{equation*}
+		\vet Y(z) = \underbrace{\Big( \C \big(z\I - \A \big)^{-1}\B + \D \Big)}_{\hat \G(z)} \vet U(z)  + \underbrace{\C \big(s\I - \A \big)^{-1}}_{\hat{\vet \psi}(z)} \x(0)
+	\end{equation*}
+	
+	\begin{theorem}
+		For continuous-time LTI system its \de{transfer function} $\hat \G(s)$ and the \de{impulse response} $\G(t)$ can be directly computed as
+		\begin{equation}
+			\hat \G(s) = \C \big(s\I - \A \big)^{-1}\B + \D \hspace{2cm} \G(t) = \L^{-1}\left\{  \C \big(s\I - \A \big)^{-1}\B + \D \right\} 
+		\end{equation}
+	\end{theorem}
+
+\section{Interconnected systems}
+	\textbf{THIS PART HAS TO BE REDONE}
+	
+\section{Realization theory}
+	Given a \textbf{rational polynomial} $\hat g(s) = n(s)/d(s)$ representing the transfer function of a SISO (single-input single-output) LTI system we say that it is\\
+	\begin{itemize}
+		\item \textbf{strictly proper} if the degree of the numerator is leen then the degree of the denominator. This implies $\lim_{s\rightarrow \infty} \hat g(s) = 0$;
+		\item \textbf{proper} if $\#n(s) \leq \#d(s)$ and more specifically $\lim_{s\rightarrow \infty}\hat g(s) \neq \infty$ (\textit{the limit do not diverge});
+		\item \textbf{improper} if $\#n(s) > \#d(s)$ meaning that $\lim_{s\rightarrow \infty} \hat g(s) = \pm \infty$.
+	\end{itemize}
+	If it happens that both the rational polynomial $\hat g$ and it's inverse $\hat g^{-1}$ are proper, then $\hat g(s)$ is also said \textbf{biproper}.
+	
+	This definitions can be also extended to a more general system of higher dimension: the \textbf{transfer matrix} $\hat{\G}(s)$ is (strictly) proper if and only if all it's entries are (strictly) proper. This means that if just one entry $g_{ij}(s) \in \hat{\G}(s)$ is improper, then $\hat \G$ is improper.
+	
+	It is proven that for LTI system all transfer functions are proper; in particular for every one of them we can recognize a strictly proper part (related to the matrices $\A,\B,\C$) and a proper part (related only to $\D$) as follows
+	\begin{equation} \label{eq:dynsys:temp3}
+		\hat \G(s) = \underbrace{\C \big(s\I - \A \big)^{-1}\B}_\textrm{strictly proper} + \underbrace{\D}_\textrm{proper}
+	\end{equation}
+	
+	\paragraph{Realization} Given a transfer function $\hat \G(s)$, we say that (\ref{LTI}) is a \de{realization} of $\hat \G(s)$ if equation (\ref{eq:dynsys:temp3}) holds.\\
+	This means that an LTI system characterized by the matrices $(\A,\B,\C,\D)$ is the realization of $\hat \G(s)$ if it holds that $\hat \G(s) = \C(s\I-\A)^{-1}\B + \D$. From this definition we say that two realization $(\A,\B,\C,\D)$ and $(\overline \A,\overline \B,\overline \C,\overline \D)$ are \de{zero state equivalent} if they realize the same transfer function $\hat \G(s)$. We observe that still this realization might have different free responses $\vet \psi (t) \neq \overline{\vet \psi}(t)$, but starting from a zero state $\x_0=0$ the behaviour of the output is the same (if the input is the same), as we can see from (\ref{eq:dynsys:temp2}).
+	
+	\begin{theorem}
+		A transfer function $\hat \G(s)$ can be realised by a LTI system in the \textit{standard form} if and only if the rational function $\hat\G(s)$ is proper.
+	\end{theorem}
+	\begin{proof}
+		The proof can be performed in 3 steps:
+		\begin{enumerate}[\itshape a)]
+			\item firstly we can show that a realization $(\A,\B,\C,\D)$ determines a proper transfer function: this is a direct consequence of (\ref{eq:dynsys:temp3}). In particular if $\D \neq 0$ the transfer function is proper, otherwise if $\D = 0$ then $\hat \G(s)$ is strictly proper.
+			\item determining instead a realization from the transfer function is instead more difficult, but we can now present a possible realization of $\hat \G(s)$. To simplify this step we can preliminary compute the non-strictly proper element $\D$ of the transfer function simply with the limit
+			\[ \D = \lim_{s\rightarrow \infty} \hat\G(s) \]
+			This allows to construct only the strictly-proper part $\hat \G_{sp}(s)$ of the transfer function as
+			\[ \hat \G_{sp}(s) = \hat \G(s) - \D = \C \big(s\I-\A\big)^{-1} \B \]
+			We can build now the polynomial $d(s)$ as the least common denominator of all the entries in the matrix $\hat \G_{sp}(s)$ and we can put him in the form
+			\[ d(s) = s^n + \alpha_1 s^{n-1} + \alpha_2 s^{n-2} + \dots + \alpha_{n-1}s + \alpha_n \]
+			Collecting now all the numerators $n_i(s)$ of the-strictly proper transfer function into a matrix $\mat N(s)$ and collecting all terms $s^0,\dots, s^{n-1}$ (being $\hat \G_{sp}(s)$ strictly-proper we know that at the numerator the maximum degree of $s$ that can appear is $n-1$) we have
+			\begin{equation} \tag{$\dagger$}
+				\hat \G_{sp}(s) = \frac{\mat N(s)}{d(s)} = \frac{\mat N_1 s^{n-1} + \mat N_2 s^{n-2} + \dots + \mat N_{n-1}s + \mat N_n }{s^n + \alpha_1 s^{n-1} + \alpha_2 s^{n-2} + \dots + \alpha_{n-1}s + \alpha_n}
+			\end{equation}
+			From this expression we can build the so called \de{controllable canonical form} defined by the following elements:
+			\begin{equation} \label{eq:dyn:controllablecanonical}
+				\matrix{\begin{array}{ c c c c | c}
+						-\alpha_1 \I_k & - \alpha_2 \I_{k\times k} & \dots & - \alpha_n \I_{k\times k} & \I_{k\times k} \\
+						\I_{k\times k} & 0 & \dots & 0 & 0 \\
+						0 & \ddots & & 0 & \vdots \\
+						0 & 0& \I_{k\times k} & 0 & 0 \\ \hline
+						\mat N_1 & \mat N_2 & \dots & \mat N_m & \D
+				\end{array}}
+			\end{equation}
+			\item as last step we can show that (\ref{eq:dyn:controllablecanonical}) is indeed a realization of the transfer function. Let us consider the sub-matrix $\mat Z(s)$ of the transfer function characterized by the vector $\vet z_i$ as
+			\[ \mat Z(s) = \matrix{\vet z_1 \\ \vdots \\ \vet z_n} = \big(s\I - \A\big)^{-1} \B \]
+			where the components $\vet z_i$ are considered expanded as rows. By this definition we have that $(s\I - \A) \mat Z(s) = \B$. Considering now the \textit{lower part} (bottom 3 rows) of the matrices $\A,\B$ of (\ref{eq:dyn:controllablecanonical}), the multiplications evaluates to the following set of equalities:
+			\[ s\vet z_2 - \vet z_1 = 0 \qquad s\vet z_3 - \vet z_2 = 0 \qquad \dots \qquad s\vet z_n = \vet z_{n-1} \]
+			Observing that it holds $\vet z_j = \frac 1 s \vet z_{j-1}$ for $j = 2,\dots, n$ we can determine the generic vector $\vet z_k$ as
+			\begin{equation} \tag{$\star$}
+				\vet z_k = \frac 1 {s^{k-1}} \vet z_1
+			\end{equation} 
+			Considering the top row in (\ref{eq:dyn:controllablecanonical}) applied to $(s\I - \A)\mat Z(s) = \B$ determines $(s+\alpha_1)\vet z_1 + \alpha_2\vet z_2+\dots+ \alpha_n \vet z_n = \I_{k\times k}$; substituting ($\star$) determines
+			\[ \left(s + \alpha_1 + \frac{\alpha_2}{s} + \dots + \frac{\alpha_n}{s^{n-1}}\right) \vet z_1 = \frac{d(s)}{s^{n-1}} \vet z_1 = \I_{k\times k} \]
+			This implies so
+			\[ \mat Z(s) =  \matrix{\vet z_1 \\ \vet z_2 \\ \vdots \\ \vet z_n} = \frac 1 {d(s)} \matrix{s^{n-1} \I_{k\times k} \\ s^{n-2} \I_{k\times k} \\ \vdots \\ \I_{k\times k} } \]
+			From this we can conclude that
+			\[ \C\big(s\I-\A\big)^{-1} = \C \mat Z(s) = \frac 1 {d(s)} \matrix{\mat N_1 & \mat N_2 & \dots & \mat N_n} \matrix{s^{n-1} \I_{k\times k} \\ s^{n-2} \I_{k\times k} \\ \vdots \\ \I_{k\times k} }  = \hat \G_{sp}(s) \]
+			The last equation holds because it's equal to ($\dagger$).
+			
+		\end{enumerate}
+	\end{proof}
+	
+\subsection{SISO case and multiple realizations: algebraic equivalence} \label{sec:dyn:realizations}
+	A \textbf{single-input single-output} (SISO) \textbf{LTI} system is characterized by a transfer function that reduces to a rational polynomial in the form
+	\[ \tag{SISO-LTI}
+	\hat G(s) = \frac{\beta_1 s^{n-1} + \beta_2 s^{n-2} + \dots + \beta_{n-1}s + \beta_n }{s^n + \alpha_1 s^{n-1} + \alpha_2 s^{n-2} + \dots + \alpha_{n-1} s + \alpha_n} \]
+	Recalling the \textbf{controllable canonical form} in (\ref{eq:dyn:controllablecanonical}), a realization of such transfer function is characterized by the matrices
+	\[ \A = \matrix{ -\alpha_1 & \dots & - \alpha_{n-1} & - \alpha_n \\
+	1 &  & 0 & 0 \\ 
+	 & \ddots & & \vdots \\
+ 	0 & & 1 & 0 } \qquad \B = \matrix{1 \\ 0 \\ \vdots \\ 0} \qquad \C = \matrix{\beta_1 & \dots & \beta_{n-1} & \beta_n} \]
+	
+	This is just one of the infinitely many realization of the same transfer function $\hat G(s)$; given a \textbf{non-singular} matrix $\mat T \in \mathds R^{n\times n}$ representing a linear transformation, we can define a new vector of states $\tilde \x = \mat T \x$ (hence $\x = \mat T^{-1} \tilde \x$): this allow to describe in a new \textit{coordinate system} the state-space representation of the system. We can in fact consider
+	\[ \begin{cases}
+		\dot{\tilde \x} = \T\dx & = \T \A \x + \T \B \u = \T \A \T^{-1} \tilde \x + \T \B \u = \tilde \A \tilde \x + \tilde \B \u \\
+		\tilde \y & = \C \x + \D \u = \C \T^{-1} \tilde \x + \D \u = \tilde \C \tilde \x + \D \u
+	\end{cases} \]
+	More compactly we can state that the following systems
+	\begin{equation} \label{eq:dynsys:algebraicequivalence}
+		\matrix{\begin{array}{c|c}
+				\tilde \A &  \tilde \B \\ \hline \tilde \C & \tilde \D
+		\end{array}} = 
+		\matrix{\begin{array}{c|c}
+			\T \A \T^{-1} &  \T \B \\ \hline \C \T^{-1} & \tilde \D
+		\end{array}} 
+		\qquad \textrm{and} \qquad 
+		\matrix{\begin{array}{c|c}
+				\A &  \B \\ \hline \C & \D
+		\end{array}}
+	\end{equation}
+	are \de{algebraically equivalent}, meaning that they are representing the same transfer function $\hat G(s)$. In this case the non-singular matrix $\T$ is referred as \textbf{similarity} (or equivalence) \textbf{transformation} and allows to describe an initial system into a different set of states. This operation can be useful because it might allow to express a system in a more suitable way for numerical computation. We also observe that this equivalence hold for the generic case of \textbf{MIMO} (multi-input multi-output) systems.
+	
+	An example of \textbf{algebraically equivalent representation} is the \de{observable canonical form} that for (SISO-LTI) is characterized by the state-space representation in the form
+	\begin{equation}
+	\matrix{\begin{array}{c c c c | c}
+		-\alpha_1 & 1 & & 0 & \beta_1 \\ 
+		\vdots & & \ddots && \vdots \\
+		-\alpha_{n-1} & 0 & & 1 & \beta_{n-1} \\
+		-\alpha_n & 0 & \dots & 0 & \beta_n \\ \hline
+		1 & 0 & \dots & 0 
+	\end{array}}
+	\end{equation}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

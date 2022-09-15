@@ -840,7 +840,7 @@
 		\end{align*} 
 	
 	\subsection{Conditions for exponential stability}
-		\paragraph{Positive and negative definite matrices} In order to make assertions regarding the exponential stability of system, a recall of definition from linear algebra is required. Given a square matrix $Q\in \mathds R^{n\times n}$ \textbf{symmetric} (so such that $Q=Q^T$), we say that it is
+		\paragraph{Positive and negative definite matrices} \label{sec:positivedefinite}In order to make assertions regarding the exponential stability of system, a recall of definition from linear algebra is required. Given a square matrix $Q\in \mathds R^{n\times n}$ \textbf{symmetric} (so such that $Q=Q^T$), we say that it is
 		\begin{itemize}
 			\item \de{positive definite}, noted as $Q>0$, if  $x^TQx > 0$ $\forall x\neq 0$;
 			\item \de{negative definite} ($Q<0$) if  $x^TQx < 0$ $\forall x\neq 0$;
@@ -1232,12 +1232,13 @@
 		$x = \big(-\alpha_0 \I - \alpha_1 \A  - \dots - \alpha_{n-1} \A^{n-1} \big) \B$ and recalling the Cayley-Hamilton theorem (equation \ref{eq:lin:cayley}, page \pageref{eq:lin:cayley}) we can consider that the term in the parenthesis exactly as $\A^n$, hence
 		\[ R \A_{ob} = \mat{ \A \B & \dots &  \A^{n-1}\B & \A^n \B } = \A \mat{ \B &\A\B &\dots & \A^{n-1}\B } = \A R \]
 		The proof of $R^{-1}\B=\B_{ob}$ is straightforward and can be obtained considering that $R \B_{ob}$ is indeed $\B$. We can so prove that for each observable form there exists a matrix $M$ such that $M^{-1} \A_{ob} M = \A_{ctr}$ and $M^{-1}\B_{ob} = \B_{ctr}$ that allows to determine the canonical form. In particular $M$ is the symmetric matrix defines as
-		\[ M = \mat{ \alpha_1 & \alpha_2 & \dots & \alpha_{n-1} & 1 \\
-		\alpha_2 & \reflectbox{$\ddots$} & & \reflectbox{$\ddots$} \\
-		\vdots & & \reflectbox{$\ddots$} \\
-		\alpha_{n-1} & \reflectbox{$\ddots$}\\
-		1 } \]
-	
+		\begin{equation} \label{eq:lin:Mmatrix}
+			M = \mat{ \alpha_1 & \alpha_2 & \dots & \alpha_{n-1} & 1 \\
+				\alpha_2 & \reflectbox{$\ddots$} & & \reflectbox{$\ddots$} \\
+				\vdots & & \reflectbox{$\ddots$} \\
+				\alpha_{n-1} & \reflectbox{$\ddots$}\\
+				1 }
+		\end{equation}
 		We can in fact show that
 		\[ M \A_{ctr} = \mat{\begin{array} {c c c | c} 
 				& \alpha^T & & 1\\ \hline
@@ -1265,5 +1266,161 @@
 		\paragraph{Ackerman} Another formula used to compute such matrix $K$ in order to assign the eigenvalues to $\A - \B K$ is by applying the \textbf{Ackerman equation}
 		\[ K = \mat{0 & \dots & 0 & 1} R^{-1} p_{\A_{cl}} (\A) \]
 		
+		\paragraph{Procedure for the single input eigenvalue assignment} In general we can reduce the procedure for the eigenvalues assignment of single input linear system as
+		\begin{enumerate}
+			\item compute the characteristic polynomial $p_\A(s) = s^n + \alpha_{n-1}s^{n-1} + \dots + \alpha_1 s + \alpha_0$ of the state matrix $\A$ as well as the one of the desired closed loop matrix $\A_{cl} = \A- \B K$ that's $p_{\A_{cl}}(s) = (s - \lambda_1 )\dots(s-\lambda_n) = s^n + \beta_{n-1}s^{n-1} + \dots + \beta_1 s + \beta_0$;
+			\item compute both the controllability matrix $R$ (equation \ref{eq:lin:controllabilitymatrix}) and the matrix $M$ (equation \ref{eq:lin:Mmatrix}) as well as their inverses;
+			\item chose the matrix $K$ as $K = \mat{\beta_0 - \alpha_0 & \beta_1-\alpha_1 & \dots & \beta_{n-1}-\alpha_{n-1}} M^{-1}R^{-1}$;
+			\item verify that the eigenvalues of $\A - \B K$ are indeed the desired ones.
+		\end{enumerate}
 		
+		\begin{example}{: system eigenvalue assignment}
+			Considering a single input LTI system characterized by the matrices $\A = \mat{-1 & 1 \\ 2 & -2}$ and $\B= \mat{-1 \\ 1}$, the goal is to determine the matrix $K$ that determines a closed loop matrix $\A_{cl} = \A- \B K$ that has eigenvalues $\lambda_1 = -1,\lambda_2 = -3$. Following the procedure:
+			\begin{enumerate}
+				\item the characteristic polynomial of $\A$ is $p_\A(s) = (s+1)(s+2) - (-1)(-2) = s^2 + 3s $ (so we can assign $\alpha_1 = 3, \alpha_0 =0$) and of the closed loop matrix $p_{\A_{cl}}(s) = (s+1)(s+3) = s^2 + 4s + 3 $ (and so $\beta_1 = 4,\beta_0 = 3$);
+				
+				\item the matrices $R$ and $M$ are so
+				\[ R = \mat{\B & \A \B} = \mat{-1 & 2 \\ 1 & -4} \hspace{2cm} M = \mat{\alpha_1 & 1 \\ 1 & 0} = \mat{3 & 1 \\ 1 & 0} \]
+				that are inverted as
+				\[ R^{-1} = \frac 1 2 \mat{-4 & -1 \\ - 2 & -1} = - \frac 1 2 \mat{4 & 1 \\ 2 & 1} \hspace{1.5cm} M^{-1} = - \mat{0 & - 1 \\ - 1 & 3} = \mat{0 & 1 \\ 1 & -3} \]
+				
+				\item determining the elements of $K_{ctr}$ as $k_0 = \beta_0 -\alpha_0 = 3$ and $k_1 = \beta_1 - \alpha_1 = 1$ we can determine the desired matrix $K$ as
+				\[ K = - \frac 1 2 \mat{3 & 1} \mat{0 & 1 \\ 1 & -3} \mat{4 & 1 \\ 2 & 1} = - \frac 1 2 \mat{ 1 & 0} \mat{4 & 1 \\ 2 & 1} = - \frac 1 2 \mat{4 & 2} = \mat{-2 & - 1} \]
+			\end{enumerate} 
+		\end{example}
+
+\section{Controllable systems}
+	Given a system $\Sigma$ defines as $\dot x/x^+ = \A(t) x + \B(t) u$, then given two times $t_1 > t_0 \geq 0$ we say that the pair $(\A,\B)$ is \de{reachable} on the time interval $[t_0,t_1]$ if $\reach[t_0,t_1] = \mathds R^n$; the same pair is also said \de{controllable} if it holds $\control[t_0,t_1] = \mathds R^n$; the underlying idea of this definition is that for such system we can choose particular inputs $u(t)$ that allows to reach/control all the possible states of $\Sigma$.
+	
+	For now on (where not otherwise specified) this section will discuss the simpler case of linear time invariant system (and in the case of continuous-time we assume that also $\A$ is invertible), and in this case we have that controllability implies reachability and vice-versa (as was shown for the gramians).
+	
+	Given so an LTI system $\Sigma_{LTI}: \dot x/x^+ = \A x + \B u$, we say that it is controllable (reachable) if and only if the rank of the controllability (reachability) matrix is full:
+	\begin{equation} \label{eq:lin:controllablesystem}
+		\textrm{controllability} \qquad \Leftrightarrow \qquad \rank R = \rank{\mat{\B & \A \B &\dots & \A^{n-1}\B}} = n
+	\end{equation}
+
+	\paragraph{Proof} Considering that the matrix $R \in \mathds R^{n\times nk}$ has $n$ rows that are linearly independent it means that $\textrm{Im} R = \mathds R^n$; this furthermore implies that $\textrm{Im} W_\reach(t_0,t_1) = \mathds R^n$ and so that the system is controllable.
+	
+	\paragraph{Examples} Considering a LTI system in the form
+	\[ \begin{cases}
+		\dot x_1 = x_1 \\ \dot x_2 = -2x_2 + x_1 + u
+	\end{cases} \qquad \leftrightarrow \qquad \A= \mat{1 & 0 \\ 1 & -2} , \B = \mat{0 \\ 1} \]
+	then what associated controllability matrix $R$ is
+	\[ R = \mat{\B & \A \B} = \mat{0 & 0 \\ 1 & - 2} \qquad \Rightarrow \qquad \rank R = 1 \neq 2 \]
+	Observing that $R$ has not full rank, this means that the system is not controllable; intuitively we can see that the input $u$ can't, in any way, modify the behaviour of the first state whose dynamics $\dot x_1 = x_1$ depends lonely on it's initial condition.
+	
+	Considering now instead the system
+	\[ \begin{cases}
+		\dot x_1 = x_2 \\ \dot x_2 = -2x_2 + x_1 + u
+	\end{cases} \qquad \leftrightarrow \qquad \A= \mat{0 & 1 \\ 1 & -2} , \B = \mat{0 \\ 1} \]
+	we can see that somehow $u$ influence $x_2$ that's controlling the dynamical behaviour of the first state; mathematically we can show that the system is controllable (hence reachable) showing that
+	\[\rank{R} = \rank{\mat{0 & 1 \\ 1 & -2}} = 2\]
+	
+\subsection{Eigenvalue test for controllability}
+	Given a matrix $A \in \mathds R^{n\times n}$, the linear subspace $\mathcal V \subseteq \mathds R^n$ is said \de{$\A$-invariant} if $\forall v \in \mathds V$ also $\A v \in \mathcal V$. Subsequent properties are
+	\begin{enumerate}[\itshape i)]
+		\item given the subspace $\mathcal V \neq \{0\}$ for which we can define a matrix $V \in \mathds R^{n\times k}$ whose $k$ columns are a basis of $\mathcal V$, then there exists a matrix $\overline A \in \mathds R^{k\times k}$ such that
+		\begin{equation}
+			AV = V \overline A
+		\end{equation}
+		Calling in fat $v_i \in \mathds R^n$ (with $i = 1\dots k$) the columns of $V$ determining a base of $\mathcal V$, if such linear space is $A$-invariant than it means that $Av_i \in \mathcal V$. At the same time we have that $A v_i$ can be regarded as a linear combination $\overline a_{1i} v_1 + \overline a_{2i} v_2 + \dots + \overline a_{ki} v_k$ and so
+		\[ A \mat{v_1 & \dots & v_k} = \mat{v_1 & \dots & v_k} \mat{\overline a_{11} & \dots & \overline a_{1k} \\ \vdots & \ddots \\ \overline a_{k1} & & \overline a_{kk} } = V \overline A \]
 		
+		\item given $A \in \mathds R^{n\times n}$ and an $A$-invariant linear subspace $\mathcal V$, then the subspace of the associated matrix $V$ contains at least one eigenvalue of $A$.
+		
+		This statement can be proving considering the eigenvalue-eigenvector pair $(\lambda, \overline v)$ of the matrix $\overline A$ (so such that $\overline A \overline v = \lambda \overline v$); if $\mathcal V$ is $A$-invariant then the previous property holds and we so have that $AV \overline v = V \overline A \overline v$; since $\overline v$ is an eigenvector of $\overline A$ then we can rewrite the equality as
+		\[ AV \overline v = \lambda V \overline v \]
+		Calling $V\overline v = x$, then we finally reach the form $Ax = \lambda x$, proving so that $\lambda$ is also an eigenvector of the matrix $A$.
+	\end{enumerate}
+		
+	\paragraph{Eigenvalue test} A LTI system $\Sigma_{LTI}$ is controllable if and only if all the eigenvectors $x$ of the matrix $\A^T$ are not in the kernel of $\B^T$.
+		
+	This theorem can be proven in two parts: one showing that if the pair $(\A,\B)$ is controllable, then the eigenvectors of $\A^T$ are not inside the kernel of $\B^T$ and secondly that vice-versa.
+	\begin{enumerate}[\itshape i)]
+		\item By contradiction assuming that exists a vector $x\neq 0$ such that $\A^T x = \lambda x$ and for which $\B^T x = 0$, exploiting the controllability matrix (equation \ref{eq:lin:controllabilitymatrix}, page \pageref{eq:lin:controllabilitymatrix}) transposed $R^T$, then we have that
+		\[ R^T x = \mat{\B^T x \\ \B^T \A^T x \\ \vdots \\ \B^T (\A^{n-1})^T} x = \mat{0 \\ \B^T \lambda x \\ \vdots \\ \B^T \lambda^{n-1} x} = \mat{0 \\ \lambda \B^T x \\ \vdots \\ \lambda^{n-1} \B^T x} = \mat{0 \\ 0 \\ \vdots \\ 0} \]
+		This means that the kernel of $R^T$ is non empty ($\dim \ker R^T \geq 1$), and so by the fundamental theorem of linear algebra for which $\dim \ker R^T + \dim \textrm{Im} R^T = n$, implying
+		\[ \dim \textrm{Im} R^T < n \]
+		However we already known that $\dim \textrm{Im} R^T = \dim \textrm{Im} R = \rank R$ that's maximum for the fact that the pair $(\A,\B)$ is controllable (as shown in equation \ref{eq:lin:controllablesystem}), hence the contradiction that if $x$ is an eigenvector of $\A^T$, then it cannot be in the kernel  of $\B^T$.
+	
+		\item if we now consider a vector $x$ such that $\A^T x = \lambda x$ and $\B^T \lambda \neq 0$ then we can prove by contradiction that the pair $(\A, \B)$ is controllable. Assuming in fact that $(\A,\B)$ is not controllable, then by theorem for controllable system (equation \ref{eq:lin:controllablesystem}) we have that $\rank R = \rank R^T < n$. By the fundamental theorem of linear algebra this implies that  $\dim \ker R^T > 0$.\\
+		We can now prove that $\ker R^T$ is $\A^T$-invariant, meaning that $R^T x = R^T	\A^T x = 0$ (and so $\A^Tx \in \ker R^T$). Considering in fact that
+		\[ R^T x = \mat{\B^T \\ \B^T \A^T \\ \vdots \\ \B^T (\A^{n-1})^T} x = \mat{\B^Tx \\ \B^T \A^Tx \\ \vdots \\ \B^T (\A^{n-1})^Tx} = 0 \]
+		but that also implies
+		\[ R^T \A^T x = \mat{\B^T\A^T \\ \B^T (\A^2)T \\ \vdots \\ \B^T (\A^n)^T} x = \mat{0 \\ \vdots \\ 0 \\ \B^T (\A^n)^T} x = 0 \]
+		Using the Cayley-Hamilton theorem (page \pageref{eq:lin:cayley}) we can decompose the last block matrix as 
+		\[ \B^T(\A^n)^T x = \B^T \left( \sum_{k=0}^{n-1} \alpha_k \A^k \right) x = \sum_{k=0}^{n-1} \alpha_k \B^T(\A^k)^T x = 0 \]
+		Having so shown that $\ker R^T$ is $\A^T$-invariant, then $\A^T x \in \ker R^T$ so contains the eigenvector of $\A^T$ (referring to the second property of the $A$-invariant definition in the previous page). Since $R^T x = 0$ implies that $\B^T x = 0$, contradicting so the initial statements $\A^T x = \lambda x$ and $\B^T x = 0$, hence if $\A^T x = \lambda x$ then we must have $\B^T x \neq 0$.		
+	\end{enumerate}
+		
+	\paragraph{PBH (Popov-Belevitch-Hotus) test} The pair $(\A,\B)$ is controllable if and only if the rank of the matrix $\mat{\A- \lambda \I & \B}$ is equal to $n$ for all values $\lambda \in \mathds C$:
+	\begin{equation}
+		\rank{\mat{\A-\lambda \I & \B}} = n \quad \forall \lambda \in \mathcal C \hspace{1.2cm} \Leftrightarrow \hspace{1.2cm} (\A,\B) \textrm{ controllable}
+	\end{equation}
+	
+	To prove this we can apply the fundamental theorem of linear algebra to the matrix $\mat{\A^T - \lambda \I \\ \B^T}$ (the transposed of the definition) requiring that is dimension must be null
+	\[ \dim \ker \mat{\A^T - \lambda \I \\ \B^T} = n - \rank{\mat{\A- \lambda \I & \B}} = 0 \]
+	This means so that
+	\[ \mat{\A^T - \lambda \I \\ \B^T} x = \mat{ \A^T x - \lambda \I x \\ \B^T x }\neq 0 \qquad \forall x \neq 0, \forall \lambda \in \mathds C\]
+	In the particular case when $\lambda$ is an eigenvector of $\A$ it means that $\A^T x = \lambda x$ and so in order to have a non-zero matrix we have to impose $\B^T x \neq 0$: each eigenvector of $\A^T$ so does not belong to $\ker \B^T$ and so for the eigenvalue test this implies controllability.
+	
+	\paragraph{Lyapunov controllability test} This test can be used only to verify exponentially stable systems only.\\
+	Assuming a LTI system characterized by a Hurwitz/Schur matrix $\A$ (implying so that the system is indeed exponentially stable), then the pair $(\A,\B)$ is controllable if and only if where exists a symmetric positive-definite matrix $W = W^T > 0$ such that 
+	\begin{equation} \label{eq:temp1}
+		(CT): \quad \A W + W \A^T = - \B \B^T \hspace{2cm} (DT): \quad \A W \A^T - W = - \B \B^T
+	\end{equation}
+	Moreover $W$ is a unique solution that can be computed as $\lim_{(t_1-t_0) \rightarrow \infty} W_\reach(t_0,t_1)$, so
+	\[ (CT): \quad W = \int_0^\infty e^{\A t} \B \B^T e^{\A^Tt}\, dt \hspace{2cm} (DT): \quad W = \sum_{\tau = 0}^{\infty} \A^\tau \B \B^T(\A^T)^\tau \]
+	
+	In order to prove this controllability test we have to recall that the norm squared of complex vectors $v \in \mathds C^n$ can be computed as ${v^*}^T v = |v|^2$. With this premise, the proof of the Lyapunov controllability test should be done for both ways of  implications (for simplicity we consider only the continuous-time case):
+	\begin{enumerate}[\itshape i)]
+		\item Firstly we can show that if exists a matrix $W = W^T > 0$ satisfying $\A W + W \A^T = - \B \B^T$, then it means that the pair $(\A,\B)$ is controllable. Exploiting the eigenvector test,if $x$ is an eigenvector of $\A^T$ (hence $\A^T x = \lambda x$) then it implies that $\B^T x = 0$; by pre-multiplying by $x^*$ and post multiplying by $x$ the Lyapunov equation results in 
+		\begin{align*}
+			x^* \big(\A W + W \A^T\big) x = x^* \A W x + x^* W \A^T x = \big(\A^T x\big)^* W x + x^* W\big(\A^T x\big) & = - x^* \B \B^T x \\
+			(\lambda x)^* W x + x^* W (\lambda x) = \lambda^* x^* W x + \lambda x^* W x & = - |\B^T x|^2 \\
+			2 \textrm{Re}\{\lambda\} x^* W x & =
+		\end{align*}
+		Having a Hurwitz matrix $\A$, then it means that $\textrm{Re}\{\lambda\} < 0$; moreover having $W$ a positive definite matrix determines that the overall $2 \textrm{Re}\{\lambda\} x^* W x$ is negative for each eigenvector $x \neq 0$ of $\A^T$ of eigenvalue $\lambda$. This means that the norm $|\B^T x|^2$ is non-zero for all $x\neq 0$, so by the eigenvector test this means having a controllable pair $(\A,\B)$.
+		
+		\item We can now show that if the pair $(\A,\B)$ is controllable, then exists a matrix $W = W^T > 0$ satisfying equation \ref{eq:temp1}. Calling the product $\B \B^T$ as $\overline Q$ and $\A^T = \overline \A$, what we obtain is the form
+		\[ W \overline \A + \overline \A^T W = - \overline Q \]
+		that coincides with the one of the Lyapunov stability test (equation \ref{eq:lin:lyapunovequality}, page \pageref{eq:lin:lyapunovequality}). From that result if $\overline Q$ is positive definite then
+		\[ W = \int_{t_0}^{t_1} e^{\overline \A t} \overline Q e^{\overline \A^T t} \, dt \]
+		In our case we are not sure that $\overline Q$ is positive definite, however to overcome this limitation we can use the preliminary assumption that $(\A,\B)$ is a controllable pair. Considering
+		\[ x^T W x = \int_0^\infty \underbrace{x^T e^{\A t} \B}_{v^T} \underbrace{\B^T e^{\A t} x}_v \, dt = \int_0^\infty \big|\B^T e^{\A^T t} x\big|^2\, dx \geq 0 \]
+		proving so that the so obtained matrix $W$ is positive definite.		
+	\end{enumerate}
+	
+	\noindent
+	Given an autonomous system $\Sigma_{A-LTI}: \ \dot x /x^+ = \A x$, then the following conditions/statements are equivalent:
+	\begin{enumerate}
+		\item the system is asymptotically stable;
+		\item the system is exponentially stable;
+		\item all eigenvalues of $\A$ are such that $\textrm{Re}\{\lambda\} < 0 $ (continuous-time systems) or $|\lambda| < 1$ (discrete-time case);
+		\item for every $Q = Q^T > 0$ there exists a matrix $P$ such that
+		\[ (CT): \quad \A^T P + P \A = - Q \hspace{2cm} (DT): \quad \A^T P \A - P = Q \]
+		Moreover
+		\[ (CT): \quad P = \int_0^\infty e^{\A^T t} Q e^{\A t}\, dt \hspace{2cm} (DT): \quad P = \sum_{k = 0}^\infty (\A^T)^k Q A^k \]
+		\item always exists a matrix $P = P^T > 0$ such that
+		\[ (CT): \quad \A^T P + P \A < 0 \hspace{2cm} (DT): \quad \A^T P \A - P < 0 \]
+		\item for each $\B$ such that $(\A,\B)$ is a controllable pair exists a positive definite matrix $W = W^T > 0$ solving
+		\[ (CT): \quad \A W + W \A^T = - \B\B^T \hspace{2cm} (DT): \quad \A W \A^T - W = - \B \B^T \]
+		Moreover $W$ is unique and is equal to
+		\[ (CT): \quad W = \int_0^\infty e^{\A t} \B \B^T e^{\A^T t}\, dt \hspace{2cm} (DT): \quad W = \sum_{k=0}^{\infty} \A^k \B \B^T (\A^T)^k \]
+	\end{enumerate}
+
+\subsection{Feedback stabilization with Lyapunov test}
+	Considering an LTI system $\Sigma: \ \dot x = \A x + \B u$ with $(\A,\B)$ a controllable pair, then we can show that also the system characterized by the pair $(-\mu \I- \A,\B)$ is controllable. We have in fact that the matrices $-\mu \I - \A$ and $\A$ share the same eigenvector: considering $x$ such that $\A x = \lambda x$, then subtracting $-\mu \I x$ on both sides evaluates to $-\mu \I x - \A x = - \lambda x - \mu x$, so
+	\[ (-\mu \I- \A) x = (-\lambda - \mu) x \]
+	hence $x$ is still an eigenvector of $-\mu \I - \A$ and satisfy the requirement $\B^T x \neq 0$. Picking so a coefficient $\mu$ large enough allows to \textit{shift} the eigenvalues of $\A$, still satisfying $(-\mu \I - \A)W + W(-\mu \I - \A)^T = - \B \B^T$. This equation can be moreover rewritten as
+	\[ \A W + W \A^T + \B \B^T = -2\mu W  \]
+	Defining $P = W^{-1}$ and pre- and post-multiply such equation by $P$ allows to obtain the form
+	\[ P\A + \A^T P- P\B\B^T P = -2\mu P \]
+	Calling $\frac{\B^TP}{2}$ as the matrix $K$, the product $P\B\B^TP$ can be split as $K^T\B^TP +P\B K$
+	
+	
+	
+	
+	
+	
+	

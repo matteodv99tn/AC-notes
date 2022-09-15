@@ -1,0 +1,255 @@
+\chapter{Observability and constructibility}
+	The linear quadratic regulator (page \pageref{sec:LQR}), or more generally the full-state feedback (page \pageref{sec:fullstatefeed}), are proposed control system that, through the design of a feedback of the type $\u = -\K\x$, allow us to achieve desired property concerning the stability of the system of interest.
+	
+	Ideally feedback of this types are the best one for linear system, however the main cons of such control system is that it requires the knowledge of all states at each time, and this is not always guaranteed. In reality in fact the states $\x$ have to be reconstructed starting from the read output $\y$ of the system. The main goal of this chapter is so to study the \de{observability}: as in controllability we studied the dynamic equation $\dx = \A\x + \B\u$ to study whenever a system was controllable, in this case we study the output equation
+	\[ \y = \C\x + \D\u \]
+	to asses the values of the states $\x$ as function of the measured output $\y(t)$, starting by the idea that if $\C$ is invertible we can have the estimation of the states $\hat \x$ as $\C^{-1}(\y-\D\u)$.
+	
+	\paragraph{Intuition behind the concepts} Similarly to what had been said for \textit{controllability} and \textit{reachability}, we define with \de{$[t_0,t_1]$-observability} the ability to reconstruct the initial state of a system given it's input $\u(t),\y(t)$ (with $t\in[t_0,t_1]$), while \de{$[t_0,t_1]$-constructibility} is instead the ability to reconstruct the final state $\x(t_1)$ given both $\u(t)$ and $\y(t)$.
+	
+	\paragraph{Unobservable subspace} Given a continuous-time linear system, from the variation of constants formula (\ref{eq:sol:varconstantcontinuous}) we hat that the output $\y(t)$ is defined as
+	\[ \y(t) = \C(t)\stm(t,t_0)\x(t_0) + \int_{t_0}^t \C(\tau)\stm(t,\tau)\B(\tau)\, d\tau + \D(t)\u(t) \]
+	The unknown quantity associated to the estimation of the state is in this case $\tilde\y(t) = \C(t)\stm(t,t_0) \x(t_0)$; assuming to have available both $\u(t),\y(t)$ (as well as the model of the system), then by simply reversing the equation we have that
+	\begin{equation} \label{eq:obs:temp1}
+		\tilde \y(t) = \C(t)\stm(t,t_0)\x(t_0) = \y(t) - \int_{t_0}^t \C(\tau)\stm(t,\tau)\B(\tau)\, d\tau - \D(t)\u(t)
+	\end{equation}
+	\begin{theorem} \label{th:obs:temp1}
+		Given two times $t_1>t_0\geq 0$, we write $\unobs[t_0,t_1]$ the \de{unobservable subspace} as the set of all initial condition $\x(t_0)\in \mathds R^n$ leading to zero homogeneous response:
+		\begin{equation} \label{eq:obs:unobservable}
+			\unobs[t_0,t_1] = \left\{ \x(t_0)\in \mathds R^n \ : \ \C(t)\stm(t,t_0)\x(t_0) = 0 \ \forall t\in [t_0,t_1] \right\}
+		\end{equation} 
+	\end{theorem}
+	The idea in this case is that if a state $\x_0$ lies in the unobservable subspace $\unobs$, then it's impossible to asses if the \textit{state-estimator} $\tilde \y(t)$ is zero due to initial condition $\x(t_0)$ of by the term $\C(t)\stm(t,t_0)$.
+	
+	As properties of the unobservable subspace, for any 2 times $t_1>t_0\geq 0$ and an input pair $\big(\u(t),\y(t)\big)$ defined in $[t_0,t_1]$:
+	\begin{enumerate}[\itshape i)]
+		\item for any initial state $\x_0$ satisfying $\tilde y(t) = \C(t) \stm(t,t_0)\x_0$ $\forall t\in[t_0,t_1]$, then for every unobservable state $\x_u \in \unobs[t_0,t_1]$ it holds that
+		\begin{equation}
+			\tilde \y(t) = \C(t)\stm(t,t_0)(\x_0+\x_u) \qquad \forall t\in [t_0,t_1]
+		\end{equation}
+		
+		\item when the unobservable subspace is trivial, so $\unobs[t_0,t_1] = \{0\}$, then there exists at most one initial state $\x_0$ compatible with the pair $(\u,\y)$ satisfying (\ref{eq:obs:temp1}).	
+	\end{enumerate}
+	\begin{proof}
+	\begin{enumerate}[\itshape a)]
+		\item proof of \textit{i)} is straightforward and is based on the linearity property:
+		\[ \tilde \y(t) = \C(t)\stm(t,t_0)\x_0 + \cancel{\C(t)\stm(t,t_0)\x_u} \]
+		where the second term has been cancelled due to the definition of unobservable subspace;
+		\item property \textit{ii)} can be proved by absurd assuming that there exists two different  initial states $\x_0 \neq \overline \x_0$  compliant with the given input-output pair $(\u,\y)$, so for which (\ref{eq:obs:temp1}) holds. Subtracting the two equations leads to
+		\[ 0 = \C(t) \stm(t,t_0)\big(\x_0-\overline \x_0\big) \]
+		In order to be true this means that in general the non-zero vector $\x_0-\overline \x_0$ must be inside the unobservable subspace, in contradiction to the initial hypothesis of it being trivial.
+	\end{enumerate}
+	\end{proof}
+	
+	Given two times $t_1 > t_0\geq 0$, the pair $\big(\C(\cdot),\A(\cdot)\big)$ is said \de{$[t_0,t_1]$-observable} if it's unobservable subspace is made by the trivial set $\unobs[t_0,t_1] = \{0\}$.
+	
+	Note that in general matrices $\B,\D$ are not considered while dealing with observability as they do not appear in any way in the definition $\tilde \y(t) = \C(t) \stm(t,t_0)\x(t_0)$. 
+	
+	\paragraph{Unconstructible subspace} The variation of constant formula for a continuous-time linear system cab be also expressed as function of the final state $\x(t_1)$, thus (\ref{eq:obs:temp1}) can be rewritten as
+	\begin{equation} \label{eq:obs:temp2}
+		\tilde \y(t) = \C(t)\stm(t,t_1)\x(t_1) = \y(t) - \int_{t_1}^t \C(\tau)\stm(t,\tau)\B(\tau)\, d\tau - \D(t)\u(t)
+	\end{equation}
+	\begin{theorem}
+		Given two times $t_1>t_0 \geq 0$ the \de{unconstructible subspace} $\uncostr[t_0,t_1]$ is made by the set of all the final states $\x(t_1)$ for which $\tilde\y(t)$ evaluates to zero, so
+		\begin{equation}
+			\uncostr[t_0,t_1] = \left\{ \x(t_1)\in \mathds R^n \ : \ \C(t)\stm(t,t_1)\x(t_1) = 0 \ \forall t\in [t_0,t_1] \right\}
+		\end{equation} 
+	\end{theorem}
+	The meaning of this theorem is similar to \ref{th:obs:temp1}, however in this case the set $\uncostr$ contains all the final state that doesn't allow to discriminate whenever $\tilde y(t)$ is zero due to the state $\x(t_1)$ or the value of $\C(t)\stm(t,t_0)$. Also in this case we have the properties\\
+	\begin{enumerate}[\itshape i)]
+		\item if $\x_1$ satisfies $\tilde \y(t) = \C(t) \stm(t,t_1)\x_1$ for all $t\in[t_0,t_1]$, for any state $\x_u\in \uncostr[t_0,t_1]$ we have that also $\x_1+\x_u$ is a solution of (\ref{eq:obs:temp2}):
+		\[ \tilde \y(t) = \C(t)\stm(t,t_1)\x_1 = \C(t)\stm(t,t_1)(\x_1 + \x_u) \]
+		\item if the unconstructible subspace is determined by the trivial subspace $\uncostr[t_0,t_1] = \{0\}$, then at most 1 state $\x_r\in \mathds R^n$ is compatible with the given input-output pair $\big(\u(\cdot), \y(\cdot)\big)$.
+	\end{enumerate}
+	
+	\paragraph{Example of unobservable system} Let us consider a system that's made by a parallel connection between two SISO continuous-time sub-systems with dynamics $\dot x_i = A_i x_i + B_i u$, where so the input $u$ is common to both system and the overall output $y$ is the sum $y_1 + y_2$ where $y_i = C_ix_i$.
+	
+	Choosing $\x = (x_1,x_2)$ the states of the overall system, the associated state-space representation is
+	\[ \begin{cases}
+		\dx = \matrix{A_1 & 0 \\ 0 & A_2}\x + \matrix{B_1 \\B_2 } u \\ y = \matrix{C_1&C_2} \x	\end{cases} \]
+	In this case the \textit{states estimator function} $\tilde y(t)$ can be regarded as the sum of the two $\tilde y_1(t) + \tilde y_2(t)$, expanding so to the form
+	\[ \tilde y(t) = C_1 e^{A_1t} x_1(0) + C_2 e^{A_2t} x_2(0) = 0 \]
+	Considering now the particular case when $A_1 = A_2 = A$ and $C_1 = C_2 = C$, this sum collapse to the form
+	\[ \tilde y(t) = C e^{At} \big(x_1(0) + x_2(0)\big) = 0 \]
+	In this case we observe that the function $\tilde y(t)$ can also be zero for any time $t$ if it happens that $x_1(0) = - x_2(0)$, so we can say that the unobservable subspace is
+	\[ \unobs[t_0,t_1] = \big\{ (x_1,x_2)\in \mathds R^2 \textrm{ such that } x_1 = -x_2 \big\} \]
+	Having a non-trivial observable subspace implies that the system is \textbf{unobservable}.
+	
+\section{Gramians}
+	As for reachability/controllability, given two times $t_1 > t_0 \geq 0$ we can define the \de{$[t_0,t_1]$-observability} and \de{$[t_0,t_1]$-constructibility Gramians} the symmetric matrices defiend as
+	\begin{equation}
+	\begin{split}
+		\ogram[t_0,t_1] & = \int_{t_0}^{t_1} \stm^T(\tau,t_0) \C^T(\tau)\C(\tau) \stm(\tau, t_0)\, d\tau \\
+		\construcgram[t_0,t_1] & = \int_{t_0}^{t_1} \stm^T(\tau,t_1) \C^T(\tau)\C(\tau) \stm(\tau, t_1)\, d\tau 
+	\end{split}
+	\end{equation}
+	\begin{theorem}
+		Given two times $t_1 > t_0 \geq 0$, then it holds that
+		\begin{equation} \label{eq:obs:temp3}
+			\unobs[t_0,t_1] = \kernel{\ogram[t_0,t_1]} \hspace{2cm} \uncostr[t_0,t_1] = \kernel{\construcgram[t_0,t_1]}
+		\end{equation}
+	\end{theorem}
+	\begin{proof}
+		To show that if a state $\x_0\in \unobs$ is unobservable we consider the quadratic form
+		\[ \x_0^T\ogram \x_0 = \int_{t_0}^{t_1} \x_0^T \stm^T(\tau,t_0) \C^T(\tau)\C(\tau) \stm(\tau, t_0) \x_0\, d\tau = \int_{t_0}^{t_1} \big|\C(\tau) \stm(\tau,t_0)\x_0\big|^2\, d\tau \geq 0 \]
+		Having supposed that $\x_0$ is unobservable, then the product $\C(t)\stm(t,t_0)\x_0$ is mutually zero, thus the quadratic form evaluates to $\x_0^T\ogram \x_0 = 0$. Showing now that $\ogram \x_0 = 0$ evaluates to zero for any unobservable state, then we can say that $\x_0$ belongs to the kernel of $\ogram$. Considering in fact
+		\[ \ogram \x_0 = \int_{t_0}^{t_1} \stm^T(\tau,t_0) \C^T(\tau)\C(\tau) \stm(\tau, t_0) \x_0\, d\tau = \int_{t_0}^{t_1} \stm^T(\tau,t_0) \C^T(\tau) \tilde \y(\tau) \, d\tau  \]
+		by having $\x_0\in \unobs$ ensures us that $\tilde \y(\tau) = 0$ for any $\tau$ implying indeed that $\ogram \x_0 =0 $ for any time $t\in [t_0,t_1]$. The proof for the unconstructible subspace is dual.
+	\end{proof}
+	
+	As corollary of this definitions we have that the pair $\big(\C(\cdot), \A(\cdot)\big)$ is
+	\begin{enumerate}[\itshape i)]
+		\item \textbf{$[t_0,t_1]$-observable} if and only if the rank of the observability Gramian $\ogram$ is equal to $n$;
+		\item \textbf{$[t_0,t_1]$-constructible} if and only if the constructibility Gramian $\construcgram$ is full rank.
+	\end{enumerate}
+	Considering in-fact that such Gramians are made by $n$ linearly independent columns (implying that they are full rank), then having $\rank{\ogram} = 0$ implies, from the fundamental theorem of linear algebra, that $\dim{\kernel{\ogram}} = 0$, so kernel (hence the unobservable subspace) is the trivial set $\unobs = \{0\}$.	
+	
+\subsection*{Gramians-based reconstruction}
+	Given a continuous-time LTV system and the input-output pair $(\u,\y)$, pre-multiplying (\ref{eq:obs:temp2}) by $\stm^T(t,t_0)\C^T(t)$ evaluates to
+	\[ \stm^T(t,t_0)\C^T(t)\tilde \y(t) = \stm^T(t,t_0)\C^T(t)\C(t)\stm(t,t_0) \x_0 \]
+	where $\tilde \y(t)$ is a quantity strictly related to both $\u$ and $\y$. Integrating this equations in time leads to
+	\begin{align*}
+		\int_{t_0}^{t_1} \stm^T(\tau,t_0)\C^T(\tau)\tilde \y(\tau) \, d\tau & = \int_{t_0}^{t_1} \stm^T(\tau,t_0)\C^T(\tau)\C(t)\stm(\tau,t_0) \, d\tau \, \x_0 \\
+		& = \ogram[t_0,t_1]  \x_0
+	\end{align*}
+	Assuming now that the system is observable (so assuming $\rank{\ogram} = n$), then it means that the Gramian $\ogram$ is invertible, thus the initial state $\x_0$ characterizing the given input-output pair can be obtained as
+	\begin{equation*}
+		\x_0 = \ogram^{-1}[t_0,t_1] \int_{t_0}^{t_1} \stm^T(\tau,t_0)\C^T(\tau)\tilde \y(\tau) \, d\tau
+	\end{equation*}
+	\begin{theorem}
+		Given two times $t_1 > t_0 \geq 0$ and an input-output pair $\big(\u(t),\y(t)\big)$ defined in the time range $t\in [t_0,t_1]$, then
+		\begin{enumerate}[\itshape i)]
+			\item if the pair $(\C,\A)$ is $[t_0,t_1]$-observable, then the corresponding initial state is
+			\begin{equation}
+				\x_0 = \ogram^{-1}[t_0,t_1] \int_{t_0}^{t_1} \stm^T(\tau,t_0)\C^T(\tau)\tilde \y(\tau) \, d\tau
+			\end{equation}
+			\item if the pair $(\C,\A)$ is $[t_0,t_1]$-constructible, then the corresponding final state can be computed as
+			\begin{equation}
+				\x_1 = \construcgram^{-1}[t_0,t_1] \int_{t_0}^{t_1} \stm^T(\tau,t_1)\C^T(\tau)\tilde \y(\tau) \, d\tau
+			\end{equation}
+		\end{enumerate}
+	\end{theorem}
+
+\section{Extension to the discrete-time case}
+	Until now we discussed \textbf{observability}/\textbf{controllability} of continuous-time LTV, system, however the same concepts can be extended to discrete-time ones with some subtle details changing. In this case the variation of constants formula (\ref{eq:sol:varconstantdiscrete}), page \pageref{eq:sol:varconstantdiscrete}, is a little bit different and lead to a state estimator function 
+	\[ \tilde \y(t) = \C(t) \stm(t,t_0)\x_0 = \y(t) - \sum_{\tau = t_0}^{t_1-1} \C(t)\stm(t,\tau+1) \B(\tau) \u(\tau) - \D(t)\u(t) \]
+	The definition of unobservable subspace (\ref{eq:obs:unobservable}) is still the same, however the $[t_0,t_1]$-unconstructible subspace $\uncostr[t_0,t_1]$ defined as the set of $\x_1$ satisfying
+	\[ \C(t) \stm(t,t_1) \x_1 = 0 \qquad \forall t\in [t_0,t_1] \]
+	requires that the state matrix $\A(t)$ is non-singular (invertible) for all times $t\in[t_0,t_1]$ in order to make possible the computation of the Peano-Baker series $\stm(t,t_1)$ backward in times.
+	
+\section{LTI observability and constructibility}
+	All concepts yet described simplifies if we consider a continuos-time LTI case, where so the pair $(\C,\A)$ is characterized by constant matrices. In this particular case the observability Gramian can be rewritten as
+	\[ \ogram[t_0,t_1] = \int_{t_0}^{t_1} e^{\A^T(\tau-t_0)} \C^T\C e^{\A(\tau- t_0)} \, d\tau \]
+	Regarding $\A^T$ as $\overline A$ and $\C^T$ as $\overline \B$ we can re-formulate this statement as
+	\[ \ogram[t_0,t_1] = \int_{t_0}^{t_1} e^{\overline \A(\tau-t_0)} \overline \B \overline \B^T e^{\overline \A^T(\tau- t_0)} \, d\tau \]
+	The result yet obtained is very close with the one presented in (\ref{eq:gram:LTIwr}), page \pageref{eq:gram:LTIwr}, where so we can find an analogy between observability (constructibility) and reachability (controllability), in particular we can note the following \de{duality} between the systems:
+	\[ \Sigma_1: \matrix{\begin{array}{c|c}
+			\A &  \B \\ \hline \C & \D
+	\end{array}} \qquad \textrm{dual to} \qquad \Sigma_2:\matrix{\begin{array}{c|c}
+		\overline \A & \overline \B \\ \hline \overline \C & \overline \D
+	\end{array}} = \matrix{\begin{array}{c|c}
+		\A^T &  \C^T \\ \hline \B^T & \D^T
+	\end{array}} \]
+	\begin{theorem}
+		A LTI system $\Sigma_1$, or equivalently the pair $(\C,\A)$, is \de{observable} (\textbf{constructible}) if and only if it's \textbf{dual} system $\Sigma_2$, or equivalently the pair $(\A^T,\C^T)$ is \de{reachable} (\textbf{controllable}).
+	\end{theorem}
+	As in the previous chapters, the concepts of observability and controllability is equivalent for LTI system, in fact the two subspaces $\unobs$ and $\uncostr$ are the same.
+	
+	Dual to the controllability matrix $\R$ described at page \pageref{eq:gram:reachabilitymatrix}, we can define the \de{observability matrix} $\O$ the one defined as
+	\begin{equation}
+		\O = \matrix{\C \\ \C \A \\ \vdots \\ \C\A^{n-1}}
+	\end{equation}
+	
+\subsection{Observability test}
+	A pair $(\C,\A)$ is \textbf{observable} (constructible) if and only if the observability matrix is full rank, so
+	\begin{equation}
+		\textrm{observability} \qquad \Leftrightarrow \qquad \rank\O = n
+	\end{equation}
+	
+	\begin{proof}
+		The proof is straightforward considering the reachability matrix $\overline \R$ of the dual system that's defined as
+		\[ \overline \R = \matrix{\C^T & \A^T \C^T & \dots & \big(\A^T\big)^{n-1}\C^T} = \O^T \]
+		If $\overline \R$ is full rank (implying controllability), then it means that also $\O$ is full rank (implying observability).
+	\end{proof}
+	
+	\paragraph{Eigenvector test for observability} {\itshape A pair $(\C,\A)$ is observable if and only if no eigenvector of $\A$ are in the kernel of $\C$.}
+	
+	\begin{proof}
+		Also in this case the straightforward proof is by duality, considering that
+		\[ (\C,\A) \textrm{ observable} \qquad \Leftrightarrow \qquad \big(\A^T,\C^T\big) \textrm{ reachable} \]
+		Considering the definition of the eigenvector test for controllability applied to such system what we obtain is indeed the definition {\itshape no eigenvector of $\big(\A^T\big)^T = \A$ can lie in the kernel of $\big(\C^T\big)^T = \C$}.
+	\end{proof}
+	
+	\paragraph{PBH test for observability} {\itshape A pair $(\C,\A)$ is observable if and only if the matrix $\matrix{\A-\lambda \I \\ \C}$ is full-rank for any complex coefficient $\lambda$:}
+	\begin{equation}
+		\textrm{observable system} \qquad \Leftrightarrow \qquad \rank{\matrix{\A - \lambda \I \\ \C}} = n \quad \forall \lambda \in \mathds C
+	\end{equation}
+	As in the case of reachability, this relation is true for almost any coefficient $\lambda$ and the lonely \textit{problematic values} are the eigenvalues of $\A$ that are making the matrix $\A$ rank-deficient.
+	
+	\paragraph{Lyapunov test for observability} {\itshape Given a Hurwitz (Schur) state-matrix $\A$, the pair $(\C,\A)$ is observable if and only if exists a matrix $\mat W = \mat W^T > 0$ satisfying
+	\begin{equation}
+		(CT): \quad \A^T \mat W + \mat W \A= - \C^T\C \hspace{2cm} (DT): \quad \A^T\mat W \A - \mat W = -\C^T\C
+	\end{equation}	
+	Moreover the unique solution is given by
+	\begin{align*}
+		(CT): \quad & \mat W = \lim_{t_1-t_0\rightarrow \infty} \ogram[t_0,t_1] = \int_0^\infty e^{\A^T\tau} \C^T\C e^{\A \tau} \, d\tau \\
+		(DT): \quad & \mat W = \lim_{t_1-t_0\rightarrow \infty} \ogram[t_0,t_1] = \sum_{\tau = 0}^\infty \big(\A^T\big)^\tau \C^T\C \A^\tau \, d\tau \\
+	\end{align*}}
+	
+\subsection{Observable decomposition}
+	Recalling what has been show in page \pageref{eq:dynsys:algebraicequivalence}, we can have that a system $\dx/\xp = \A\x, \y =\C\x$ is algebraically equivalent to $\dot{\overline{\x}}/\overline \x^+ = \overline \A \overline \x, \y = \overline \C \overline \x$ if exists a similarity transformation matrix $\T$ for which it holds
+	\[ \matrix{\overline \A \\ \overline \C } = \matrix{\T^{-1}\A\T \\ \C \T} \]
+	One relevant property to observe is that the computation of the observability matrix $\overline \O$ of the algebraically equivalent system can be simply computed from $\O$ as
+	\[ \overline \O = \matrix{ \overline \C \\ \overline \C \overline \A \\ \vdots \\ \overline{CA}^{n-1} } = \matrix{\C \T \\ \C \T\T^{-1} \A \T \\ \vdots \\ \C \T\T^{-1}\A\T\dots \T^{-1}\A\T} = \matrix{\C\T \\ \C\A\T \\ \vdots \\ \C\A^{n-1}\T} = \O\T \]
+	
+	\begin{theorem}
+		The pair $(\C,\A)$ is observable if and only if the pair $(\overline \C,\overline \A) = (\C\T, \T^{-1}\A \T)$ is also observable for any non-singular $n\times n$ transformation matrix $\T$.
+	\end{theorem}
+	This theorem is dual to the controllable case and states that observability is an intrinsic property of the system, meaning that it's preserved for any algebraically equivalent system.
+	
+	\begin{theorem}
+		For any unobservable pair $(\C,\A)$ there exists a similarity transformation $\T$ that determines and algebraically equivalent system with matrices
+		\begin{equation} \label{eq:obs:temp4}
+			\overline \C = \C\T= \matrix{\C_o & 0} \hspace{2cm} \overline \A = \T^{-1}\A\T = \matrix{\A_o & 0 \\ \A_{12} & \A_{\overline o}}
+		\end{equation} 
+		where $\A_{\overline o}$ is a $n_{\overline o} \times n_{\overline o}$ matrix ruling the \textbf{\textit{unobservable part}} of the system (indeed $n_{\overline o} = \dim \kernel{\unobs}$). This is the \de{observable decomposition}.
+	\end{theorem}
+	Important consequences are
+	\begin{enumerate}[\itshape i)]
+		\item the unobservable subspace of the new system is characterized by the set
+		\begin{equation}
+			\unobs =  \image{\matrix{0 \\ \I_{n_{\overline o} \times n_{\overline o} }}}
+		\end{equation}
+		\item the pair $(\C_o,\A_o)$ is observable.
+	\end{enumerate}
+	Similarly to what has been shown for controllability, the desired transformation matrix $\T$ of (\ref{eq:obs:temp4}) can be built as $\matrix{\V_o & \V_{\overline o}}$, where $\V_{\overline o}$ is a base of the unobservable subspace (basis of $\kernel\ogram = \kernel{\O}$) and $\V_0$ is it's completion.
+	
+	\begin{note}
+		From a numerical point of view, computing kernels or images of matrices is performed through the \textit{singular value decomposition} SVD, a process that's computationally expensive and numerically unfeasible for system of higher dimensions.
+	\end{note}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

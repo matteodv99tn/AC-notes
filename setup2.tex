@@ -28,6 +28,7 @@
 \usepackage{enumerate}
 \usepackage{mathrsfs} 
 \usepackage{tikzit}
+\usepackage{multirow}
 
 \usetikzlibrary{arrows.meta}
 \input{style.tikzstyles}
@@ -38,122 +39,59 @@
 
 \captionsetup{font = {it, small}, labelfont={color=NavyBlue, bf}}
 
-\renewcommand{\L}{\mathscr{L}}
-\newcommand{\Z}{\mathscr{Z}}
-\newcommand{\ztransf}[1]{\Z\left\{#1\right\}}
-\newcommand{\aL}{\L^{-1}}
-\newcommand{\laplace}[1]{\L \left\{ #1 \right\}}
-\newcommand{\antilaplace}[1]{\L^{-1} \left\{ #1 \right\} }
-\renewcommand{\Re}[1]{\mathds{R}\textrm{e}\left\{#1\right\}}
-\renewcommand{\Im}[1]{\mathds{I}\textrm{m}\left\{#1\right\}}
-\newcommand{\A}{\mathcal{A}}
-\newcommand{\B}{\mathcal{B}}
-\newcommand{\C}{\mathcal{C}}
-\newcommand{\D}{\mathcal{D}}
-\newcommand{\G}{\mathcal{G}}
-\newcommand{\I}{\mathcal{I}}
-\newcommand{\J}{\mathcal{J}}
-\newcommand{\vet}[1]{\begin{pmatrix} #1 \end{pmatrix}}
-\newcommand{\mat}[1]{\begin{bmatrix} #1 \end{bmatrix}}
-\newcommand{\tikzfigure}[1]{\tikzfig{Images/#1}}
-\newcommand{\Gs}{\hat \G(s)}
-\newcommand{\lyap}{\mathcal V}
-\newcommand{\eq}{^{eq}}
-\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
-\newcommand{\pdl}[2]{\partial #1/\partial #2}
-\renewcommand{\H}{\mathcal H}
-\newcommand{\control}{\mathscr C}
-\newcommand{\reach}{\mathscr R}
-\newcommand{\Acl}{\A_{cl}}
-\newcommand{\rank}[1]{\textrm{rank}\left\{#1\right\}}
+\newcommand{\mat}[1]{\mathbf{#1}}
+\newcommand{\vet}[1]{\pmb{#1}}
+\newcommand{\vett}[1]{\boldsymbol{#1}}
+\newcommand{\A}{\mat{A}}
+\newcommand{\B}{\mat{B}}
+\newcommand{\C}{\mat{C}}
+\newcommand{\D}{\mat{D}}
+\newcommand{\G}{\mat{G}}
+\newcommand{\R}{\mat{R}}
+\newcommand{\Q}{\mat{Q}}
+\newcommand{\K}{\mat{K}}
+\newcommand{\V}{\mat{V}}
+\renewcommand{\P}{\mat{P}}
+\renewcommand{\O}{\mat{O}}
+\renewcommand{\S}{\mat{S}}
+\newcommand{\T}{\mat{T}}
+\newcommand{\I}{\mat{I}}
+\newcommand{\x}{\vet{x}}
+\renewcommand{\u}{\vet{u}}
+\newcommand{\y}{\vet{y}}
+\newcommand{\z}{\vet{z}}
+\newcommand{\dx}{\dot{\x}}
+\newcommand{\xp}{\x^+}
+\newcommand{\jordan}{\vet J}
+
+\newcommand{\reach}{\mathcal R}
+\newcommand{\ctr}{\mathcal C}
+\newcommand{\rgram}{\mat W_\reach}
+\newcommand{\cgram}{\mat W_\ctr}
+\newcommand{\image}[1]{\textrm{Im}\left\{#1\right\}}
+\newcommand{\kernel}[1]{\textrm{Ker}\left\{#1\right\}}
+\newcommand{\dimension}[1]{\textrm{dim}\{#1\}}
+\newcommand{\rank}[1]{\textrm{rank}\{#1\}}
+\newcommand{\unobs}{\mathcal{N_O}}
+\newcommand{\uncostr}{\mathcal{N_C}}
+\newcommand{\ogram}{\mat W_{\mathcal O}}
+\newcommand{\construcgram}{\mat W_{\mathcal C n}}
+\newcommand{\jset}{\mathcal D}
+\newcommand{\fset}{\mathcal C}
+\newcommand{\hsol}{\mathds E}
+
+\renewcommand{\Re}[1]{\mathds R\textrm{e}\{#1\}}
+
+\renewcommand{\L}{\mathscr L}
+\newcommand{\Z}{\mathscr Z}
+\newcommand{\stm}{\mat{\Phi}}
+
+\renewcommand{\vector}[1]{\begin{pmatrix} #1 \end{pmatrix}}
+\renewcommand{\matrix}[1]{\begin{bmatrix} #1 \end{bmatrix}}
 
 \newcommand{\de}[1]{\textbf{\textcolor{NavyBlue}{#1}}}
 \newcommand{\bfcolor}[1]{\renewcommand*{\textbf}[1]{{\bfseries {\color{#1}##1}}}}
 
-\setcolumnwidth{0.3\textwidth}
-
-
-
-\newcounter{concetti}
-\newenvironment{concetto}{
-	
-	\bfcolor{NavyBlue}
-	\refstepcounter{concetti}
-	{\color{NavyBlue}\textbf{Concetto \theconcetti:}} \quad
-}{
-}
-\numberwithin{concetti}{chapter}
-\tcolorboxenvironment{concetto}{
-	boxrule=0pt,
-	boxsep=0pt,
-	colback={White!90!NavyBlue},
-	enhanced jigsaw, 
-	borderline west={2pt}{0pt}{NavyBlue},
-	sharp corners,
-	before skip=5pt,
-	after skip=10pt,
-	breakable,
-}
-
-\newcounter{teoremi}
-\newenvironment{teorema}[2]{
-	\bfcolor{ForestGreen}
-	\refstepcounter{teoremi}
-	\textbf{Concetto \theteoremi #1} 
-	\vspace{3mm} 
-	
-	\texttt{Ipotesi: } #2
-	
-	\vspace{3mm} 
-	
-	\texttt{Enunciato}: 
-}{
-}
-\numberwithin{teoremi}{chapter}
-\tcolorboxenvironment{teorema}{
-	boxrule=0pt,
-	boxsep=0pt,
-	colback={White!100!ForestGreen},
-	enhanced jigsaw, 
-	borderline west={2pt}{0pt}{ForestGreen},
-	sharp corners,
-	before skip=5pt,
-	after skip=10pt,
-	breakable,
-}
-
-
-\newenvironment{dimostrazione}{
-	\bfcolor{Orchid}
-	\textbf{Dimostrazione} \quad
-}{ }
-\tcolorboxenvironment{dimostrazione}{
-	boxrule=0pt,
-	boxsep=0pt,
-	colback={White!100!NavyBlue},
-	enhanced jigsaw, 
-	borderline west={2pt}{0pt}{Orchid},
-	sharp corners,
-	before skip=5pt,
-	after skip=10pt,
-	breakable,
-}
-
-\newenvironment{osservazione}{
-	\bfcolor{BurntOrange}
-	\textbf{Osservazione: }
-}{ }
-\tcolorboxenvironment{osservazione}{
-	boxrule=0pt,
-	boxsep=0pt,
-	colback={White!100!BurntOrange},
-	enhanced jigsaw, 
-	borderline west={2pt}{0pt}{BurntOrange},
-	sharp corners,
-	before skip=5pt,
-	after skip=10pt,
-	breakable,
-}
 
 \newenvironment{note}{
 	\bfcolor{CadetBlue}
@@ -172,6 +110,51 @@
 }
 
 
+\newcounter{numth}
+\numberwithin{numth}{chapter}
+\newenvironment{theorem}{
+	\noindent
+	\refstepcounter{numth}
+	
+	%	\renewcommand{\de}[1]{ { \color{ForestGreen} \textbf{#1} } }
+	
+	{\color{NavyBlue}\textbf{Theorem \thenumth:}}
+}{
+}
+\tcolorboxenvironment{theorem}{
+	boxrule=0pt,
+	boxsep=0pt,
+	colback={White!90!NavyBlue},
+	enhanced jigsaw, 
+	borderline west={2pt}{0pt}{NavyBlue},
+	sharp corners,
+	before skip=5pt,
+	after skip=5pt,
+	breakable,
+}
+
+\newcounter{numproof}
+\numberwithin{numproof}{chapter}
+\newenvironment{proof}{
+	\noindent
+	\refstepcounter{numproof}
+	
+	%	\renewcommand{\de}[1]{ { \color{ForestGreen} \textbf{#1} } }
+	
+	{\color{NavyBlue}\textbf{Proof \thenumproof:}}
+}{
+}
+\tcolorboxenvironment{proof}{
+	boxrule=0pt,
+	boxsep=0pt,
+	colback={White!100!NavyBlue},
+	enhanced jigsaw, 
+	borderline west={2pt}{0pt}{NavyBlue},
+	sharp corners,
+	before skip=5pt,
+	after skip=5pt,
+	breakable,
+}
 
 
 \newcounter{numdem}
@@ -180,7 +163,7 @@
 	\noindent
 	\refstepcounter{numdem}
 	
-%	\renewcommand{\de}[1]{ { \color{ForestGreen} \textbf{#1} } }
+	%	\renewcommand{\de}[1]{ { \color{ForestGreen} \textbf{#1} } }
 	
 	{\color{ForestGreen}\textbf{Demonstration \thenumdem:}}
 }{
